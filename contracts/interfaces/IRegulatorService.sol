@@ -39,6 +39,18 @@ interface IRegulatorService {
   event IssuerRemoved();
 
   /**
+   * @notice Triggered when a messaging address is set
+   *
+   * @param  _address Address of a messaging service
+   */
+  event MessagingAddressSet(address _address);
+
+  /**
+   * @notice Triggered when a messaging address is removed
+   */
+  event MessagingAddressRemoved();
+
+  /**
    * @dev Add a new whitelist
    *
    * @param  _whitelist The actual whitelist which is added to the array

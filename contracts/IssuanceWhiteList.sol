@@ -65,9 +65,9 @@ contract IssuanceWhiteList is IIssuanceWhiteList {
 
   }
 
-  function verify(address _buyer) whenNotPaused public constant returns (bool) {
+  function verify(address _buyer) public constant returns (bool) {
 
-    return !paused && members[_buyer] == true;
+    return members[_buyer] == true;
 
   }
 

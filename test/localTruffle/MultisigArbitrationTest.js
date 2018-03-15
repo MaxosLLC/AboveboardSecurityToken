@@ -31,11 +31,11 @@ contract('MultisigArbitrage', async accounts => {
 
         await token.mint(accounts[0], 10, {from: accounts[0]});
 
-        assert.equal(await token.balanceOf(accounts[0], 10));
+        assert.equal(await token.balanceOf(accounts[0]), 10);
 
         await wallet.executeTransferFrom(1, accounts[0], accounts[1], 5, {from: accounts[0]});
 
-        assert.equal(await token.balanceOf(accounts[0], 5));
+        assert.equal(await token.balanceOf(accounts[0]), 5);
         
       });
 

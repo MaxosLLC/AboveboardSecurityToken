@@ -8,7 +8,6 @@ import 'contracts/interfaces/IRegulatorService.sol';
 /// @notice Standard interface for `RegulatorService`s
 contract RegulatorService is IRegulatorService, Ownable {
 
-
   struct Settings {
 
     /**
@@ -27,6 +26,9 @@ contract RegulatorService is IRegulatorService, Ownable {
 
   /// @dev Issuer of the token
   address private issuer;
+
+  /// @dev Messaging address
+  address private messagingAddress;
 
   /// @dev Array of whitelists
   WhiteList[] whitelists;
@@ -222,4 +224,31 @@ contract RegulatorService is IRegulatorService, Ownable {
   function getIssuerAddress() constant public returns (address) {
     return issuer;
   }
+
+  /**
+   * @notice Get messaging address
+   */
+  function getMessagingAddress() constant public returns (address) {
+    return messagingAddress;
+  }
+
+  /**
+   * @notice Set messaging address
+   *
+   * @param  _address Messaging address to be set
+   */
+  function setMessagingAddress(address _address) onlyOwner public {
+    require(_address != address(0));
+    messagingAddress = _address;
+    MessagingAddressSet(_address);
+  }
+
+  /**
+   * @notice Remove messaging address
+   */
+  function removeMessagingAddress() onlyOwner public {
+    messagingAddress = address(0);
+    MessagingAddressRemoved();
+  }
+
 }

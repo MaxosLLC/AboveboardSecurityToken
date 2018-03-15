@@ -1,9 +1,8 @@
 pragma solidity ^0.4.17;
 
 import 'contracts/interfaces/WhiteList.sol';
-import 'contracts/zeppelin-solidity/contracts/lifecycle/Pausable.sol';
 
-contract IIssuanceWhiteList is WhiteList, Pausable {
+contract IIssuanceWhiteList is WhiteList {
 
   /**
    * @notice Triggered when a new aggent is assigned to the whitelist
