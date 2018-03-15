@@ -1,6 +1,5 @@
 var BasicWhiteList = artifacts.require("./BasicWhiteList.sol");
 var IssuanceWhiteList = artifacts.require("./IssuanceWhiteList.sol");
-var RegulationDWhiteList = artifacts.require("./RegulationDWhiteList.sol");
 var RegulatorService = artifacts.require("./RegulatorService.sol");
 var ServiceRegistry = artifacts.require("./ServiceRegistry.sol");
 var RegulatedToken = artifacts.require("./RegulatedToken.sol");
@@ -13,9 +12,6 @@ module.exports = async function(deployer, network, accounts) {
 
     return deployer.deploy(IssuanceWhiteList)
       .then(() => {
-        return deployer.deploy(RegulationDWhiteList);
-      })
-      .then(() => {
         return deployer.deploy(RegulatorService);
       }).then(() => {
         return deployer.deploy(ServiceRegistry, RegulatorService.address);
@@ -23,12 +19,8 @@ module.exports = async function(deployer, network, accounts) {
         return deployer.deploy(RegulatedToken, ServiceRegistry.address, 'Aboveboard', 'ABV');
       }).then(() => {
         return RegulatorService.deployed().then(function(instance) {
-          return instance.addWhitelist(IssuanceWhiteList.address);
-        });
-      }).then(() => {
-        return RegulatorService.deployed().then(function(instance) {
           service = instance;
-          return instance.addWhitelist(RegulationDWhiteList.address);
+          return instance.addWhitelist(IssuanceWhiteList.address);
         });
       }).then(() => {
         return RegulatedToken.deployed().then(function(instance) {
