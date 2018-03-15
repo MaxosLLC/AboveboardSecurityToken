@@ -13,6 +13,13 @@ interface IRegulatorService {
   event LogPartialTransferSet(address indexed token, bool enabled);
 
   /**
+   * @notice Triggered when an initial offering end date is set
+   *
+   * @param  _date Initial offering end date
+   */
+  event InititalOfferEndDateSet(uint256 _date);
+
+  /**
    * @notice Triggered when whitelist is added to the array
    *
    * @param  whitelist Address of the whitelist

@@ -30,6 +30,9 @@ contract RegulatorService is IRegulatorService, Ownable {
   /// @dev Messaging address
   address private messagingAddress;
 
+  /// @dev Initial offering end date
+  uint256 private initialOfferEndDate;
+
   /// @dev Array of whitelists
   WhiteList[] whitelists;
 
@@ -197,6 +200,16 @@ contract RegulatorService is IRegulatorService, Ownable {
         return true;
     }
     return false;
+  }
+
+  /**
+   * @notice Set initial offering end date
+   *
+   * @param  _date Initial offering end date
+   */
+  function setInititalOfferEndDate(uint256 _date) onlyOwner public {
+    initialOfferEndDate = _date;
+    InititalOfferEndDateSet(_date);
   }
 
   /**
