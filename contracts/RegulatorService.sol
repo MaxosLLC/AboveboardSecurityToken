@@ -54,6 +54,9 @@ contract RegulatorService is IRegulatorService, Ownable {
   // @dev Check error reason: Receiver is not allowed to receive the token
   uint8 constant private CHECK_ERECV = 4;
 
+  // @dev Check error reason: Transfer before initial offering end date
+  uint8 constant private CHECK_ERREGD = 5;
+
   function addWhitelist(WhiteList _whitelist) onlyOwner public {
 
     //check that we don't pass an empty list
@@ -159,13 +162,11 @@ contract RegulatorService is IRegulatorService, Ownable {
       return CHECK_ELOCKED;
     }
 
-    // US investors cannot sell these shares in the first year, except to the issuer
-    if (!isWhiteListed(_from) && _to != issuer) {
+    if (!isWhiteListed(_from)) {
       return CHECK_ESEND;
     }
 
-    // only issuer can send to US investors first year
-    if (!isWhiteListed(_to) && _from != issuer) {
+    if (!isWhiteListed(_to)) {
       return CHECK_ERECV;
     }
 
