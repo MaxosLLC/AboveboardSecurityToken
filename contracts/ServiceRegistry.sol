@@ -1,6 +1,5 @@
 pragma solidity ^0.4.18;
 
-import 'contracts/RegulatorService.sol';
 import 'contracts/interfaces/IServiceRegistry.sol';
 
 /// @notice A service that points to a `RegulatorService`

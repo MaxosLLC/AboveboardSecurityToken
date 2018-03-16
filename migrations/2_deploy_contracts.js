@@ -1,6 +1,6 @@
 var BasicWhiteList = artifacts.require("./BasicWhiteList.sol");
 var IssuanceWhiteList = artifacts.require("./IssuanceWhiteList.sol");
-var RegulatorService = artifacts.require("./RegulatorService.sol");
+var RegulatorService = artifacts.require("./AboveboardRegDSWhitelistRegulatorService.sol");
 var ServiceRegistry = artifacts.require("./ServiceRegistry.sol");
 var RegulatedToken = artifacts.require("./RegulatedToken.sol");
 var MockRegulatorService = artifacts.require('contracts/MockRegulatorService.sol');

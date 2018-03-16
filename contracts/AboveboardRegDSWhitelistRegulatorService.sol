@@ -6,7 +6,7 @@ import 'contracts/interfaces/WhiteList.sol';
 import 'contracts/interfaces/IRegulatorService.sol';
 
 /// @notice Standard interface for `RegulatorService`s
-contract RegulatorService is IRegulatorService, Ownable {
+contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable {
 
   struct Settings {
 

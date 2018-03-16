@@ -3,7 +3,7 @@ pragma solidity ^0.4.18;
 import 'contracts/zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol';
 import 'contracts/zeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
 import 'contracts/ServiceRegistry.sol';
-import 'contracts/RegulatorService.sol';
+import 'contracts/AboveboardRegDSWhitelistRegulatorService.sol';
 
 
 /// @notice An ERC-20 token that has the ability to check for trade validity
@@ -147,7 +147,7 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    *
    * @return The `RegulatorService` that manages this token.
    */
-  function _service() constant public returns (RegulatorService) {
-    return RegulatorService(registry.service());
+  function _service() constant public returns (AboveboardRegDSWhitelistRegulatorService) {
+    return AboveboardRegDSWhitelistRegulatorService(registry.service());
   }
 }
