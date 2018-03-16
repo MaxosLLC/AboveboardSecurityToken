@@ -170,6 +170,12 @@ contract RegulatorService is IRegulatorService, Ownable {
       return CHECK_ERECV;
     }
 
+    // only issuer can send to US investors first year
+    // US investors cannot sell these shares in the first year, except to the issuer
+    if (now < initialOfferEndDate && _from != issuer && _to != issuer) {
+      return CHECK_ERREGD;
+    }
+
     if (!settings[_token].partialTransfers && _amount % _wholeToken(_token) != 0) {
       return CHECK_EDIVIS;
     }
