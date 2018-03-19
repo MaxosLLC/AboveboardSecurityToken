@@ -20,15 +20,15 @@ It includes the following features.
 ## Components
 
 * AboveboardSecurityToken
- * Permissioned ERC-20 smart contract representing ownership of securities
- * Compatible with existing wallets and exchanges that support the ERC-20 token standard
- * Overrides the existing ERC-20 transfer method to check with an on-chain Regulator Service for trade approval
+  * Permissioned ERC-20 smart contract representing ownership of securities
+  * Compatible with existing wallets and exchanges that support the ERC-20 token standard
+  * Overrides the existing ERC-20 transfer method to check with an on-chain Regulator Service for trade approval
 * AboveboardRegDSWhitelistRegulatorService
- * Contains the permissions necessary for regulatory compliance
- * Supports SEC Regulation D lockup rule
+  * Contains the permissions necessary for regulatory compliance
+  * Supports SEC Regulation D lockup rule
 * ServiceRegistry
- * Accounts for regulatory requirement changes over time
- * Routes the AboveboardSecurityToken to the correct version of the Regulator Service
+  * Accounts for regulatory requirement changes over time
+  * Routes the AboveboardSecurityToken to the correct version of the Regulator Service
 * Whitelists
   * A whitelist is a list of buyers that qualify. We put that list inside our blockchain scripts, which we call “whitelist tokens”
 
