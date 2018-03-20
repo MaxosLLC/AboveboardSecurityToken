@@ -15,9 +15,10 @@ interface IRegulatorService {
   /**
    * @notice Triggered when an initial offering end date is set
    *
+   * @param  token Address of the token
    * @param  _date Initial offering end date
    */
-  event InititalOfferEndDateSet(uint256 _date);
+  event InititalOfferEndDateSet(address token, uint256 _date);
 
   /**
    * @notice Triggered when whitelist is added to the array
@@ -44,14 +45,17 @@ interface IRegulatorService {
   /**
    * @notice Triggered when an issuer is set
    *
+   * @param  token Address of the token
    * @param  _issuer Address of an issuer
    */
-  event IssuerSet(address _issuer);
+  event IssuerSet(address token, address _issuer);
 
   /**
    * @notice Triggered when an issuer is removed
+   *
+   * @param  token Address of the token
    */
-  event IssuerRemoved();
+  event IssuerRemoved(address token);
 
   /**
    * @notice Triggered when a messaging address is set

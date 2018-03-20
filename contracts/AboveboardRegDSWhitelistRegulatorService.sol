@@ -25,16 +25,16 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
 
     /// @dev Address of Regulation D Whitelist
     address regDWhitelist;
-  }
 
-  /// @dev Issuer of the token
-  address private issuer;
+    /// @dev Issuer of the token
+    address issuer;
+
+    /// @dev Initial offering end date
+    uint256 initialOfferEndDate;
+  }
 
   /// @dev Messaging address
   address private messagingAddress;
-
-  /// @dev Initial offering end date
-  uint256 private initialOfferEndDate;
 
   /// @dev Array of whitelists
   WhiteList[] whitelists;
@@ -192,9 +192,9 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
 
     // sender or receiver is under Regulation D, Non-US investors can trade at any time
     if ((wlFrom == settings[_token].regDWhitelist || wlTo == settings[_token].regDWhitelist)
-      && now < initialOfferEndDate
-      && _from != issuer                // only issuer can send to US investors first year
-      && _to != issuer) {               // US investors cannot sell these shares in the first year, except to the issuer
+      && now < settings[_token].initialOfferEndDate
+      && _from != settings[_token].issuer            // only issuer can send to US investors first year
+      && _to != settings[_token].issuer) {           // US investors cannot sell these shares in the first year, except to the issuer
       return CHECK_ERREGD;
     }
 
@@ -234,37 +234,43 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
   /**
    * @notice Set initial offering end date
    *
+   * @param  _token The address of the token
    * @param  _date Initial offering end date
    */
-  function setInititalOfferEndDate(uint256 _date) onlyOwner public {
-    initialOfferEndDate = _date;
-    InititalOfferEndDateSet(_date);
+  function setInititalOfferEndDate(address _token, uint256 _date) onlyOwner public {
+    settings[_token].initialOfferEndDate = _date;
+    InititalOfferEndDateSet(_token, _date);
   }
 
   /**
    * @notice Set issuer of token
    *
+   * @param  _token The address of the token
    * @param  _issuer Issuer to be set
    */
-  function setIssuer(address _issuer) onlyOwner public {
+  function setIssuer(address _token, address _issuer) onlyOwner public {
     require(_issuer != address(0));
-    issuer = _issuer;
-    IssuerSet(issuer);
+    settings[_token].issuer = _issuer;
+    IssuerSet(_token, _issuer);
   }
 
   /**
    * @notice Remove issuer of token
+   *
+   * @param  _token The address of the token
    */
-  function removeIssuer() onlyOwner public {
-    issuer = address(0);
-    IssuerRemoved();
+  function removeIssuer(address _token) onlyOwner public {
+    settings[_token].issuer = address(0);
+    IssuerRemoved(_token);
   }
 
   /**
    * @notice Get issuer's address
+   *
+   * @param  _token The address of the token
    */
-  function getIssuerAddress() constant public returns (address) {
-    return issuer;
+  function getIssuerAddress(address _token) constant public returns (address) {
+    return settings[_token].issuer;
   }
 
   /**
