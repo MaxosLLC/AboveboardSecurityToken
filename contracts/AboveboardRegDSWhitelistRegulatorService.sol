@@ -22,6 +22,9 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
      *      transfers allowed).
      */
     bool partialTransfers;
+
+    /// @dev Address of Regulation D Whitelist
+    address regDWhitelist;
   }
 
   /// @dev Issuer of the token
@@ -78,6 +81,17 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
       whitelists.push(_whitelist);
       WhitelistAdded(_whitelist);
     }
+  }
+
+  /**
+   * @notice Set Regulation D whitelist
+   *
+   * @param  _token Address of the token
+   * @param  _whitelist Regulation D whitelist address
+   */
+  function setRegDWhitelist(address _token, address _whitelist) onlyOwner public {
+    settings[_token].regDWhitelist = _whitelist;
+    RegulationDWhitelistSet(_token, _whitelist);
   }
 
   function removeWhitelist(WhiteList _whitelist) onlyOwner public {
@@ -162,17 +176,25 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
       return CHECK_ELOCKED;
     }
 
-    if (!isWhiteListed(_from)) {
+    bool f;
+    address wlFrom;
+    (f, wlFrom) = isWhiteListed(_from);
+    if (!f) {
       return CHECK_ESEND;
     }
 
-    if (!isWhiteListed(_to)) {
+    bool t;
+    address wlTo;
+    (t,wlTo) = isWhiteListed(_to);
+    if (!t) {
       return CHECK_ERECV;
     }
 
-    // only issuer can send to US investors first year
-    // US investors cannot sell these shares in the first year, except to the issuer
-    if (now < initialOfferEndDate && _from != issuer && _to != issuer) {
+    // sender or receiver is under Regulation D, Non-US investors can trade at any time
+    if ((wlFrom == settings[_token].regDWhitelist || wlTo == settings[_token].regDWhitelist)
+      && now < initialOfferEndDate
+      && _from != issuer                // only issuer can send to US investors first year
+      && _to != issuer) {               // US investors cannot sell these shares in the first year, except to the issuer
       return CHECK_ERREGD;
     }
 
@@ -201,12 +223,12 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
    *
    * @return True if buyer is added to whitelist, otherwise false
    */
-  function isWhiteListed(address _address) private returns (bool) {
+  function isWhiteListed(address _address) private returns (bool, address) {
     for (uint256 i = 0; i < whitelists.length; i++) {
       if (whitelists[i].verify(_address))
-        return true;
+        return (true, whitelists[i]);
     }
-    return false;
+    return (false, address(0));
   }
 
   /**

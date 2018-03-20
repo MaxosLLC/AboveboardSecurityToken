@@ -34,6 +34,14 @@ interface IRegulatorService {
   event WhitelistRemoved(address whitelist);
 
   /**
+   * @notice Triggered when a Regulation D whitelist is set
+   *
+   * @param  token Address of the token
+   * @param  whitelist Address of the Regulation D whitelist
+   */
+   event RegulationDWhitelistSet(address token, address whitelist);
+
+  /**
    * @notice Triggered when an issuer is set
    *
    * @param  _issuer Address of an issuer
