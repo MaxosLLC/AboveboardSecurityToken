@@ -112,6 +112,15 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     }
   }
 
+  /**
+   * @notice Get whitelists
+   *
+   * @return WhiteList[] Array of whitelists
+   */
+  function getWhitelists() public returns (WhiteList[]) {
+    return whitelists;
+  }
+
   function remove(uint256 index) private {
     
     //check that the index doesn't exceed the list length
