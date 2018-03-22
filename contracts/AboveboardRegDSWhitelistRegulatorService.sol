@@ -34,7 +34,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
   }
 
   /// @dev Messaging address
-  address private messagingAddress;
+  string private messagingAddress;
 
   /// @dev Array of whitelists
   WhiteList[] whitelists;
@@ -276,7 +276,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
   /**
    * @notice Get messaging address
    */
-  function getMessagingAddress() constant public returns (address) {
+  function getMessagingAddress() constant public returns (string) {
     return messagingAddress;
   }
 
@@ -285,18 +285,9 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
    *
    * @param  _address Messaging address to be set
    */
-  function setMessagingAddress(address _address) onlyOwner public {
-    require(_address != address(0));
+  function setMessagingAddress(string _address) onlyOwner public {
     messagingAddress = _address;
     MessagingAddressSet(_address);
-  }
-
-  /**
-   * @notice Remove messaging address
-   */
-  function removeMessagingAddress() onlyOwner public {
-    messagingAddress = address(0);
-    MessagingAddressRemoved();
   }
 
 }

@@ -62,12 +62,7 @@ interface IRegulatorService {
    *
    * @param  _address Address of a messaging service
    */
-  event MessagingAddressSet(address _address);
-
-  /**
-   * @notice Triggered when a messaging address is removed
-   */
-  event MessagingAddressRemoved();
+  event MessagingAddressSet(string _address);
 
   /**
    * @dev Add a new whitelist
