@@ -194,5 +194,30 @@ contract('RegulatedToken', async function(accounts) {
         });
       });
     });
+
+    describe('when receiver is under Regulation D, only issuer can send to US investors first year', () => {
+      beforeEach(async () => {
+        await whitelist.add(owner);
+        await regDWhitelist.add(receiver);
+        await assertBalances({ owner: 100, receiver: 0 });
+        await regulator.setRegDWhitelist(token.address, regDWhitelist.address);
+        await regulator.setIssuer(token.address, owner);
+      });
+
+      it('triggers a CheckStatus event and transfers funds', async () => {
+        const event = token.CheckStatus();
+        const value = 25;
+
+        await token.transfer(receiver, value, fromOwner);
+        await assertBalances({ owner: 75, receiver: value });
+        await assertCheckStatusEvent(event, {
+          reason: 0,
+          spender: owner,
+          from: owner,
+          to: receiver,
+          value,
+        });
+      });
+    });
   });
 });
