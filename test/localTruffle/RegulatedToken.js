@@ -20,7 +20,7 @@ contract('RegulatedToken', async function(accounts) {
   const fromReceiver = { from: receiver };
 
   beforeEach(async () => {
-    releaseTime = web3.eth.getBlock('latest').timestamp + 365*24*3600;
+    releaseTime = web3.eth.getBlock('latest').timestamp + helpers.duration.years(1);
 
     regulator = await RegulatorService.new({ from: owner });
 
@@ -162,6 +162,31 @@ contract('RegulatedToken', async function(accounts) {
         await assertBalances({ owner: 100, receiver: 0 });
         await assertCheckStatusEvent(event, {
           reason: 5,
+          spender: owner,
+          from: owner,
+          to: receiver,
+          value,
+        });
+      });
+    });
+
+    describe('when receiver is under Regulation D, transfer is after release date', () => {
+      beforeEach(async () => {
+        await whitelist.add(owner);
+        await regDWhitelist.add(receiver);
+        await assertBalances({ owner: 100, receiver: 0 });
+        await regulator.setRegDWhitelist(token.address, regDWhitelist.address);
+        await helpers.increaseTimeTo(releaseTime + helpers.duration.seconds(100), web3)
+      });
+
+      it('triggers a CheckStatus event and transfers funds', async () => {
+        const event = token.CheckStatus();
+        const value = 25;
+
+        await token.transfer(receiver, value, fromOwner);
+        await assertBalances({ owner: 75, receiver: value });
+        await assertCheckStatusEvent(event, {
+          reason: 0,
           spender: owner,
           from: owner,
           to: receiver,
