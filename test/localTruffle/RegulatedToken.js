@@ -219,5 +219,41 @@ contract('RegulatedToken', async function(accounts) {
         });
       });
     });
+
+    describe('when receiver is under Regulation D, cannot sell these shares in the first year, except to the issuer', () => {
+      beforeEach(async () => {
+        await whitelist.add(owner);
+        await regDWhitelist.add(receiver);
+        await assertBalances({ owner: 100, receiver: 0 });
+        await regulator.setRegDWhitelist(token.address, regDWhitelist.address);
+        await regulator.setIssuer(token.address, owner);
+      });
+
+      it('triggers a CheckStatus event, transfers funds from issuer then transfers funds back to issuer', async () => {
+        const event = token.CheckStatus();
+        const value = 25;
+
+        await token.transfer(receiver, value, fromOwner);
+        await assertBalances({ owner: 75, receiver: value });
+        await assertCheckStatusEvent(event, {
+          reason: 0,
+          spender: owner,
+          from: owner,
+          to: receiver,
+          value,
+        });
+
+        const ev = token.CheckStatus();
+        await token.transfer(owner, value, fromReceiver);
+        await assertBalances({ owner: 100, receiver: 0 });
+        await assertCheckStatusEvent(ev, {
+          reason: 0,
+          spender: receiver,
+          from: receiver,
+          to: owner,
+          value,
+        });
+      });
+    });
   });
 });
