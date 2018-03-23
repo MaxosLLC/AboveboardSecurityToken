@@ -10,6 +10,8 @@ contract('RegulatedToken', async function(accounts) {
   let regulator;
   let token;
   let whitelist;
+  let regDWhitelist;
+  var releaseTime;
 
   const owner = accounts[0];
   const receiver = accounts[1];
@@ -18,6 +20,8 @@ contract('RegulatedToken', async function(accounts) {
   const fromReceiver = { from: receiver };
 
   beforeEach(async () => {
+    releaseTime = web3.eth.getBlock('latest').timestamp + 365*24*3600;
+
     regulator = await RegulatorService.new({ from: owner });
 
     const registry = await ServiceRegistry.new(regulator.address);
@@ -26,8 +30,12 @@ contract('RegulatedToken', async function(accounts) {
 
     whitelist = await IssuanceWhiteList.new({ from: owner });
 
+    regDWhitelist = await IssuanceWhiteList.new({ from: owner });
+
     await regulator.setPartialTransfers(token.address, true);
     await regulator.addWhitelist(whitelist.address);
+    await regulator.addWhitelist(regDWhitelist.address);
+    await regulator.setInititalOfferEndDate(token.address, releaseTime);
 
     await token.mint(owner, 100);
     await token.finishMinting();
@@ -130,6 +138,30 @@ contract('RegulatedToken', async function(accounts) {
         await assertBalances({ owner: 75, receiver: value });
         await assertCheckStatusEvent(event, {
           reason: 0,
+          spender: owner,
+          from: owner,
+          to: receiver,
+          value,
+        });
+      });
+    });
+
+    describe('when receiver is under Regulation D, transfer is before release date', () => {
+      beforeEach(async () => {
+        await whitelist.add(owner);
+        await regDWhitelist.add(receiver);
+        await assertBalances({ owner: 100, receiver: 0 });
+        await regulator.setRegDWhitelist(token.address, regDWhitelist.address);
+      });
+
+      it('triggers a CheckStatus event and does NOT transfer funds', async () => {
+        const event = token.CheckStatus();
+        const value = 25;
+
+        await token.transfer(receiver, value, fromOwner);
+        await assertBalances({ owner: 100, receiver: 0 });
+        await assertCheckStatusEvent(event, {
+          reason: 5,
           spender: owner,
           from: owner,
           to: receiver,
