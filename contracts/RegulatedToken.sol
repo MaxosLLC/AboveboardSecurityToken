@@ -99,25 +99,23 @@ contract RegulatedToken is DetailedERC20, MintableToken {
     if (msg.sender == multisigArbitration) {
 
       Transfer(_from, _to, _value);
-
       return super.transferFrom(_from, _to, _value);
 
-    } else {
+    }
+    else {
 
-        if (_check(_from, _to, _value)) {
+      if (_check(_from, _to, _value)) {
 
         Transfer(_from, _to, _value);
         return super.transferFrom(_from, _to, _value);
 
-      } else {
+      }
+      else {
 
         return false;
 
       }
-
     } 
-    
-    
   }
 
   /**

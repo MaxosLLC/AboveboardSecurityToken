@@ -256,4 +256,28 @@ contract('RegulatedToken', async function(accounts) {
       });
     });
   });
+
+  describe('transferFrom', () => {
+    describe('when sender and receiver are added to whitelist', () => {
+      beforeEach(async () => {
+        await whitelist.add(owner);
+        await whitelist.add(receiver);
+        await token.approve(receiver, 25, fromOwner);
+        await assertBalances({ owner: 100, receiver: 0 });
+      });
+
+      it('returns true', async () => {
+        assert.isTrue(await token.transferFrom.call(owner, receiver, 25, fromReceiver));
+        await assertBalances({ owner: 100, receiver: 0 });
+      });
+
+      it('triggers a CheckStatus event and transfers funds', async () => {
+        const event = token.CheckStatus();
+        const value = 25;
+
+        await token.transferFrom(owner, receiver, value, fromReceiver);
+        await assertBalances({ owner: 75, receiver: value });
+      });
+    });
+  });
 });
