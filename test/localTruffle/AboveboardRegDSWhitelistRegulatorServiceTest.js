@@ -38,5 +38,61 @@ contract('AboveboardRegDSWhitelistRegulatorService', async accounts => {
       let wl = await regulator.setRegDWhitelist(token.address, whitelist.address);
       assert.equal(wl.logs[0].event, 'RegulationDWhitelistSet');
     });
+
+    it('get whitelists', async () => {
+      let wl = await regulator.addWhitelist(whitelist.address);
+      assert.equal(wl.logs[0].event, 'WhitelistAdded');
+
+      wl = await regulator.getWhitelists.call();
+      assert.equal(wl[0], whitelist.address);
+    });
+  });
+
+  describe('manage settings', () => {
+    it('setLocked', async () => {
+      let l = await regulator.setLocked(token.address, true);
+      assert.equal(l.logs[0].event, 'LogLockSet');
+    });
+
+    it('setPartialTransfers', async () => {
+      let l = await regulator.setPartialTransfers(token.address, true);
+      assert.equal(l.logs[0].event, 'LogPartialTransferSet');
+    });
+
+    it('setInititalOfferEndDate', async () => {
+      let l = await regulator.setInititalOfferEndDate(token.address, new Date().getTime()/1000.0);
+      assert.equal(l.logs[0].event, 'InititalOfferEndDateSet');
+    });
+
+    it('setIssuer', async () => {
+      let l = await regulator.setIssuer(token.address, accounts[1]);
+      assert.equal(l.logs[0].event, 'IssuerSet');
+    });
+
+    it('removeIssuer', async () => {
+      let l = await regulator.removeIssuer(token.address);
+      assert.equal(l.logs[0].event, 'IssuerRemoved');
+    });
+
+    it('getIssuerAddress', async () => {
+      let l = await regulator.setIssuer(token.address, accounts[1]);
+      assert.equal(l.logs[0].event, 'IssuerSet');
+
+      l = await regulator.getIssuerAddress(token.address);
+      assert.equal(l, accounts[1]);
+    });
+
+    it('setMessagingAddress', async () => {
+      let l = await regulator.setMessagingAddress('someAddress');
+      assert.equal(l.logs[0].event, 'MessagingAddressSet');
+    });
+
+    it('getMessagingAddress', async () => {
+      let l = await regulator.setMessagingAddress('someAddress');
+      assert.equal(l.logs[0].event, 'MessagingAddressSet');
+
+      l = await regulator.getMessagingAddress();
+      assert.equal(l, 'someAddress');
+    });
   });
 });
