@@ -28,6 +28,7 @@
     "jest-cli": "^20.0.4",
     "lk-test-helpers": "^0.1.3",
     "snazzy": "^7.0.0",
+    "solidity-coverage": "^0.4.14",
     "standard": "^10.0.3",
     "truffle-artifactor": "1.0.2",
     "truffle-contract": "^3.0.0",
