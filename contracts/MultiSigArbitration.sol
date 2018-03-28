@@ -1,9 +1,8 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.15;
 
-import "contracts/RegulatedToken.sol";
 
-/// @title Multisignature arbitration - Allows an arbitrator and an issuer to multisig and decide on executing specific functions.
-/// @author Stefan George - <stefan.george@consensys.net> and modified by Stefan Ionescu
+/// @title Multisignature wallet - Allows multiple parties to agree on transactions before execution.
+/// @author Stefan George - <stefan.george@consensys.net>, modified by Vojtech Hromek
 contract MultiSigArbitration {
 
     /*
@@ -22,7 +21,7 @@ contract MultiSigArbitration {
     /*
      *  Constants
      */
-    uint constant public MAX_OWNER_COUNT = 3;
+    uint constant public MAX_OWNER_COUNT = 50;
 
     /*
      *  Storage
@@ -36,8 +35,8 @@ contract MultiSigArbitration {
 
     struct Transaction {
         address destination;
-        string contractName;
-        string functionName;
+        uint value;
+        bytes data;
         bool executed;
     }
 
@@ -104,13 +103,18 @@ contract MultiSigArbitration {
      * Public functions
      */
     /// @dev Contract constructor sets initial owners and required number of confirmations.
-    function MultiSigArbitration(address arbitrator, address issuer)
-        public {
-
-        isOwner[arbitrator] = true;
-        isOwner[issuer] = true;
-        required = 2;
-
+    /// @param _owners List of initial owners.
+    /// @param _required Number of required confirmations.
+    function MultiSigArbitration(address[] _owners, uint _required)
+        public
+        validRequirement(_owners.length, _required)
+    {
+        for (uint i=0; i<_owners.length; i++) {
+            require(!isOwner[_owners[i]] && _owners[i] != 0);
+            isOwner[_owners[i]] = true;
+        }
+        owners = _owners;
+        required = _required;
     }
 
     /// @dev Allows to add a new owner. Transaction has to be sent by wallet.
@@ -179,14 +183,14 @@ contract MultiSigArbitration {
 
     /// @dev Allows an owner to submit and confirm a transaction.
     /// @param destination Transaction target address.
-    /// @param contractName Contract that will be called
-    /// @param functionName Function from the contract
+    /// @param value Transaction ether value.
+    /// @param data Transaction data payload.
     /// @return Returns transaction ID.
-    function submitTransaction(address destination, string contractName, string functionName)
+    function submitTransaction(address destination, uint value, bytes data)
         public
         returns (uint transactionId)
     {
-        transactionId = addTransaction(destination, contractName, functionName);
+        transactionId = addTransaction(destination, value, data);
         confirmTransaction(transactionId);
     }
 
@@ -195,11 +199,12 @@ contract MultiSigArbitration {
     function confirmTransaction(uint transactionId)
         public
         ownerExists(msg.sender)
-   //     transactionExists(transactionId)
+        transactionExists(transactionId)
         notConfirmed(transactionId, msg.sender)
     {
         confirmations[transactionId][msg.sender] = true;
         Confirmation(msg.sender, transactionId);
+        executeTransaction(transactionId);
     }
 
     /// @dev Allows an owner to revoke a confirmation for a transaction.
@@ -216,32 +221,44 @@ contract MultiSigArbitration {
 
     /// @dev Allows anyone to execute a confirmed transaction.
     /// @param transactionId Transaction ID.
-    function executeTransferFrom(uint transactionId, address _from, address _to, uint256 _value)
+    function executeTransaction(uint transactionId)
         public
         ownerExists(msg.sender)
         confirmed(transactionId, msg.sender)
         notExecuted(transactionId)
     {
-
-        if (isConfirmed(transactionId) && 
-            keccak256(transactions[transactionId].contractName) == keccak256("RegulatedToken") &&
-            keccak256(transactions[transactionId].functionName) == keccak256("transferFrom") &&
-            _from != address(0) && _to != address(0)) {
-
+        if (isConfirmed(transactionId)) {
             Transaction storage txn = transactions[transactionId];
             txn.executed = true;
-            
-            RegulatedToken token = RegulatedToken(transactions[transactionId].destination);
-            token.transferFrom(_from, _to, _value);
-
-            Execution(transactionId);
-            
-        } else {
-
-            ExecutionFailure(transactionId);
-
+            if (external_call(txn.destination, txn.value, txn.data.length, txn.data))
+                Execution(transactionId);
+            else {
+                ExecutionFailure(transactionId);
+                txn.executed = false;
+            }
         }
+    }
 
+    // call has been separated into its own function in order to take advantage
+    // of the Solidity's code generator to produce a loop that copies tx.data into memory.
+    function external_call(address destination, uint value, uint dataLength, bytes data) private returns (bool) {
+        bool result;
+        assembly {
+            let x := mload(0x40)   // "Allocate" memory for output (0x40 is where "free memory" pointer is stored by convention)
+            let d := add(data, 32) // First 32 bytes are the padded length of data, so exclude that
+            result := call(
+                sub(gas, 34710),   // 34710 is the value that solidity is currently emitting
+                                   // It includes callGas (700) + callVeryLow (3, to pay for SUB) + callValueTransferGas (9000) +
+                                   // callNewAccountGas (25000, in case the destination address does not exist and needs creating)
+                destination,
+                value,
+                d,
+                dataLength,        // Size of the input (in bytes) - this is what fixes the padding problem
+                x,
+                0                  // Output is ignored, therefore the output size is zero
+            )
+        }
+        return result;
     }
 
     /// @dev Returns the confirmation status of a transaction.
@@ -261,20 +278,15 @@ contract MultiSigArbitration {
         }
     }
 
-    function checkIfOwner(address _from) public constant returns (bool)
- {
-
-     return isOwner[_from];
-
- }
     /*
      * Internal functions
      */
     /// @dev Adds a new transaction to the transaction mapping, if transaction does not exist yet.
     /// @param destination Transaction target address.
-    /// @param functionName The function that will get called.
+    /// @param value Transaction ether value.
+    /// @param data Transaction data payload.
     /// @return Returns transaction ID.
-    function addTransaction(address destination, string contractName, string functionName)
+    function addTransaction(address destination, uint value, bytes data)
         internal
         notNull(destination)
         returns (uint transactionId)
@@ -282,8 +294,8 @@ contract MultiSigArbitration {
         transactionId = transactionCount;
         transactions[transactionId] = Transaction({
             destination: destination,
-            contractName: contractName,
-            functionName: functionName,
+            value: value,
+            data: data,
             executed: false
         });
         transactionCount += 1;
@@ -330,8 +342,6 @@ contract MultiSigArbitration {
     {
         return owners;
     }
-
-
 
     /// @dev Returns array with owner addresses, which confirmed transaction.
     /// @param transactionId Transaction ID.

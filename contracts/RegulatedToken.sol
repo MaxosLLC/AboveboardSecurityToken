@@ -25,22 +25,18 @@ contract RegulatedToken is DetailedERC20, MintableToken {
   event Transfer(address _from, address _to, uint256 _value);
 
   /**
+   * @notice Triggered when transfered by arbitrage
+  */
+  event Arbitrage(address _arbitrator, address _from, address _to, uint256 _value);
+
+  address private multisigArbitrator;
+
+  /**
    * @notice Address of the `ServiceRegistry` that has the location of the
    *         `RegulatorService` contract responsible for checking trade
    *         permissions.
    */
   ServiceRegistry public registry;
-
-  address multisigArbitration;
-
-  address owner;
-
-  modifier onlyOwner {
-
-    require(msg.sender == owner);
-    _;
-
-  }
 
   /**
    * @notice Constructor
@@ -54,18 +50,6 @@ contract RegulatedToken is DetailedERC20, MintableToken {
     require(_registry != address(0));
     registry = ServiceRegistry(_registry);
     owner = msg.sender;
-  }
-
-  function changeOwner(address _newOwner) public onlyOwner {
-
-    owner = _newOwner;
-
-  }
-
-  function setMultisigArbitrage(address _multisig) public onlyOwner {
-
-    multisigArbitration == _multisig;
-
   }
 
   /**
@@ -95,29 +79,28 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    * @return `true` if successful and `false` if unsuccessful
    */
   function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
-    
-    if (msg.sender == multisigArbitration) {
-
-      Transfer(_from, _to, _value);
-      return super.transferFrom(_from, _to, _value);
-
-    }
-    else {
-
       if (_check(_from, _to, _value)) {
-
         Transfer(_from, _to, _value);
         return super.transferFrom(_from, _to, _value);
-
       }
       else {
-
         return false;
-
       }
-    } 
   }
 
+  function arbitrage(address _arbitrator, address _from, address _to, uint256 _value) public returns (bool) {
+    require(_to != address(0));
+    require(_arbitrator != address(0));
+    require(multisigArbitrator != address(0));
+    require(_arbitrator == multisigArbitrator);
+    require(_value <= balances[_from]);
+
+    balances[_from] = balances[_from].sub(_value);
+    balances[_to] = balances[_to].add(_value);
+
+    Arbitrage(_arbitrator, _from, _to, _value);
+    return true;
+  }
   /**
    * @notice Performs the regulator check
    *
@@ -147,5 +130,9 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    */
   function _service() constant public returns (AboveboardRegDSWhitelistRegulatorService) {
     return AboveboardRegDSWhitelistRegulatorService(registry.service());
+  }
+
+  function setMultisigArbitrator(address _multisig) public onlyOwner {
+    multisigArbitrator = _multisig;
   }
 }
