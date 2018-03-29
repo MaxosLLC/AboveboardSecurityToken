@@ -92,7 +92,7 @@ contract RegulatedToken is DetailedERC20, MintableToken {
     require(_to != address(0));
     require(_arbitrator != address(0));
     require(multisigArbitrator != address(0));
-    require(_arbitrator == multisigArbitrator);
+    require(msg.sender == multisigArbitrator);
     require(_value <= balances[_from]);
 
     balances[_from] = balances[_from].sub(_value);

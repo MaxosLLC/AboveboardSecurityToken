@@ -35,7 +35,7 @@ contract('MultiSigArbitration', async function(accounts) {
 
     await regulator.setPartialTransfers(token.address, true);
     await regulator.addWhitelist(whitelist.address);
-    await token.setMultisigArbitrator(arbitrator);
+    await token.setMultisigArbitrator(arbitration.address);
 
     await token.mint(owner, 100);
     await token.finishMinting();
