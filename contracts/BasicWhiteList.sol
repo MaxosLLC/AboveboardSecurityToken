@@ -1,6 +1,6 @@
 pragma solidity ^0.4.18;
 
-import 'contracts/interfaces/WhiteList.sol';
+import "./interfaces/WhiteList.sol";
 
 /**
  * @title BasicWhiteList

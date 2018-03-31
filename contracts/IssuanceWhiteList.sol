@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
-import 'contracts/interfaces/IIssuanceWhiteList.sol';
-import 'contracts/zeppelin-solidity/contracts/ownership/Ownable.sol';
+import "./interfaces/IIssuanceWhiteList.sol";
+import "./zeppelin-solidity/contracts/ownership/Ownable.sol";
 
 /**
  * @title IssuanceWhiteList

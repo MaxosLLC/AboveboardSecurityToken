@@ -1,9 +1,9 @@
 pragma solidity ^0.4.18;
 
-import 'contracts/zeppelin-solidity/contracts/ownership/Ownable.sol';
-import 'contracts/zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol';
-import 'contracts/interfaces/WhiteList.sol';
-import 'contracts/interfaces/IRegulatorService.sol';
+import "./zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "./zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
+import "./interfaces/WhiteList.sol";
+import "./interfaces/IRegulatorService.sol";
 
 /// @notice Standard interface for `RegulatorService`s
 contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable {

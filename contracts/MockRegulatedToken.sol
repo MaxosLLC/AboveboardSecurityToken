@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
-import 'contracts/RegulatedToken.sol';
-import 'contracts/AboveboardRegDSWhitelistRegulatorService.sol';
+import "./RegulatedToken.sol";
+import "./AboveboardRegDSWhitelistRegulatorService.sol";
 
 contract MockRegulatedToken is RegulatedToken {
   AboveboardRegDSWhitelistRegulatorService public service;

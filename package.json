@@ -15,7 +15,7 @@
     "moment": "^2.18.1",
     "truffle-blockchain-utils": "^0.0.3",
     "truffle-hdwallet-provider": "^0.0.3",
-    "zeppelin-solidity": "^1.7.0"
+    "zeppelin-solidity": "^1.8.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -46,7 +46,7 @@
     "testrpc": "scripts/runTestrpc.sh",
     "run-jest": "jest",
     "lint": "standard --verbose | snazzy",
-    "coverage": "./node_modules/.bin/solidity-coverage"
+    "coverage": "solidity-coverage"
   },
   "jest": {
     "moduleDirectories": [

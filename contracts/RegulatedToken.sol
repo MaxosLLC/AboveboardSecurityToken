@@ -1,9 +1,9 @@
 pragma solidity ^0.4.18;
 
-import 'contracts/zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol';
-import 'contracts/zeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
-import 'contracts/ServiceRegistry.sol';
-import 'contracts/AboveboardRegDSWhitelistRegulatorService.sol';
+import "./zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
+import "./zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
+import "./ServiceRegistry.sol";
+import "./AboveboardRegDSWhitelistRegulatorService.sol";
 
 
 /// @notice An ERC-20 token that has the ability to check for trade validity

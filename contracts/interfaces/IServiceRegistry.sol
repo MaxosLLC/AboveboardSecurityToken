@@ -1,6 +1,6 @@
 pragma solidity ^0.4.18;
 
-import 'contracts/zeppelin-solidity/contracts/ownership/Ownable.sol';
+import "../zeppelin-solidity/contracts/ownership/Ownable.sol";
 
 contract IServiceRegistry is Ownable {
 

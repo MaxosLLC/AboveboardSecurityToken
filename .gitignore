@@ -4,6 +4,5 @@ build
 lib
 package-lock.json
 secrets.json
-zeppelin-solidity
 coverageEnv
 scTopics

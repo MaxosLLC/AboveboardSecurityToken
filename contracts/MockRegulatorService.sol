@@ -1,6 +1,6 @@
 pragma solidity ^0.4.18;
 
-import 'contracts/AboveboardRegDSWhitelistRegulatorService.sol';
+import "./AboveboardRegDSWhitelistRegulatorService.sol";
 
 contract MockRegulatorService is AboveboardRegDSWhitelistRegulatorService  {
   bool public success;
