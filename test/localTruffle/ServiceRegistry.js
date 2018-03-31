@@ -1,7 +1,7 @@
-const helpers = require('./throwAndAssert');
+const helpers = require('../helpers/throwAndAssert');
 const RegulatedToken = artifacts.require('./RegulatedToken.sol');
 const ServiceRegistry = artifacts.require('./ServiceRegistry.sol');
-const RegulatorService = artifacts.require('../test/helpers/AboveboardRegDSWhitelistRegulatorService.sol');
+const RegulatorService = artifacts.require('./AboveboardRegDSWhitelistRegulatorService.sol');
 
 contract('ServiceRegistry', async accounts => {
   let owner;

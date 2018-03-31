@@ -18,17 +18,4 @@ contract('IssuanceWhiteList', function(accounts) {
 
     });
 
-    it("Test pausing", async function() {
-        
-        await issuanceWhiteList.setAgent(accounts[0]);
-        await issuanceWhiteList.addQualifier(accounts[0]);
-        await issuanceWhiteList.add(accounts[1]);
-
-        await issuanceWhiteList.pause();
-
-        assert.equal(await issuanceWhiteList.paused.call(), true);
-
-    });
-
-
 });

@@ -1,6 +1,6 @@
 const BigNumber = require('bignumber.js');
-const helpers = require('./throwAndAssert');
-const utils = require('./utils')
+const helpers = require('../helpers/throwAndAssert');
+const utils = require('../helpers/utils')
 
 const RegulatedToken = artifacts.require('./RegulatedToken.sol');
 const ServiceRegistry = artifacts.require('./ServiceRegistry.sol');

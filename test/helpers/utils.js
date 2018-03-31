@@ -31,7 +31,7 @@ function increaseTimestamp(web3, increase) {
             jsonrpc: "2.0",
             id: new Date().getTime()
           }, (e) => (e ? reject(e) : mineBlock(web3, reject, resolve)))
-    })    
+    })
 }
 
 function balanceOf(web3, account) {
