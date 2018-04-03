@@ -2,6 +2,7 @@ pragma solidity ^0.4.18;
 
 import "./zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
+import "./zeppelin-solidity/contracts/token/ERC20/BasicToken.sol";
 import "./interfaces/WhiteList.sol";
 import "./interfaces/IRegulatorService.sol";
 
@@ -22,6 +23,9 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
      *      transfers allowed).
      */
     bool partialTransfers;
+
+    /// @dev Toggle for allowing/disallowing new shareholders
+    bool newShareholdersAllowed;
 
     /// @dev Address of Regulation D Whitelist
     address regDWhitelist;
@@ -59,6 +63,9 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
 
   // @dev Check error reason: Transfer before initial offering end date
   uint8 constant private CHECK_ERREGD = 5;
+
+  // @dev Check error reason: New shareholders are not allowed
+  uint8 constant private CHECK_ERALLOW = 6;
 
   function addWhitelist(WhiteList _whitelist) onlyOwner public {
 
@@ -185,6 +192,11 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
       return CHECK_ELOCKED;
     }
 
+    // if newShareholdersAllowed is not enabled, the transfer will only succeed if the buyer already has tokens
+    if (!settings[_token].newShareholdersAllowed && BasicToken(_token).balanceOf(_to) == 0) {
+      return CHECK_ERALLOW;
+    }
+
     bool f;
     address wlFrom;
     (f, wlFrom) = isWhiteListed(_from);
@@ -299,4 +311,14 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     MessagingAddressSet(_address);
   }
 
+  /**
+   * @notice Allow/disallow new shareholders
+   *
+   * @param  _token The address of the token
+   * @param  allow Allow/disallow new shareholders
+   */
+  function allowNewShareholders(address _token, bool allow) onlyOwner public {
+    settings[_token].newShareholdersAllowed = allow;
+    NewShareholdersAllowance(_token, allow);
+  }
 }

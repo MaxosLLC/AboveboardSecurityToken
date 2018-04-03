@@ -33,6 +33,7 @@ contract('RegulatedToken', async function(accounts) {
     regDWhitelist = await IssuanceWhiteList.new({ from: owner });
 
     await regulator.setPartialTransfers(token.address, true);
+    await regulator.allowNewShareholders(token.address, true);
     await regulator.addWhitelist(whitelist.address);
     await regulator.addWhitelist(regDWhitelist.address);
     await regulator.setInititalOfferEndDate(token.address, releaseTime);

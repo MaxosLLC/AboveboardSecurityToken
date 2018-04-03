@@ -65,6 +65,14 @@ interface IRegulatorService {
   event MessagingAddressSet(string _address);
 
   /**
+   * @notice Triggered when a new shareholders allowed/disallowed
+   *
+   * @param  token Address of the token
+   * @param  allow True for allowing new shareholders
+   */
+   event NewShareholdersAllowance(address token, bool allow);
+
+  /**
    * @dev Add a new whitelist
    *
    * @param  _whitelist The actual whitelist which is added to the array

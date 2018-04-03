@@ -27,6 +27,10 @@ module.exports = async function(deployer, network, accounts) {
           return service.setPartialTransfers(instance.address, true);
         });
       }).then(() => {
+        return RegulatedToken.deployed().then(function(instance) {
+          return service.allowNewShareholders(instance.address, true);
+        });
+      }).then(() => {
         return deployer.deploy(MultiSigArbitration, [accounts[0], accounts[1]], 2);
       });
 };
