@@ -88,7 +88,15 @@ contract RegulatedToken is DetailedERC20, MintableToken {
       }
   }
 
-  function arbitrage(address _arbitrator, address _from, address _to, uint256 _value) public returns (bool) {
+  /**
+   * @notice Recover tokens from lost account. Called from Multi Signature Arbitrator contract
+   *
+   * @param _arbitrator Multi Signature Arbitrator contract
+   * @param _from The address of the sender
+   * @param _to The address of the receiver
+   * @param _value The number of tokens to transfer
+   */
+  function arbitrage(address _arbitrator, address _from, address _to, uint256 _value) public {
     require(_to != address(0));
     require(_arbitrator != address(0));
     require(multisigArbitrator != address(0));
@@ -99,8 +107,8 @@ contract RegulatedToken is DetailedERC20, MintableToken {
     balances[_to] = balances[_to].add(_value);
 
     Arbitrage(_arbitrator, _from, _to, _value);
-    return true;
   }
+
   /**
    * @notice Performs the regulator check
    *
