@@ -149,13 +149,15 @@ contract('RegulatedToken', async function(accounts) {
 
     describe('when new shareholders are not allowed', () => {
       beforeEach(async () => {
-        await regulator.allowNewShareholders(token.address, false);
         await whitelist.add(owner);
         await whitelist.add(receiver);
+        await whitelist.add(accounts[2]);
         await assertBalances({ owner: 100, receiver: 0 });
       });
 
       it('triggers a CheckStatus event and does NOT transfers funds', async () => {
+        // disable new shareholders
+        await regulator.allowNewShareholders(token.address, false);
         const event = token.CheckStatus();
         const value = 25;
 
@@ -166,6 +168,41 @@ contract('RegulatedToken', async function(accounts) {
           spender: owner,
           from: owner,
           to: receiver,
+          value,
+        });
+      });
+
+      it('triggers a CheckStatus event and transfers funds', async () => {
+        var event = token.CheckStatus();
+        const value = 25;
+
+        // transfer funds to receiver, so balance is not zero
+        await token.transfer(receiver, value, fromOwner);
+        await assertBalances({ owner: 75, receiver: value });
+
+        // disable new shareholders
+        await regulator.allowNewShareholders(token.address, false);
+
+        event = token.CheckStatus();
+        // transfer will pass to existing shareholder, receiver already has funds
+        await token.transfer(receiver, value, fromOwner);
+        await assertBalances({ owner: 50, receiver: 50 });
+        await assertCheckStatusEvent(event, {
+          reason: 0,
+          spender: owner,
+          from: owner,
+          to: receiver,
+          value,
+        });
+
+        event = token.CheckStatus();
+        // transfer will fail to new shareholder
+        await token.transfer(accounts[2], value, fromOwner);
+        await assertCheckStatusEvent(event, {
+          reason: 6,
+          spender: owner,
+          from: owner,
+          to: accounts[2],
           value,
         });
       });
