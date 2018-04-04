@@ -147,6 +147,30 @@ contract('RegulatedToken', async function(accounts) {
       });
     });
 
+    describe('when new shareholders are not allowed', () => {
+      beforeEach(async () => {
+        await regulator.allowNewShareholders(token.address, false);
+        await whitelist.add(owner);
+        await whitelist.add(receiver);
+        await assertBalances({ owner: 100, receiver: 0 });
+      });
+
+      it('triggers a CheckStatus event and does NOT transfers funds', async () => {
+        const event = token.CheckStatus();
+        const value = 25;
+
+        await token.transfer(receiver, value, fromOwner);
+        await assertBalances({ owner: 100, receiver: 0 });
+        await assertCheckStatusEvent(event, {
+          reason: 6,
+          spender: owner,
+          from: owner,
+          to: receiver,
+          value,
+        });
+      });
+    });
+
     describe('when receiver is under Regulation D, transfer is before release date', () => {
       beforeEach(async () => {
         await whitelist.add(owner);
