@@ -143,4 +143,8 @@ contract RegulatedToken is DetailedERC20, MintableToken {
   function setMultisigArbitrator(address _multisig) public onlyOwner {
     multisigArbitrator = _multisig;
   }
+
+  function getMultisigArbitrator() constant public onlyOwner returns (address) {
+    return multisigArbitrator;
+  }
 }

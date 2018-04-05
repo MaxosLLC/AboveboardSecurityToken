@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.18;
 
 
 /// @title Multisignature wallet - Allows multiple parties to agree on transactions before execution.
@@ -188,6 +188,7 @@ contract MultiSigArbitration {
     /// @return Returns transaction ID.
     function submitTransaction(address destination, uint value, bytes data)
         public
+        ownerExists(msg.sender)
         returns (uint transactionId)
     {
         transactionId = addTransaction(destination, value, data);
