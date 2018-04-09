@@ -16,7 +16,7 @@ module.exports = async function(deployer, network, accounts) {
       }).then(() => {
         return deployer.deploy(ServiceRegistry, RegulatorService.address);
       }).then(() => {
-        return deployer.deploy(RegulatedToken, ServiceRegistry.address, 'Aboveboard', 'ABV');
+        return deployer.deploy(RegulatedToken, ServiceRegistry.address, 'AboveboardSecurityToken', 'ABST');
       }).then(() => {
         return RegulatorService.deployed().then(function(instance) {
           service = instance;

@@ -30,7 +30,7 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
   function addQualifier(address _qualifier) onlyAgentOrOwner public {
 
     qualifiers[_qualifier] = true;
-    uint id = qualifiersAddress.length;
+    uint256 id = qualifiersAddress.length;
     qualifiersIndex[_qualifier] = id;
     qualifiersAddress.push(_qualifier);
     QualifierAdded(_qualifier);
@@ -40,7 +40,7 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
   function removeQualifier(address _qualifier) onlyAgentOrOwner public {
 
     qualifiers[_qualifier] = false;
-    uint id = qualifiersIndex[_qualifier];
+    uint256 id = qualifiersIndex[_qualifier];
     delete qualifiersAddress[id];
     QualifierRemoved(_qualifier);
 

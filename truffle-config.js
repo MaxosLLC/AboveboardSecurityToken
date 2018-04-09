@@ -1,6 +1,5 @@
 module.exports = {
   networks: {
-
     development: {
       host: process.env.TRUFFLE_HOST || 'localhost',
       port: process.env.TRUFFLE_PORT || 8545,
@@ -13,8 +12,8 @@ module.exports = {
       gas: 0xfffffffffff,
       gasPrice: 0x01
     },
-    rinkeby: getRinkebyConfig()
-
+    rinkeby: getRinkebyConfig(),
+    live: getliveNetworkConfig()
   }
 }
 
@@ -34,5 +33,23 @@ function getRinkebyConfig () {
     provider: rinkebyProvider,
     from: rinkebyProvider.getAddress(),
     gas: 4700000
+  }
+}
+
+function getliveNetworkConfig () {
+  var HDWalletProvider = require('truffle-hdwallet-provider')
+  var secrets = {}
+  try {
+    secrets = require('./secrets.json')
+  } catch (err) {
+    console.log('could not find ./secrets.json')
+  }
+
+  var liveProvider = new HDWalletProvider(secrets.mnemonic, 'https://mainnet.infura.io/' + secrets.infura_apikey)
+
+  return {
+    network_id: 1,
+    provider: liveProvider,
+    from: liveProvider.getAddress()
   }
 }
