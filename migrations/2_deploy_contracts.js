@@ -1,11 +1,7 @@
-var BasicWhiteList = artifacts.require("./BasicWhiteList.sol");
 var IssuanceWhiteList = artifacts.require("./IssuanceWhiteList.sol");
 var RegulatorService = artifacts.require("./AboveboardRegDSWhitelistRegulatorService.sol");
 var ServiceRegistry = artifacts.require("./ServiceRegistry.sol");
 var RegulatedToken = artifacts.require("./RegulatedToken.sol");
-var MockRegulatorService = artifacts.require('contracts/MockRegulatorService.sol');
-var MockRegulatedToken = artifacts.require('contracts/MockRegulatedToken.sol');
-var MultiSigArbitration = artifacts.require('contracts/MultiSigArbitration.sol');
 var service;
 
 module.exports = async function(deployer, network, accounts) {
@@ -16,7 +12,7 @@ module.exports = async function(deployer, network, accounts) {
       }).then(() => {
         return deployer.deploy(ServiceRegistry, RegulatorService.address);
       }).then(() => {
-        return deployer.deploy(RegulatedToken, ServiceRegistry.address, 'AboveboardSecurityToken', 'ABST');
+        return deployer.deploy(RegulatedToken, ServiceRegistry.address, 'AboveboardStock', 'ABST');
       }).then(() => {
         return RegulatorService.deployed().then(function(instance) {
           service = instance;
@@ -30,7 +26,5 @@ module.exports = async function(deployer, network, accounts) {
         return RegulatedToken.deployed().then(function(instance) {
           return service.allowNewShareholders(instance.address, true);
         });
-      }).then(() => {
-        return deployer.deploy(MultiSigArbitration, [accounts[0], accounts[1]], 2);
       });
 };
