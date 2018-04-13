@@ -18,6 +18,7 @@ contract('MultiSigArbitration', async function(accounts) {
   const owner = accounts[0];
   const receiver = accounts[1];
   const arbitrator = accounts[2];
+  const hacker = accounts[3];
 
   const fromOwner = { from: owner };
   const fromReceiver = { from: receiver };
@@ -48,6 +49,30 @@ contract('MultiSigArbitration', async function(accounts) {
     assert.equal(balances.owner, (await token.balanceOf.call(owner)).valueOf());
     assert.equal(balances.receiver, (await token.balanceOf.call(receiver)).valueOf());
   };
+
+  describe('MultisigArbitrator', () => {
+    it('getMultisigArbitrator', async () => {
+      let l = await token.setMultisigArbitrator(arbitration.address);
+
+      l = await token.getMultisigArbitrator({from: owner});
+      assert.equal(l, arbitration.address);
+    });
+
+    it('getMultisigArbitrator by hacker', async () => {
+      try {
+        let l = await token.setMultisigArbitrator(arbitration.address);
+
+        l = await token.getMultisigArbitrator({from: hacker});
+        assert.equal(l, arbitration.address);
+
+        assert.fail('hacker cannot get arbitrators address, should have thrown before');
+      } catch (error) {
+        assert(error);
+        return;
+      }
+      assert.fail('Expected throw not received');
+    });
+  });
 
   describe('when funds are send back to owner and confirmed by arbitrator', () => {
     beforeEach(async () => {
