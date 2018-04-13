@@ -29,7 +29,7 @@ function getRinkebyConfig () {
   var rinkebyProvider = new HDWalletProvider(secrets.mnemonic, 'https://kovan.infura.io/' + secrets.infura_apikey)
 
   return {
-    network_id: 4,
+    network_id: 42,
     provider: rinkebyProvider,
     from: rinkebyProvider.getAddress(),
     gas: 4700000
