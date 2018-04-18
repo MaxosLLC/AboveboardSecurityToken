@@ -8,4 +8,5 @@ coverageEnv
 scTopics
 *.dev.js
 Dockerfile
-
+yarn.lock
+.yarn-cache.tgz
