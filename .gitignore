@@ -6,3 +6,4 @@ package-lock.json
 secrets.json
 coverageEnv
 scTopics
+*.dev.js
