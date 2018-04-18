@@ -7,3 +7,5 @@ secrets.json
 coverageEnv
 scTopics
 *.dev.js
+Dockerfile
+
