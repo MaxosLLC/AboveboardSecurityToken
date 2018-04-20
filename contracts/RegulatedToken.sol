@@ -20,11 +20,6 @@ contract RegulatedToken is DetailedERC20, MintableToken {
   event CheckStatus(uint8 reason, address indexed spender, address indexed from, address indexed to, uint256 value);
 
   /**
-   * @notice Triggered when transfer or transferFrom are successful
-  */
-  event Transfer(address _from, address _to, uint256 _value);
-
-  /**
    * @notice Triggered when transfered by arbitrage
   */
   event Arbitrage(address _arbitrator, address _from, address _to, uint256 _value);
@@ -62,7 +57,6 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    */
   function transfer(address _to, uint256 _value) public returns (bool) {
     if (_check(msg.sender, _to, _value)) {
-      Transfer(0x0, _to, _value);
       return super.transfer(_to, _value);
     } else {
       return false;
@@ -80,7 +74,6 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    */
   function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
       if (_check(_from, _to, _value)) {
-        Transfer(_from, _to, _value);
         return super.transferFrom(_from, _to, _value);
       }
       else {
