@@ -30,5 +30,9 @@ module.exports = async function(deployer, network, accounts) {
         return RegulatedToken.deployed().then(function(instance) {
           return service.allowNewShareholders(instance.address, true);
         });
+      }).then(() => {
+        return RegulatedToken.deployed().then(function(instance) {
+          return service.setIssuer(instance.address, accounts[0]);
+        });
       });
 };
