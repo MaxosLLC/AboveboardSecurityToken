@@ -8,6 +8,10 @@ module.exports = async function(deployer, network, accounts) {
 
     return deployer.deploy(IssuanceWhiteList)
       .then(() => {
+        return IssuanceWhiteList.deployed().then(function(instance) {
+          return instance.add(accounts[0]);
+        });
+      }).then(() => {
         return deployer.deploy(RegulatorService);
       }).then(() => {
         return deployer.deploy(ServiceRegistry, RegulatorService.address);
