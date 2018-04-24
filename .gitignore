@@ -10,3 +10,5 @@ scTopics
 Dockerfile
 yarn.lock
 .yarn-cache.tgz
+coverage
+coverage.json
