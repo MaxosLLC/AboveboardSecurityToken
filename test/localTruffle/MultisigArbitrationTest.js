@@ -7,8 +7,10 @@ const ServiceRegistry = artifacts.require('./ServiceRegistry.sol');
 const RegulatorService = artifacts.require('./AboveboardRegDSWhitelistRegulatorService.sol');
 const IssuanceWhiteList = artifacts.require('./IssuanceWhiteList.sol');
 const MultiSigArbitration = artifacts.require('./MultiSigArbitration.sol');
+const SettingsStorage = artifacts.require('./SettingsStorage.sol');
 
 contract('MultiSigArbitration', async function(accounts) {
+  let storage;
   let regulator;
   let token;
   let whitelist;
@@ -24,7 +26,9 @@ contract('MultiSigArbitration', async function(accounts) {
   const fromReceiver = { from: receiver };
 
   beforeEach(async () => {
-    regulator = await RegulatorService.new({ from: owner });
+    storage = await SettingsStorage.new({ from: owner });
+
+    regulator = await RegulatorService.new(storage.address,{ from: owner });
 
     const registry = await ServiceRegistry.new(regulator.address);
 
@@ -34,9 +38,9 @@ contract('MultiSigArbitration', async function(accounts) {
 
     arbitration = await MultiSigArbitration.new([arbitrator, owner], 2);
 
-    await regulator.setPartialTransfers(token.address, true);
-    await regulator.allowNewShareholders(token.address, true);
-    await regulator.addWhitelist(whitelist.address);
+    await storage.setPartialTransfers(token.address, true);
+    await storage.allowNewShareholders(token.address, true);
+    await storage.addWhitelist(whitelist.address);
     await token.setMultisigArbitrator(arbitration.address);
 
     await token.mint(owner, 100);

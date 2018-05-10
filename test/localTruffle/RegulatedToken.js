@@ -5,8 +5,10 @@ const RegulatedToken = artifacts.require('./RegulatedToken.sol');
 const ServiceRegistry = artifacts.require('./ServiceRegistry.sol');
 const RegulatorService = artifacts.require('./AboveboardRegDSWhitelistRegulatorService.sol');
 const IssuanceWhiteList = artifacts.require('./IssuanceWhiteList.sol');
+const SettingsStorage = artifacts.require('./SettingsStorage.sol');
 
 contract('RegulatedToken', async function(accounts) {
+  let storage;
   let regulator;
   let token;
   let whitelist;
@@ -22,7 +24,9 @@ contract('RegulatedToken', async function(accounts) {
   beforeEach(async () => {
     releaseTime = web3.eth.getBlock('latest').timestamp + helpers.duration.years(1);
 
-    regulator = await RegulatorService.new({ from: owner });
+    storage = await SettingsStorage.new({ from: owner });
+
+    regulator = await RegulatorService.new(storage.address, { from: owner });
 
     const registry = await ServiceRegistry.new(regulator.address);
 
@@ -32,11 +36,11 @@ contract('RegulatedToken', async function(accounts) {
 
     regDWhitelist = await IssuanceWhiteList.new({ from: owner });
 
-    await regulator.setPartialTransfers(token.address, true);
-    await regulator.allowNewShareholders(token.address, true);
-    await regulator.addWhitelist(whitelist.address);
-    await regulator.addWhitelist(regDWhitelist.address);
-    await regulator.setInititalOfferEndDate(token.address, releaseTime);
+    await storage.setPartialTransfers(token.address, true);
+    await storage.allowNewShareholders(token.address, true);
+    await storage.addWhitelist(whitelist.address);
+    await storage.addWhitelist(regDWhitelist.address);
+    await storage.setInititalOfferEndDate(token.address, releaseTime);
 
     await token.mint(owner, 100);
     await token.finishMinting();
@@ -157,7 +161,7 @@ contract('RegulatedToken', async function(accounts) {
 
       it('triggers a CheckStatus event and does NOT transfers funds', async () => {
         // disable new shareholders
-        await regulator.allowNewShareholders(token.address, false);
+        await storage.allowNewShareholders(token.address, false);
         const event = token.CheckStatus();
         const value = 25;
 
@@ -181,7 +185,7 @@ contract('RegulatedToken', async function(accounts) {
         await assertBalances({ owner: 75, receiver: value });
 
         // disable new shareholders
-        await regulator.allowNewShareholders(token.address, false);
+        await storage.allowNewShareholders(token.address, false);
 
         event = token.CheckStatus();
         // transfer will pass to existing shareholder, receiver already has funds
@@ -213,7 +217,7 @@ contract('RegulatedToken', async function(accounts) {
         await whitelist.add(owner);
         await regDWhitelist.add(receiver);
         await assertBalances({ owner: 100, receiver: 0 });
-        await regulator.setRegDWhitelist(token.address, regDWhitelist.address);
+        await storage.setRegDWhitelist(token.address, regDWhitelist.address);
       });
 
       it('triggers a CheckStatus event and does NOT transfer funds', async () => {
@@ -237,7 +241,7 @@ contract('RegulatedToken', async function(accounts) {
         await whitelist.add(owner);
         await regDWhitelist.add(receiver);
         await assertBalances({ owner: 100, receiver: 0 });
-        await regulator.setRegDWhitelist(token.address, regDWhitelist.address);
+        await storage.setRegDWhitelist(token.address, regDWhitelist.address);
         await helpers.increaseTimeTo(releaseTime + helpers.duration.seconds(100), web3)
       });
 
@@ -262,8 +266,8 @@ contract('RegulatedToken', async function(accounts) {
         await whitelist.add(owner);
         await regDWhitelist.add(receiver);
         await assertBalances({ owner: 100, receiver: 0 });
-        await regulator.setRegDWhitelist(token.address, regDWhitelist.address);
-        await regulator.setIssuer(token.address, owner);
+        await storage.setRegDWhitelist(token.address, regDWhitelist.address);
+        await storage.setIssuer(token.address, owner);
       });
 
       it('triggers a CheckStatus event and transfers funds', async () => {
@@ -287,8 +291,8 @@ contract('RegulatedToken', async function(accounts) {
         await whitelist.add(owner);
         await regDWhitelist.add(receiver);
         await assertBalances({ owner: 100, receiver: 0 });
-        await regulator.setRegDWhitelist(token.address, regDWhitelist.address);
-        await regulator.setIssuer(token.address, owner);
+        await storage.setRegDWhitelist(token.address, regDWhitelist.address);
+        await storage.setIssuer(token.address, owner);
       });
 
       it('triggers a CheckStatus event, transfers funds from issuer then transfers funds back to issuer', async () => {
