@@ -45,6 +45,12 @@ contract('BasicWhiteList', function(accounts) {
 
     });
 
-    
+    it("Add multiple buyers", async function() {
+
+        await basicWhiteList.addBuyers([accounts[0], accounts[1]]);
+
+        assert.equal(await basicWhiteList.verify(accounts[0]), true);
+        assert.equal(await basicWhiteList.verify(accounts[1]), true);
+    });
 
 });

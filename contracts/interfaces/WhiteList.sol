@@ -20,6 +20,10 @@ contract WhiteList {
   /// @param member Address of a member that is added to the whitelist
   function add(address member) public returns (bool);
 
+  /// @dev Adds members in the member mapping
+  /// @param members Addresses of members that are added to the whitelist
+  function addBuyers(address[] members) public returns (bool);
+
   /// @dev Deletes a member from the member mapping
   /// @param member Address of a member that is deleted from the whitelist
   function remove(address member) public returns (bool);

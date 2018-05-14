@@ -60,6 +60,20 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
 
   }
 
+  function addBuyers(address[] _buyers) public returns (bool) {
+
+    // make only executable by owner, agent, and qualifiers
+    bool isQualifier = qualifiers[msg.sender];
+
+    // require that the caller is the owner of the contract, the agent or one of the qualifiers
+    require(msg.sender == owner || msg.sender == agent || isQualifier);
+
+    for (uint256 i = 0; i < _buyers.length; i++) {
+      members[_buyers[i]] = true;
+      MemberAdded(_buyers[i]);
+    }
+  }
+
   function remove(address _buyer) public returns (bool) {
 
     // make only executable by owner, agent, and qualifiers
