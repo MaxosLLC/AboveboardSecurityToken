@@ -4,6 +4,11 @@ pragma solidity ^0.4.18;
 
 interface IRegulatorService {
 
+  /**
+   * @notice Triggered when storage address is replaced
+   */
+  event ReplaceStorage(address oldStorage, address newStorage);
+
   /*
    * @notice This method *MUST* be called by `RegulatedToken`s during `transfer()` and `transferFrom()`.
    *         The implementation *SHOULD* check whether or not a transfer can be approved.

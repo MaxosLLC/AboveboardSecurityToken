@@ -34,6 +34,19 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
   uint8 constant private CHECK_ERALLOW = 6;
 
   /**
+   * @dev Validate contract address
+   * Credit: https://github.com/Dexaran/ERC223-token-standard/blob/Recommended/ERC223_Token.sol#L107-L114
+   *
+   * @param _addr The address of a smart contract
+   */
+  modifier withContract(address _addr) {
+    uint length;
+    assembly { length := extcodesize(_addr) }
+    require(length > 0);
+    _;
+  }
+
+  /**
    * @notice Constructor
    *
    * @param _storage The address of the `SettingsStorage`
@@ -107,5 +120,26 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
    */
   function _wholeToken(address _token) view private returns (uint256) {
     return uint256(10)**DetailedERC20(_token).decimals();
+  }
+
+  /**
+   * @notice Get Settings Storage address
+   *
+   * @return Settings Storage address
+   */
+  function getStorageAddress() view public returns (address) {
+    return settingsStorage;
+  }
+
+  /**
+   * @dev Replace the current SettingsStorage
+   *
+   * @param _storage The address of the `SettingsStorage`
+   *
+   */
+  function replaceStorage(address _storage) onlyOwner withContract(_storage) public {
+    address oldStorage = settingsStorage;
+    settingsStorage = SettingsStorage(_storage);
+    ReplaceStorage(oldStorage, _storage);
   }
 }
