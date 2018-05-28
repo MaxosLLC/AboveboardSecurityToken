@@ -12,8 +12,10 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
   address agent;
   mapping(address => bool) members;
   mapping(address => bool) qualifiers;
+  address[] membersAddress;
   address[] qualifiersAddress;
   mapping(address => uint256) qualifiersIndex;
+  mapping(address => uint256) membersIndex;
 
   modifier onlyAgentOrOwner() {
     require(msg.sender == owner || msg.sender == agent);
@@ -55,6 +57,9 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
     require(msg.sender == owner || msg.sender == agent || isQualifier);
 
     members[_buyer] = true;
+    uint256 id = membersAddress.length;
+    membersIndex[_buyer] = id;
+    membersAddress.push(_buyer);
 
     MemberAdded(_buyer);
 
@@ -83,6 +88,9 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
     require(msg.sender == owner || msg.sender == agent || isQualifier);
 
     members[_buyer] = false;
+    uint256 id = membersIndex[_buyer];
+    delete membersAddress[id];
+
     MemberRemoved(_buyer);
 
   }
@@ -95,6 +103,10 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
 
   function getOwner() onlyAgentOrOwner constant public returns (address) {
     return owner;
+  }
+
+  function getBuyers() onlyAgentOrOwner constant public returns (address[]) {
+    return membersAddress;
   }
 
   function getQualifiers() onlyAgentOrOwner constant public returns (address[]) {
