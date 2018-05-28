@@ -1,8 +1,9 @@
 var IssuanceWhiteList = artifacts.require("./IssuanceWhiteList.sol");
+var SettingsStorage = artifacts.require("./SettingsStorage.sol");
 var RegulatorService = artifacts.require("./AboveboardRegDSWhitelistRegulatorService.sol");
 var ServiceRegistry = artifacts.require("./ServiceRegistry.sol");
 var RegulatedToken = artifacts.require("./RegulatedToken.sol");
-var service;
+var storage;
 
 module.exports = async function(deployer, network, accounts) {
 
@@ -12,27 +13,29 @@ module.exports = async function(deployer, network, accounts) {
           return instance.add(accounts[0]);
         });
       }).then(() => {
-        return deployer.deploy(RegulatorService);
+        return deployer.deploy(SettingsStorage);
+      }).then(() => {
+        return deployer.deploy(RegulatorService, SettingsStorage.address);
       }).then(() => {
         return deployer.deploy(ServiceRegistry, RegulatorService.address);
       }).then(() => {
         return deployer.deploy(RegulatedToken, ServiceRegistry.address, 'AboveboardStock', 'ABST');
       }).then(() => {
-        return RegulatorService.deployed().then(function(instance) {
-          service = instance;
+        return SettingsStorage.deployed().then(function(instance) {
+          storage = instance;
           return instance.addWhitelist(IssuanceWhiteList.address);
         });
       }).then(() => {
         return RegulatedToken.deployed().then(function(instance) {
-          return service.setPartialTransfers(instance.address, true);
+          return storage.setPartialTransfers(instance.address, true);
         });
       }).then(() => {
         return RegulatedToken.deployed().then(function(instance) {
-          return service.allowNewShareholders(instance.address, true);
+          return storage.allowNewShareholders(instance.address, true);
         });
       }).then(() => {
         return RegulatedToken.deployed().then(function(instance) {
-          return service.setIssuer(instance.address, accounts[0]);
+          return storage.setIssuer(instance.address, accounts[0]);
         });
       });
 };
