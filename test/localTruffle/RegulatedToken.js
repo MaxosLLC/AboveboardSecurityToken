@@ -320,6 +320,35 @@ contract('RegulatedToken', async function(accounts) {
           value,
         });
       });
+
+      it('triggers a CheckStatus event, transfers funds from issuer then transfers funds back to issuer even when trading is locked', async () => {
+        const event = token.CheckStatus();
+        const value = 25;
+
+        await token.transfer(receiver, value, fromOwner);
+        await assertBalances({ owner: 75, receiver: value });
+        await assertCheckStatusEvent(event, {
+          reason: 0,
+          spender: owner,
+          from: owner,
+          to: receiver,
+          value,
+        });
+
+        // lock trading. Trading will pass because we are sending back to issuer
+        await storage.setLocked(token.address, true);
+
+        const ev = token.CheckStatus();
+        await token.transfer(owner, value, fromReceiver);
+        await assertBalances({ owner: 100, receiver: 0 });
+        await assertCheckStatusEvent(ev, {
+          reason: 0,
+          spender: receiver,
+          from: receiver,
+          to: owner,
+          value,
+        });
+      });
     });
   });
 

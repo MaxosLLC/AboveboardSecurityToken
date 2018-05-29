@@ -141,10 +141,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
     }
 
     //delete the last whitelist and decrease the array length
-    WhitelistRemoved(whitelists[whitelists.length-1]);
-
     delete whitelists[whitelists.length-1];
-
     whitelists.length--;
   }
 

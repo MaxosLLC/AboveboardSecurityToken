@@ -73,12 +73,17 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
    *               to assign meaning.
    */
   function check(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
-    if (settingsStorage.getLocked(_token)) {
+
+    address issuer = settingsStorage.getIssuerAddress(_token);
+    bool isIssuer = _from == issuer || _to == issuer;
+
+    // trading is locked, can transfer to or from issuer
+    if (settingsStorage.getLocked(_token) && !isIssuer) {
       return CHECK_ELOCKED;
     }
 
-    // if newShareholdersAllowed is not enabled, the transfer will only succeed if the buyer already has tokens
-    if (!settingsStorage.newShareholdersAllowed(_token) && BasicToken(_token).balanceOf(_to) == 0) {
+    // if newShareholdersAllowed is not enabled, the transfer will only succeed if the buyer already has tokens or tranfers to or from issuer
+    if (!settingsStorage.newShareholdersAllowed(_token) && BasicToken(_token).balanceOf(_to) == 0 && !isIssuer) {
       return CHECK_ERALLOW;
     }
 
@@ -99,8 +104,8 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     // sender or receiver is under Regulation D, Non-US investors can trade at any time
     if ((wlFrom == settingsStorage.getRegDWhitelist(_token) || wlTo == settingsStorage.getRegDWhitelist(_token))
       && block.timestamp < settingsStorage.getInititalOfferEndDate(_token)
-      && _from != settingsStorage.getIssuerAddress(_token)            // only issuer can send to US investors first year
-      && _to != settingsStorage.getIssuerAddress(_token)) {           // US investors cannot sell these shares in the first year, except to the issuer
+      && _from != issuer            // only issuer can send to US investors first year
+      && _to != issuer) {           // US investors cannot sell these shares in the first year, except to the issuer
       return CHECK_ERREGD;
     }
 
