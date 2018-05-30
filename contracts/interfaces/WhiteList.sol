@@ -28,4 +28,8 @@ contract WhiteList {
   /// @param member Address of a member that is deleted from the whitelist
   function remove(address member) public returns (bool);
 
+  /// @dev Get buyers
+  /// @return Addresses of buyers
+  function getBuyers() constant public returns (address[]);
+
 }

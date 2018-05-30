@@ -102,10 +102,10 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     }
 
     // sender or receiver is under Regulation D, Non-US investors can trade at any time
+    // only issuer can send to US investors first year, US investors cannot sell these shares in the first year, except to the issuer
     if ((wlFrom == settingsStorage.getRegDWhitelist(_token) || wlTo == settingsStorage.getRegDWhitelist(_token))
       && block.timestamp < settingsStorage.getInititalOfferEndDate(_token)
-      && _from != issuer            // only issuer can send to US investors first year
-      && _to != issuer) {           // US investors cannot sell these shares in the first year, except to the issuer
+      && !isIssuer) {
       return CHECK_ERREGD;
     }
 
