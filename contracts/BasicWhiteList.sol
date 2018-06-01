@@ -12,39 +12,51 @@ contract BasicWhiteList is WhiteList {
   address[] membersAddress;
   mapping(address => uint256) membersIndex;
 
-  function verify(address _buyer) public constant returns (bool) {
+  function verify(address _buyer) view public returns (bool) {
     return members[_buyer];
   }
 
   function add(address _buyer) public returns (bool) {
+
+    if (!members[_buyer]) {
+      uint256 id = membersAddress.length;
+      membersIndex[_buyer] = id;
+      membersAddress.push(_buyer);
+    }
+
     members[_buyer] = true;
-    uint256 id = membersAddress.length;
-    membersIndex[_buyer] = id;
-    membersAddress.push(_buyer);
 
     MemberAdded(_buyer);
   }
 
   function addBuyers(address[] _buyers) public returns (bool) {
     for (uint256 i = 0; i < _buyers.length; i++) {
+
+      if (!members[_buyers[i]]) {
+        uint256 id = membersAddress.length;
+        membersIndex[_buyers[i]] = id;
+        membersAddress.push(_buyers[i]);
+      }
+
       members[_buyers[i]] = true;
-      uint256 id = membersAddress.length;
-      membersIndex[_buyers[i]] = id;
-      membersAddress.push(_buyers[i]);
 
       MemberAdded(_buyers[i]);
     }
   }
 
   function remove(address _buyer) public returns (bool) {
+
+    if (members[_buyer]) {
+      uint256 id = membersIndex[_buyer];
+      delete membersAddress[id];
+    }
+
     members[_buyer] = false;
-    uint256 id = membersIndex[_buyer];
-    delete membersAddress[id];
 
     MemberRemoved(_buyer);
   }
 
-  function getBuyers() constant public returns (address[]) {
+  function getBuyers() view public returns (address[]) {
     return membersAddress;
   }
 

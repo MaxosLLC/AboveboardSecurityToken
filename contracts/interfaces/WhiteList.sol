@@ -14,7 +14,7 @@ contract WhiteList {
 
   /// @dev Verifies that a member is already in the member mapping
   /// @param member Address of a member that we check to see if it's in the whitelist
-  function verify(address member) public constant returns (bool);
+  function verify(address member) view public returns (bool);
 
   /// @dev Adds a member in the member mapping
   /// @param member Address of a member that is added to the whitelist
@@ -30,6 +30,6 @@ contract WhiteList {
 
   /// @dev Get buyers
   /// @return Addresses of buyers
-  function getBuyers() constant public returns (address[]);
+  function getBuyers() view public returns (address[]);
 
 }
