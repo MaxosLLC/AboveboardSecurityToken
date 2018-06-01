@@ -31,10 +31,6 @@ contract IIssuanceWhiteList is WhiteList {
   /// @param _qualifier Address of qualifier that will be removed
   function removeQualifier(address _qualifier) public;
 
-  /// @dev Get whitelist owner
-  /// @return Address of owner
-  function getOwner() view public returns (address);
-
   /// @dev Get qualifiers
   /// @return Addresses of qualifiers
   function getQualifiers() view public returns (address[]);

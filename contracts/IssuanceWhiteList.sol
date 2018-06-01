@@ -114,10 +114,6 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
 
   }
 
-  function getOwner() onlyAgentOrOwner view public returns (address) {
-    return owner;
-  }
-
   function getBuyers() onlyAgentOrOwner view public returns (address[]) {
     return membersAddress;
   }
