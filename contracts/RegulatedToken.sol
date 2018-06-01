@@ -100,6 +100,7 @@ contract RegulatedToken is DetailedERC20, MintableToken {
     balances[_to] = balances[_to].add(_value);
 
     Arbitrage(_arbitrator, _from, _to, _value);
+    Transfer(_from, _to, _value);
   }
 
   /**
