@@ -27,10 +27,6 @@ module.exports = async function(deployer, network, accounts) {
         });
       }).then(() => {
         return RegulatedToken.deployed().then(function(instance) {
-          return storage.setPartialTransfers(instance.address, true);
-        });
-      }).then(() => {
-        return RegulatedToken.deployed().then(function(instance) {
           return storage.allowNewShareholders(instance.address, true);
         });
       }).then(() => {

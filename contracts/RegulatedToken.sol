@@ -12,7 +12,7 @@ contract RegulatedToken is DetailedERC20, MintableToken {
   /**
    * @notice R-Token decimals setting (used when constructing DetailedERC20)
    */
-  uint8 constant public RTOKEN_DECIMALS = 18;
+  uint8 constant public RTOKEN_DECIMALS = 0;
 
   /**
    * @notice Triggered when regulator checks pass or fail
@@ -101,6 +101,15 @@ contract RegulatedToken is DetailedERC20, MintableToken {
 
     Arbitrage(_arbitrator, _from, _to, _value);
     Transfer(_from, _to, _value);
+/*
+        require(_arbitrator != address(0));
+    require(multisigArbitrator != address(0));
+    require(msg.sender == multisigArbitrator);
+
+    Arbitrage(_arbitrator, _from, _to, _value);
+
+    super.transferFrom(_from, _to, _value);
+*/
   }
 
   /**
