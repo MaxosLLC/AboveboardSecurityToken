@@ -86,15 +86,15 @@ contract('SettingsStorage', async accounts => {
     });
 
     it('setMessagingAddress', async () => {
-      let l = await storage.setMessagingAddress('someAddress');
+      let l = await storage.setMessagingAddress(token.address, 'someAddress');
       assert.equal(l.logs[0].event, 'MessagingAddressSet');
     });
 
     it('getMessagingAddress', async () => {
-      let l = await storage.setMessagingAddress('someAddress');
+      let l = await storage.setMessagingAddress(token.address, 'someAddress');
       assert.equal(l.logs[0].event, 'MessagingAddressSet');
 
-      l = await storage.getMessagingAddress();
+      l = await storage.getMessagingAddress(token.address);
       assert.equal(l, 'someAddress');
     });
   });
