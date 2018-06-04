@@ -32,10 +32,10 @@ contract SettingsStorage is ISettingsStorage, Ownable {
 
     /// @dev Initial offering end date
     uint256 initialOfferEndDate;
-  }
 
-  /// @dev Messaging address
-  string messagingAddress;
+    /// @dev Messaging address
+    string messagingAddress;
+  }
 
   /// @dev Array of whitelists
   WhiteList[] whitelists;
@@ -217,18 +217,21 @@ contract SettingsStorage is ISettingsStorage, Ownable {
 
   /**
    * @notice Get messaging address
+   *
+   * @param  _token The address of the token
    */
-  function getMessagingAddress() view public returns (string) {
-    return messagingAddress;
+  function getMessagingAddress(address _token) view public returns (string) {
+    return settings[_token].messagingAddress;
   }
 
   /**
    * @notice Set messaging address
    *
+   * @param  _token The address of the token
    * @param  _address Messaging address to be set
    */
-  function setMessagingAddress(string _address) onlyOwner public {
-    messagingAddress = _address;
+  function setMessagingAddress(address _token, string _address) onlyOwner public {
+    settings[_token].messagingAddress = _address;
     MessagingAddressSet(_address);
   }
 
