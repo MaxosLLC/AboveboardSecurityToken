@@ -38,7 +38,6 @@ contract('MultiSigArbitration', async function(accounts) {
 
     arbitration = await MultiSigArbitration.new([arbitrator, owner], 2);
 
-    await storage.setPartialTransfers(token.address, true);
     await storage.allowNewShareholders(token.address, true);
     await storage.addWhitelist(whitelist.address);
     await token.setMultisigArbitrator(arbitration.address);

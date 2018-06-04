@@ -37,7 +37,6 @@ contract('MultiSigWallet', async function(accounts) {
 
     wallet = await MultiSigWallet.new([arbitrator, owner], 2);
 
-    await storage.setPartialTransfers(token.address, true);
     await storage.allowNewShareholders(token.address, true);
     await storage.addWhitelist(whitelist.address);
     await token.setMultisigArbitrator(wallet.address);

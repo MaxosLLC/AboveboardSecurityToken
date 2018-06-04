@@ -36,7 +36,6 @@ contract('RegulatedToken', async function(accounts) {
 
     regDWhitelist = await IssuanceWhiteList.new({ from: owner });
 
-    await storage.setPartialTransfers(token.address, true);
     await storage.allowNewShareholders(token.address, true);
     await storage.addWhitelist(whitelist.address);
     await storage.addWhitelist(regDWhitelist.address);
