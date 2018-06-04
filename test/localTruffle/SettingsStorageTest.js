@@ -57,11 +57,6 @@ contract('SettingsStorage', async accounts => {
       assert.equal(l.logs[0].event, 'LogLockSet');
     });
 
-    it('setPartialTransfers', async () => {
-      let l = await storage.setPartialTransfers(token.address, true);
-      assert.equal(l.logs[0].event, 'LogPartialTransferSet');
-    });
-
     it('setInititalOfferEndDate', async () => {
       let l = await storage.setInititalOfferEndDate(token.address, new Date().getTime()/1000.0);
       assert.equal(l.logs[0].event, 'InititalOfferEndDateSet');

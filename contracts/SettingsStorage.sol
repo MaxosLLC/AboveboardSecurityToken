@@ -14,13 +14,6 @@ contract SettingsStorage is ISettingsStorage, Ownable {
      */
     bool locked;
 
-    /**
-     * @dev Toggle for allowing/disallowing fractional token trades at a token level.
-     *      The default state when this contract is created `false` (or no partial
-     *      transfers allowed).
-     */
-    bool partialTransfers;
-
     /// @dev Toggle for allowing/disallowing new shareholders
     bool newShareholdersAllowed;
 
@@ -57,22 +50,6 @@ contract SettingsStorage is ISettingsStorage, Ownable {
 
   function getLocked(address _token) view public returns(bool) {
     return settings[_token].locked;
-  }
-
-  /**
-   * @notice Allows the ability to trade a fraction of a token
-   *
-   * @dev    This method can only be called by this contract's owner
-   *
-   * @param  _token The address of the token to allow partial transfers
-   */
-  function setPartialTransfers(address _token, bool _enabled) onlyOwner public {
-    settings[_token].partialTransfers = _enabled;
-    LogPartialTransferSet(_token, _enabled);
-  }
-
-  function getPartialTransfers(address _token) view public returns(bool) {
-    return settings[_token].partialTransfers;
   }
 
   function addWhitelist(WhiteList _whitelist) onlyOwner public {

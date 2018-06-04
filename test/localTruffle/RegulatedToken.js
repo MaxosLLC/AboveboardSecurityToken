@@ -167,7 +167,7 @@ contract('RegulatedToken', async function(accounts) {
         await token.transfer(receiver, value, fromOwner);
         await assertBalances({ owner: 100, receiver: 0 });
         await assertCheckStatusEvent(event, {
-          reason: 6,
+          reason: 2,
           spender: owner,
           from: owner,
           to: receiver,
@@ -202,7 +202,7 @@ contract('RegulatedToken', async function(accounts) {
         // transfer will fail to new shareholder
         await token.transfer(accounts[2], value, fromOwner);
         await assertCheckStatusEvent(event, {
-          reason: 6,
+          reason: 2,
           spender: owner,
           from: owner,
           to: accounts[2],

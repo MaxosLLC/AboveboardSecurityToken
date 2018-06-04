@@ -18,8 +18,8 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
   // @dev Check error reason: Token is locked
   uint8 constant private CHECK_ELOCKED = 1;
 
-  // @dev Check error reason: Token can not trade partial amounts
-  uint8 constant private CHECK_EDIVIS = 2;
+  // @dev Check error reason: New shareholders are not allowed
+  uint8 constant private CHECK_ERALLOW = 2;
 
   // @dev Check error reason: Sender is not allowed to send the token
   uint8 constant private CHECK_ESEND = 3;
@@ -29,9 +29,6 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
 
   // @dev Check error reason: Transfer before initial offering end date
   uint8 constant private CHECK_ERREGD = 5;
-
-  // @dev Check error reason: New shareholders are not allowed
-  uint8 constant private CHECK_ERALLOW = 6;
 
   /**
    * @dev Validate contract address
@@ -109,22 +106,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
       return CHECK_ERREGD;
     }
 
-    if (!settingsStorage.getPartialTransfers(_token) && _amount % _wholeToken(_token) != 0) {
-      return CHECK_EDIVIS;
-    }
-
     return CHECK_SUCCESS;
-  }
-
-  /**
-   * @notice Retrieves the whole token value from a token that this `RegulatorService` manages
-   *
-   * @param  _token The token address of the managed token
-   *
-   * @return The uint256 value that represents a single whole token
-   */
-  function _wholeToken(address _token) view private returns (uint256) {
-    return uint256(10)**DetailedERC20(_token).decimals();
   }
 
   /**
