@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 import "./zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "./interfaces/WhiteList.sol";
+import "./IssuanceWhiteList.sol";
 import "./interfaces/ISettingsStorage.sol";
 
 contract SettingsStorage is ISettingsStorage, Ownable {
@@ -17,9 +17,6 @@ contract SettingsStorage is ISettingsStorage, Ownable {
     /// @dev Toggle for allowing/disallowing new shareholders
     bool newShareholdersAllowed;
 
-    /// @dev Address of Regulation D Whitelist
-    address regDWhitelist;
-
     /// @dev Issuer of the token
     address issuer;
 
@@ -31,7 +28,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
   }
 
   /// @dev Array of whitelists
-  WhiteList[] whitelists;
+  IssuanceWhiteList[] whitelists;
 
   /// @notice Permissions that allow/disallow token trades on a per token level
   mapping(address => Settings) settings;
@@ -52,7 +49,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
     return settings[_token].locked;
   }
 
-  function addWhitelist(WhiteList _whitelist) onlyOwner public {
+  function addWhitelist(IssuanceWhiteList _whitelist) onlyOwner public {
 
     //check that we don't pass an empty list
     require(_whitelist != address(0));
@@ -75,22 +72,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
     }
   }
 
-  /**
-   * @notice Set Regulation D whitelist
-   *
-   * @param  _token Address of the token
-   * @param  _whitelist Regulation D whitelist address
-   */
-  function setRegDWhitelist(address _token, address _whitelist) onlyOwner public {
-    settings[_token].regDWhitelist = _whitelist;
-    RegulationDWhitelistSet(_token, _whitelist);
-  }
-
-  function getRegDWhitelist(address _token) view public returns(address) {
-    return settings[_token].regDWhitelist;
-  }
-
-  function removeWhitelist(WhiteList _whitelist) onlyOwner public {
+  function removeWhitelist(IssuanceWhiteList _whitelist) onlyOwner public {
 
     //check that we don't pass an empty list
     require(_whitelist != address(0));
@@ -127,7 +109,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    *
    * @return WhiteList[] Array of whitelists
    */
-  function getWhitelists() view public returns (WhiteList[]) {
+  function getWhitelists() view public returns (IssuanceWhiteList[]) {
     return whitelists;
   }
 
@@ -138,12 +120,12 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    *
    * @return True if buyer is added to whitelist, otherwise false
    */
-  function isWhiteListed(address _address) view public returns (bool, address) {
+  function isWhiteListed(address _address) view public returns (bool, string) {
     for (uint256 i = 0; i < whitelists.length; i++) {
       if (whitelists[i].verify(_address))
-        return (true, whitelists[i]);
+        return (true, whitelists[i].whitelistType());
     }
-    return (false, address(0));
+    return (false, "");
   }
 
   /**

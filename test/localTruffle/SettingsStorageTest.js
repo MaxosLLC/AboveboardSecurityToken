@@ -37,11 +37,6 @@ contract('SettingsStorage', async accounts => {
       assert.equal(wl.logs[0].event, 'WhitelistRemoved');
     });
 
-    it('set Regulation D whitelist', async () => {
-      let wl = await storage.setRegDWhitelist(token.address, whitelist.address);
-      assert.equal(wl.logs[0].event, 'RegulationDWhitelistSet');
-    });
-
     it('get whitelists', async () => {
       let wl = await storage.addWhitelist(whitelist.address);
       assert.equal(wl.logs[0].event, 'WhitelistAdded');

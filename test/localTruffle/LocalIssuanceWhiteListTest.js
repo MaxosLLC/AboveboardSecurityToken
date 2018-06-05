@@ -18,6 +18,13 @@ contract('IssuanceWhiteList', function(accounts) {
 
     });
 
+    it("Set whitelist type", async function() {
+
+        let w = await issuanceWhiteList.setWhitelistType("RegS");
+        assert.equal(w.logs[0].event, 'WhitelistTypeSet');
+
+    });
+
     it("Get list of buyers", async function() {
 
         await issuanceWhiteList.add(accounts[0]);

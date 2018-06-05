@@ -17,6 +17,8 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
   mapping(address => uint256) qualifiersIndex;
   mapping(address => uint256) membersIndex;
 
+  string public whitelistType;
+
   modifier onlyAgentOrOwner() {
     require(msg.sender == owner || msg.sender == agent);
     _;
@@ -27,6 +29,13 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
     agent = _agent;
     NewAgentAssigned(_agent);
     
+  }
+
+  function setWhitelistType(string _whitelistType) onlyOwner public {
+
+    whitelistType = _whitelistType;
+    WhitelistTypeSet(_whitelistType);
+
   }
 
   function addQualifier(address _qualifier) onlyAgentOrOwner public {

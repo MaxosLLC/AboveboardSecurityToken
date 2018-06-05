@@ -10,6 +10,10 @@ module.exports = async function(deployer, network, accounts) {
     return deployer.deploy(IssuanceWhiteList)
       .then(() => {
         return IssuanceWhiteList.deployed().then(function(instance) {
+          return instance.setWhitelistType("RegS");
+        });
+      }).then(() => {
+        return IssuanceWhiteList.deployed().then(function(instance) {
           return instance.add(accounts[0]);
         });
       }).then(() => {

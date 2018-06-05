@@ -8,13 +8,14 @@ module.exports = async function(deployer, network, accounts) {
 
     return deployer.deploy(RegulationDWhiteList)
       .then(() => {
+        return RegulationDWhiteList.deployed().then(function(instance) {
+          return instance.setWhitelistType("RegD");
+        });
+      })
+      .then(() => {
         return SettingsStorage.deployed().then(function(instance) {
           storage = instance;
           return instance.addWhitelist(RegulationDWhiteList.address);
-        });
-      }).then(() => {
-        return RegulatedToken.deployed().then(function(instance) {
-          return storage.setRegDWhitelist(instance.address, RegulationDWhiteList.address);
         });
       });
 };

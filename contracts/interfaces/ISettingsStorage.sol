@@ -1,6 +1,6 @@
 pragma solidity ^0.4.18;
 
-import "./WhiteList.sol";
+import "../IssuanceWhiteList.sol";
 
 /// @notice Standard interface for `RegulatorService`s
 
@@ -77,12 +77,12 @@ interface ISettingsStorage {
    *
    * @param  _whitelist The actual whitelist which is added to the array
    */
-  function addWhitelist(WhiteList _whitelist) public;
+  function addWhitelist(IssuanceWhiteList _whitelist) public;
 
   /**
    * @dev Remove a whitelist from the array
    *
    * @param  _whitelist The actual whitelist which is deleted from the array
    */
-  function removeWhitelist(WhiteList _whitelist) public;
+  function removeWhitelist(IssuanceWhiteList _whitelist) public;
 }

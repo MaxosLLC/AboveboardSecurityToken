@@ -19,6 +19,11 @@ contract IIssuanceWhiteList is WhiteList {
    */
   event QualifierRemoved(address qualifier);
 
+  /**
+   * @notice Triggered when a whitelist type is set
+   */
+  event WhitelistTypeSet(string _whitelistType);
+
   /// @dev Set the agent for the whitelist
   /// @param _agent Address of agent that will be assigned
   function setAgent(address _agent) public;

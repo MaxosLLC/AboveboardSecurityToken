@@ -85,14 +85,14 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     }
 
     bool f;
-    address wlFrom;
+    string memory wlFrom;
     (f, wlFrom) = settingsStorage.isWhiteListed(_from);
     if (!f) {
       return CHECK_ESEND;
     }
 
     bool t;
-    address wlTo;
+    string memory wlTo;
     (t,wlTo) = settingsStorage.isWhiteListed(_to);
     if (!t) {
       return CHECK_ERECV;
@@ -100,7 +100,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
 
     // sender or receiver is under Regulation D, Non-US investors can trade at any time
     // only issuer can send to US investors first year, US investors cannot sell these shares in the first year, except to the issuer
-    if ((wlFrom == settingsStorage.getRegDWhitelist(_token) || wlTo == settingsStorage.getRegDWhitelist(_token))
+    if ((keccak256(wlFrom) == keccak256("RegD") || keccak256(wlTo) == keccak256("RegD"))
       && block.timestamp < settingsStorage.getInititalOfferEndDate(_token)
       && !isIssuer) {
       return CHECK_ERREGD;
