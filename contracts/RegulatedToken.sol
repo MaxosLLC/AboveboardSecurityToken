@@ -33,6 +33,11 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    */
   ServiceRegistry public registry;
 
+  modifier onlyOwnerOrArbitrator() {
+    require(msg.sender == owner || msg.sender == multisigArbitrator);
+    _;
+  }
+
   /**
    * @notice Constructor
    *
@@ -143,7 +148,7 @@ contract RegulatedToken is DetailedERC20, MintableToken {
     return AboveboardRegDSWhitelistRegulatorService(registry.service());
   }
 
-  function setMultisigArbitrator(address _multisig) public onlyOwner {
+  function setMultisigArbitrator(address _multisig) public onlyOwnerOrArbitrator {
     multisigArbitrator = _multisig;
   }
 
