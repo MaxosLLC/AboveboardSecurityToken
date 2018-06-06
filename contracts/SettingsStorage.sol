@@ -40,7 +40,10 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    *
    * @param  _token The address of the token to lock
    */
-  function setLocked(address _token, bool _locked) onlyOwner public {
+  function setLocked(address _token, bool _locked) public {
+
+    require(msg.sender == settings[_token].issuer);
+
     settings[_token].locked = _locked;
     LogLockSet(_token, _locked);
   }
@@ -134,7 +137,10 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    * @param  _token The address of the token
    * @param  _date Initial offering end date
    */
-  function setInititalOfferEndDate(address _token, uint256 _date) onlyOwner public {
+  function setInititalOfferEndDate(address _token, uint256 _date) public {
+
+    require(msg.sender == settings[_token].issuer);
+
     settings[_token].initialOfferEndDate = _date;
     InititalOfferEndDateSet(_token, _date);
   }
@@ -189,7 +195,10 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    * @param  _token The address of the token
    * @param  _address Messaging address to be set
    */
-  function setMessagingAddress(address _token, string _address) onlyOwner public {
+  function setMessagingAddress(address _token, string _address) public {
+
+    require(msg.sender == owner || msg.sender == settings[_token].issuer);
+
     settings[_token].messagingAddress = _address;
     MessagingAddressSet(_address);
   }
@@ -200,7 +209,10 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    * @param  _token The address of the token
    * @param  allow Allow/disallow new shareholders
    */
-  function allowNewShareholders(address _token, bool allow) onlyOwner public {
+  function allowNewShareholders(address _token, bool allow) public {
+
+    require(msg.sender == settings[_token].issuer);
+
     settings[_token].newShareholdersAllowed = allow;
     NewShareholdersAllowance(_token, allow);
   }
