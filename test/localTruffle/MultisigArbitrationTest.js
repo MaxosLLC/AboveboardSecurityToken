@@ -57,15 +57,12 @@ contract('MultiSigArbitration', async function(accounts) {
 
   describe('MultisigArbitrator', () => {
     it('getMultisigArbitrator', async () => {
-      let l = await token.setMultisigArbitrator(arbitration.address);
-
-      l = await token.getMultisigArbitrator({from: owner});
-      assert.equal(l, arbitration.address);
+      assert.equal(await token.getMultisigArbitrator({from: owner}), arbitration.address);
     });
 
     it('getMultisigArbitrator by hacker', async () => {
       try {
-        let l = await token.setMultisigArbitrator(arbitration.address);
+        let l = await token.setMultisigArbitrator(arbitration.address, { from: arbitration.address });
 
         l = await token.getMultisigArbitrator({from: hacker});
         assert.equal(l, arbitration.address);
@@ -76,6 +73,22 @@ contract('MultiSigArbitration', async function(accounts) {
         return;
       }
       assert.fail('Expected throw not received');
+    });
+
+    it('setMultisigArbitrator by owner after already set', async () => {
+      try {
+        assert.equal(await token.setMultisigArbitrator(hacker, {from: owner}));
+      } catch (e) {
+        assert.ok(e)
+      }
+    });
+
+    it('setMultisigArbitrator from hacker', async () => {
+      try {
+        assert.equal(await token.setMultisigArbitrator(receiver, {from: hacker}));
+      } catch (e) {
+        assert.ok(e)
+      }
     });
   });
 

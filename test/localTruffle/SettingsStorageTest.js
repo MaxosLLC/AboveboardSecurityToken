@@ -11,8 +11,9 @@ contract('SettingsStorage', async accounts => {
   let token;
   let whitelist;
 
-  let owner = accounts[0];
+  const owner = accounts[0];
   const issuer = accounts[4];
+  const hacker = accounts[5];
 
   beforeEach(async () => {
     storage = await SettingsStorage.new({ from: owner });
@@ -21,7 +22,7 @@ contract('SettingsStorage', async accounts => {
     token = await RegulatedToken.new(registry.address, 'Test', 'TEST');
     whitelist = await IssuanceWhiteList.new({ from: owner });
 
-    await storage.setIssuer(token.address, issuer);
+    await storage.setIssuer(token.address, issuer, { from: owner });
   });
 
   describe('manage whitelists', () => {
@@ -59,17 +60,41 @@ contract('SettingsStorage', async accounts => {
     });
 
     it('setIssuer', async () => {
-      let l = await storage.setIssuer(token.address, accounts[1]);
+      let l = await storage.setIssuer(token.address, accounts[1], { from: issuer });
       assert.equal(l.logs[0].event, 'IssuerSet');
     });
 
+    it('setIssuer from owner after already set', async () => {
+      try {
+        await storage.setIssuer(token.address, accounts[1], { from: owner });
+      } catch (e) {
+        assert.ok(e)
+      }
+    });
+
+    it('setIssuer from hacker', async () => {
+      try {
+        await storage.setIssuer(token.address, accounts[1], { from: hacker });
+      } catch (e) {
+        assert.ok(e)
+      }
+    });
+
     it('removeIssuer', async () => {
-      let l = await storage.removeIssuer(token.address);
+      let l = await storage.removeIssuer(token.address, { from: issuer });
       assert.equal(l.logs[0].event, 'IssuerRemoved');
     });
 
+    it('owner removeIssuer', async () => {
+      try {
+        await storage.removeIssuer(token.address, { from: owner });
+      } catch (e) {
+        assert.ok(e)
+      }
+    });
+
     it('getIssuerAddress', async () => {
-      let l = await storage.setIssuer(token.address, accounts[1]);
+      let l = await storage.setIssuer(token.address, accounts[1], { from: issuer });
       assert.equal(l.logs[0].event, 'IssuerSet');
 
       l = await storage.getIssuerAddress(token.address);
