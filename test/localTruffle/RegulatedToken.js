@@ -17,6 +17,7 @@ contract('RegulatedToken', async function(accounts) {
 
   const owner = accounts[0];
   const receiver = accounts[1];
+  const issuer = accounts[4];
 
   const fromOwner = { from: owner };
   const fromReceiver = { from: receiver };
@@ -37,10 +38,12 @@ contract('RegulatedToken', async function(accounts) {
     regDWhitelist = await IssuanceWhiteList.new({ from: owner });
 
     await regDWhitelist.setWhitelistType("RegD");
-    await storage.allowNewShareholders(token.address, true);
+
+    await storage.setIssuer(token.address, issuer);
+    await storage.allowNewShareholders(token.address, true, { from: issuer });
     await storage.addWhitelist(whitelist.address);
     await storage.addWhitelist(regDWhitelist.address);
-    await storage.setInititalOfferEndDate(token.address, releaseTime);
+    await storage.setInititalOfferEndDate(token.address, releaseTime, { from: issuer });
 
     await token.mint(owner, 100);
     await token.finishMinting();
@@ -161,7 +164,7 @@ contract('RegulatedToken', async function(accounts) {
 
       it('triggers a CheckStatus event and does NOT transfers funds', async () => {
         // disable new shareholders
-        await storage.allowNewShareholders(token.address, false);
+        await storage.allowNewShareholders(token.address, false, { from: issuer });
         const event = token.CheckStatus();
         const value = 25;
 
@@ -185,7 +188,7 @@ contract('RegulatedToken', async function(accounts) {
         await assertBalances({ owner: 75, receiver: value });
 
         // disable new shareholders
-        await storage.allowNewShareholders(token.address, false);
+        await storage.allowNewShareholders(token.address, false, { from: issuer });
 
         event = token.CheckStatus();
         // transfer will pass to existing shareholder, receiver already has funds

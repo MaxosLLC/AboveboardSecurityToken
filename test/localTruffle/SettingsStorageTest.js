@@ -11,16 +11,17 @@ contract('SettingsStorage', async accounts => {
   let token;
   let whitelist;
 
-  let owner;
+  let owner = accounts[0];
+  const issuer = accounts[4];
 
   beforeEach(async () => {
-    owner = accounts[0];
-
     storage = await SettingsStorage.new({ from: owner });
     regulator = await RegulatorService.new(storage.address, { from: owner });
     const registry = await ServiceRegistry.new(regulator.address);
     token = await RegulatedToken.new(registry.address, 'Test', 'TEST');
     whitelist = await IssuanceWhiteList.new({ from: owner });
+
+    await storage.setIssuer(token.address, issuer);
   });
 
   describe('manage whitelists', () => {
@@ -48,12 +49,12 @@ contract('SettingsStorage', async accounts => {
 
   describe('manage settings', () => {
     it('setLocked', async () => {
-      let l = await storage.setLocked(token.address, true);
+      let l = await storage.setLocked(token.address, true, { from: issuer });
       assert.equal(l.logs[0].event, 'LogLockSet');
     });
 
     it('setInititalOfferEndDate', async () => {
-      let l = await storage.setInititalOfferEndDate(token.address, new Date().getTime()/1000.0);
+      let l = await storage.setInititalOfferEndDate(token.address, new Date().getTime()/1000.0, { from: issuer });
       assert.equal(l.logs[0].event, 'InititalOfferEndDateSet');
     });
 
@@ -86,6 +87,14 @@ contract('SettingsStorage', async accounts => {
 
       l = await storage.getMessagingAddress(token.address);
       assert.equal(l, 'someAddress');
+    });
+
+    it('allowNewShareholders', async () => {
+      let l = await storage.allowNewShareholders(token.address, true, { from: issuer });
+      assert.equal(l.logs[0].event, 'NewShareholdersAllowance');
+
+      l = await storage.newShareholdersAllowed(token.address);
+      assert.equal(l, true);
     });
   });
 });

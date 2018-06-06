@@ -106,15 +106,6 @@ contract RegulatedToken is DetailedERC20, MintableToken {
 
     Arbitrage(_arbitrator, _from, _to, _value);
     Transfer(_from, _to, _value);
-/*
-        require(_arbitrator != address(0));
-    require(multisigArbitrator != address(0));
-    require(msg.sender == multisigArbitrator);
-
-    Arbitrage(_arbitrator, _from, _to, _value);
-
-    super.transferFrom(_from, _to, _value);
-*/
   }
 
   /**

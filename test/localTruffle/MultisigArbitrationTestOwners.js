@@ -20,6 +20,7 @@ contract('MultiSigArbitration', async function(accounts) {
   const owner = accounts[0];
   const receiver = accounts[1];
   const arbitrator = accounts[2];
+  const issuer = accounts[4];
 
   const fromOwner = { from: owner };
   const fromReceiver = { from: receiver };
@@ -37,7 +38,8 @@ contract('MultiSigArbitration', async function(accounts) {
 
     arbitration = await MultiSigArbitration.new([owner], 1);
 
-    await storage.allowNewShareholders(token.address, true);
+    await storage.setIssuer(token.address, issuer);
+    await storage.allowNewShareholders(token.address, true, { from: issuer });
     await storage.addWhitelist(whitelist.address);
     await token.setMultisigArbitrator(arbitration.address);
 
