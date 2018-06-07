@@ -71,38 +71,38 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
    */
   function check(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
 
-    address issuer = settingsStorage.getIssuerAddress(_token);
-    bool isIssuer = _from == issuer || _to == issuer;
+    address company = settingsStorage.getCompanyAddress(_token);
+    bool isCompany = _from == company || _to == company;
 
-    // trading is locked, can transfer to or from issuer
-    if (settingsStorage.getLocked(_token) && !isIssuer) {
+    // trading is locked, can transfer to or from company account
+    if (settingsStorage.getLocked(_token) && !isCompany) {
       return CHECK_ELOCKED;
     }
 
-    // if newShareholdersAllowed is not enabled, the transfer will only succeed if the buyer already has tokens or tranfers to or from issuer
-    if (!settingsStorage.newShareholdersAllowed(_token) && BasicToken(_token).balanceOf(_to) == 0 && !isIssuer) {
+    // if newShareholdersAllowed is not enabled, the transfer will only succeed if the buyer already has tokens or tranfers to or from company account
+    if (!settingsStorage.newShareholdersAllowed(_token) && BasicToken(_token).balanceOf(_to) == 0 && !isCompany) {
       return CHECK_ERALLOW;
     }
 
     bool f;
     string memory wlFrom;
     (f, wlFrom) = settingsStorage.isWhiteListed(_from);
-    if (!f) {
+    if (!f && !isCompany) {
       return CHECK_ESEND;
     }
 
     bool t;
     string memory wlTo;
     (t,wlTo) = settingsStorage.isWhiteListed(_to);
-    if (!t) {
+    if (!t && !isCompany) {
       return CHECK_ERECV;
     }
 
     // sender or receiver is under Regulation D, Non-US investors can trade at any time
-    // only issuer can send to US investors first year, US investors cannot sell these shares in the first year, except to the issuer
+    // only company account can send to US investors first year, US investors cannot sell these shares in the first year, except to the company account
     if ((keccak256(wlFrom) == keccak256("RegD") || keccak256(wlTo) == keccak256("RegD"))
       && block.timestamp < settingsStorage.getInititalOfferEndDate(_token)
-      && !isIssuer) {
+      && !isCompany) {
       return CHECK_ERREGD;
     }
 
