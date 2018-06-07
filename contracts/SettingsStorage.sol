@@ -158,7 +158,9 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    * @param  _token The address of the token
    * @param  _issuer Issuer to be set
    */
-  function setIssuer(address _token, address _issuer) onlyOwner public {
+  function setIssuer(address _token, address _issuer) public {
+    require((msg.sender == settings[_token].issuer && settings[_token].issuer != address(0)) ||
+            (msg.sender == owner && settings[_token].issuer == address(0)));
     require(_issuer != address(0));
     settings[_token].issuer = _issuer;
     IssuerSet(_token, _issuer);
@@ -169,7 +171,8 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    *
    * @param  _token The address of the token
    */
-  function removeIssuer(address _token) onlyOwner public {
+  function removeIssuer(address _token) public {
+    require(msg.sender == settings[_token].issuer && settings[_token].issuer != address(0));
     settings[_token].issuer = address(0);
     IssuerRemoved(_token);
   }

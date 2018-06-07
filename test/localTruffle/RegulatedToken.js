@@ -38,7 +38,6 @@ contract('RegulatedToken', async function(accounts) {
     regDWhitelist = await IssuanceWhiteList.new({ from: owner });
 
     await regDWhitelist.setWhitelistType("RegD");
-
     await storage.setIssuer(token.address, issuer);
     await storage.allowNewShareholders(token.address, true, { from: issuer });
     await storage.addWhitelist(whitelist.address);
@@ -267,7 +266,7 @@ contract('RegulatedToken', async function(accounts) {
         await whitelist.add(owner);
         await regDWhitelist.add(receiver);
         await assertBalances({ owner: 100, receiver: 0 });
-        await storage.setIssuer(token.address, owner);
+        await storage.setIssuer(token.address, owner, { from: issuer });
       });
 
       it('triggers a CheckStatus event and transfers funds', async () => {
@@ -291,7 +290,7 @@ contract('RegulatedToken', async function(accounts) {
         await whitelist.add(owner);
         await regDWhitelist.add(receiver);
         await assertBalances({ owner: 100, receiver: 0 });
-        await storage.setIssuer(token.address, owner);
+        await storage.setIssuer(token.address, owner, { from: issuer });
       });
 
       it('triggers a CheckStatus event, transfers funds from issuer then transfers funds back to issuer', async () => {
