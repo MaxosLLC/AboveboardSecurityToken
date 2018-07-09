@@ -51,13 +51,6 @@ interface ISettingsStorage {
   event IssuerSet(address token, address _issuer);
 
   /**
-   * @notice Triggered when an issuer is removed
-   *
-   * @param  token Address of the token
-   */
-  event IssuerRemoved(address token);
-
-  /**
    * @notice Triggered when a messaging address is set
    *
    * @param  _address Address of a messaging service

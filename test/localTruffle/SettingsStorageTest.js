@@ -80,19 +80,6 @@ contract('SettingsStorage', async accounts => {
       }
     });
 
-    it('removeIssuer', async () => {
-      let l = await storage.removeIssuer(token.address, { from: issuer });
-      assert.equal(l.logs[0].event, 'IssuerRemoved');
-    });
-
-    it('owner removeIssuer', async () => {
-      try {
-        await storage.removeIssuer(token.address, { from: owner });
-      } catch (e) {
-        assert.ok(e)
-      }
-    });
-
     it('getIssuerAddress', async () => {
       let l = await storage.setIssuer(token.address, accounts[1], { from: issuer });
       assert.equal(l.logs[0].event, 'IssuerSet');
