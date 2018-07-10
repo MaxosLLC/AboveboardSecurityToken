@@ -20,13 +20,6 @@ contract RegulatedToken is DetailedERC20, MintableToken {
   event CheckStatus(uint8 reason, address indexed spender, address indexed from, address indexed to, uint256 value);
 
   /**
-   * @notice Triggered when transfered by arbitrage
-  */
-  event Arbitrage(address _arbitrator, address _from, address _to, uint256 _value);
-
-  address private multisigArbitrator;
-
-  /**
    * @notice Address of the `ServiceRegistry` that has the location of the
    *         `RegulatorService` contract responsible for checking trade
    *         permissions.
@@ -82,28 +75,6 @@ contract RegulatedToken is DetailedERC20, MintableToken {
   }
 
   /**
-   * @notice Recover tokens from lost account. Called from Multi Signature Arbitrator contract
-   *
-   * @param _arbitrator Multi Signature Arbitrator contract
-   * @param _from The address of the sender
-   * @param _to The address of the receiver
-   * @param _value The number of tokens to transfer
-   */
-  function arbitrage(address _arbitrator, address _from, address _to, uint256 _value) public {
-    require(_to != address(0));
-    require(_arbitrator != address(0));
-    require(multisigArbitrator != address(0));
-    require(msg.sender == multisigArbitrator);
-    require(_value <= balances[_from]);
-
-    balances[_from] = balances[_from].sub(_value);
-    balances[_to] = balances[_to].add(_value);
-
-    Arbitrage(_arbitrator, _from, _to, _value);
-    Transfer(_from, _to, _value);
-  }
-
-  /**
    * @notice Performs the regulator check
    *
    * @dev This method raises a CheckStatus event indicating success or failure of the check
@@ -132,16 +103,5 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    */
   function _service() constant public returns (AboveboardRegDSWhitelistRegulatorService) {
     return AboveboardRegDSWhitelistRegulatorService(registry.service());
-  }
-
-  function setMultisigArbitrator(address _multisig) public {
-    require(_multisig != address(0));
-    require((msg.sender == multisigArbitrator && multisigArbitrator != address(0)) ||
-            (msg.sender == owner && multisigArbitrator == address(0)));
-    multisigArbitrator = _multisig;
-  }
-
-  function getMultisigArbitrator() constant public onlyOwner returns (address) {
-    return multisigArbitrator;
   }
 }

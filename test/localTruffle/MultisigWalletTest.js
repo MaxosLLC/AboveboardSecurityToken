@@ -41,7 +41,6 @@ contract('MultiSigWallet', async function(accounts) {
     await storage.setIssuer(token.address, issuer);
     await storage.allowNewShareholders(token.address, true, { from: issuer });
     await storage.addWhitelist(whitelist.address);
-    await token.setMultisigArbitrator(wallet.address);
 
     await token.mint(owner, 100);
     await token.finishMinting();
