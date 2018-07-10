@@ -71,8 +71,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
    */
   function check(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
 
-    address company = settingsStorage.getCompanyAddress(_token);
-    bool isCompany = _from == company || _to == company;
+    bool isCompany = _from == owner || _to == owner;
 
     // trading is locked, can transfer to or from company account
     if (settingsStorage.getLocked(_token) && !isCompany) {

@@ -58,15 +58,6 @@ interface ISettingsStorage {
   event MessagingAddressSet(string _address);
 
   /**
-   * @notice Triggered when a company account address is set
-   *
-   * @param  token Address of the token
-   *
-   * @param  _address Address of a company account
-   */
-  event CompanyAddressSet(address token, address _address);
-
-  /**
    * @notice Triggered when a new shareholders allowed/disallowed
    *
    * @param  token Address of the token

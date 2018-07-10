@@ -25,9 +25,6 @@ contract SettingsStorage is ISettingsStorage, Ownable {
 
     /// @dev Messaging address
     string messagingAddress;
-
-    /// @dev Company acccount address address
-    address companyAccount;
   }
 
   /// @dev Array of whitelists
@@ -213,23 +210,5 @@ contract SettingsStorage is ISettingsStorage, Ownable {
 
   function newShareholdersAllowed(address _token) view public returns(bool) {
     return settings[_token].newShareholdersAllowed;
-  }
-
-  /**
-   * @notice Set company account address
-   *
-   * @param  _token The address of the token
-   * @param  _address The address of the company account
-   */
-  function setCompanyAddress(address _token, address _address) public {
-
-    require(msg.sender == settings[_token].issuer);
-
-    settings[_token].companyAccount = _address;
-    CompanyAddressSet(_token, _address);
-  }
-
-  function getCompanyAddress(address _token) view public returns(address) {
-    return settings[_token].companyAccount;
   }
 }
