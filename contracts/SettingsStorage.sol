@@ -25,7 +25,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
   string public messagingAddress;
 
   /// @dev Array of whitelists
-  IssuanceWhiteList[] public whitelists;
+  IssuanceWhiteList[] whitelists;
 
   /**
    * @notice Locks the ability to trade a token
@@ -40,6 +40,15 @@ contract SettingsStorage is ISettingsStorage, Ownable {
 
     locked = _locked;
     LogLockSet(_locked);
+  }
+
+  /**
+   * @notice Get whitelists
+   *
+   * @return IssuanceWhiteList[] Array of whitelists
+   */
+  function getWhitelists() view public returns (IssuanceWhiteList[]) {
+    return whitelists;
   }
 
   function addWhitelist(IssuanceWhiteList _whitelist) onlyOwner public {
