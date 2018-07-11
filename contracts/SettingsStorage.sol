@@ -25,7 +25,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
   string public messagingAddress;
 
   /// @dev Array of whitelists
-  IssuanceWhiteList[] whitelists;
+  IssuanceWhiteList[] public whitelists;
 
   /**
    * @notice Locks the ability to trade a token
