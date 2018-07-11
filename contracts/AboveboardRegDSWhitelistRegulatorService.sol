@@ -21,9 +21,6 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
   // @dev Check error reason: New shareholders are not allowed
   uint8 constant private CHECK_ERALLOW = 2;
 
-  // @dev Check error reason: Sender is not allowed to send the token
-  uint8 constant private CHECK_ESEND = 3;
-
   // @dev Check error reason: Receiver is not allowed to receive the token
   uint8 constant private CHECK_ERECV = 4;
 
@@ -86,9 +83,6 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     bool f;
     string memory wlFrom;
     (f, wlFrom) = settingsStorage.isWhiteListed(_from);
-    if (!f && !isCompany) {
-      return CHECK_ESEND;
-    }
 
     bool t;
     string memory wlTo;
