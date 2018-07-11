@@ -7,18 +7,17 @@ import "../IssuanceWhiteList.sol";
 interface ISettingsStorage {
 
   /// @dev Event raised when a token's locked setting is set
-  event LogLockSet(address indexed token, bool locked);
+  event LogLockSet(bool locked);
 
   /// @dev Event raised when a token's partial transfer setting is set
-  event LogPartialTransferSet(address indexed token, bool enabled);
+  event LogPartialTransferSet(bool enabled);
 
   /**
    * @notice Triggered when an initial offering end date is set
    *
-   * @param  token Address of the token
    * @param  _date Initial offering end date
    */
-  event InititalOfferEndDateSet(address token, uint256 _date);
+  event InititalOfferEndDateSet(uint256 _date);
 
   /**
    * @notice Triggered when whitelist is added to the array
@@ -37,18 +36,16 @@ interface ISettingsStorage {
   /**
    * @notice Triggered when a Regulation D whitelist is set
    *
-   * @param  token Address of the token
    * @param  whitelist Address of the Regulation D whitelist
    */
-  event RegulationDWhitelistSet(address token, address whitelist);
+  event RegulationDWhitelistSet(address whitelist);
 
   /**
    * @notice Triggered when an issuer is set
    *
-   * @param  token Address of the token
    * @param  _issuer Address of an issuer
    */
-  event IssuerSet(address token, address _issuer);
+  event IssuerSet(address _issuer);
 
   /**
    * @notice Triggered when a messaging address is set
@@ -60,10 +57,9 @@ interface ISettingsStorage {
   /**
    * @notice Triggered when a new shareholders allowed/disallowed
    *
-   * @param  token Address of the token
    * @param  allow True for allowing new shareholders
    */
-  event NewShareholdersAllowance(address token, bool allow);
+  event NewShareholdersAllowance(bool allow);
 
   /**
    * @dev Add a new whitelist

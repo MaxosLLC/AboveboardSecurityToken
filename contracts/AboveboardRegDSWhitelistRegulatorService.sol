@@ -74,12 +74,12 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     bool isCompany = _from == owner || _to == owner;
 
     // trading is locked, can transfer to or from company account
-    if (settingsStorage.getLocked(_token) && !isCompany) {
+    if (settingsStorage.locked() && !isCompany) {
       return CHECK_ELOCKED;
     }
 
     // if newShareholdersAllowed is not enabled, the transfer will only succeed if the buyer already has tokens or tranfers to or from company account
-    if (!settingsStorage.newShareholdersAllowed(_token) && BasicToken(_token).balanceOf(_to) == 0 && !isCompany) {
+    if (!settingsStorage.newShareholdersAllowed() && BasicToken(_token).balanceOf(_to) == 0 && !isCompany) {
       return CHECK_ERALLOW;
     }
 
@@ -100,7 +100,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     // sender or receiver is under Regulation D, Non-US investors can trade at any time
     // only company account can send to US investors first year, US investors cannot sell these shares in the first year, except to the company account
     if ((keccak256(wlFrom) == keccak256("RegD") || keccak256(wlTo) == keccak256("RegD"))
-      && block.timestamp < settingsStorage.getInititalOfferEndDate(_token)
+      && block.timestamp < settingsStorage.initialOfferEndDate()
       && !isCompany) {
       return CHECK_ERREGD;
     }
