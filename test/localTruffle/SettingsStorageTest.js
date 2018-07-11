@@ -22,7 +22,7 @@ contract('SettingsStorage', async accounts => {
     token = await RegulatedToken.new(registry.address, 'Test', 'TEST');
     whitelist = await IssuanceWhiteList.new({ from: owner });
 
-    await storage.setIssuer(token.address, issuer, { from: owner });
+    await storage.setIssuer(issuer, { from: owner });
   });
 
   describe('manage whitelists', () => {
@@ -50,23 +50,23 @@ contract('SettingsStorage', async accounts => {
 
   describe('manage settings', () => {
     it('setLocked', async () => {
-      let l = await storage.setLocked(token.address, true, { from: issuer });
+      let l = await storage.setLocked(true, { from: issuer });
       assert.equal(l.logs[0].event, 'LogLockSet');
     });
 
     it('setInititalOfferEndDate', async () => {
-      let l = await storage.setInititalOfferEndDate(token.address, new Date().getTime()/1000.0, { from: issuer });
+      let l = await storage.setInititalOfferEndDate(new Date().getTime()/1000.0, { from: issuer });
       assert.equal(l.logs[0].event, 'InititalOfferEndDateSet');
     });
 
     it('setIssuer', async () => {
-      let l = await storage.setIssuer(token.address, accounts[1], { from: issuer });
+      let l = await storage.setIssuer(accounts[1], { from: issuer });
       assert.equal(l.logs[0].event, 'IssuerSet');
     });
 
     it('setIssuer from owner after already set', async () => {
       try {
-        await storage.setIssuer(token.address, accounts[1], { from: owner });
+        await storage.setIssuer(accounts[1], { from: owner });
       } catch (e) {
         assert.ok(e)
       }
@@ -74,38 +74,33 @@ contract('SettingsStorage', async accounts => {
 
     it('setIssuer from hacker', async () => {
       try {
-        await storage.setIssuer(token.address, accounts[1], { from: hacker });
+        await storage.setIssuer(accounts[1], { from: hacker });
       } catch (e) {
         assert.ok(e)
       }
     });
 
     it('getIssuerAddress', async () => {
-      let l = await storage.setIssuer(token.address, accounts[1], { from: issuer });
+      let l = await storage.setIssuer(accounts[1], { from: issuer });
       assert.equal(l.logs[0].event, 'IssuerSet');
 
-      l = await storage.getIssuerAddress(token.address);
+      l = await storage.issuer.call();
       assert.equal(l, accounts[1]);
     });
 
     it('setMessagingAddress', async () => {
-      let l = await storage.setMessagingAddress(token.address, 'someAddress');
-      assert.equal(l.logs[0].event, 'MessagingAddressSet');
-    });
-
-    it('getMessagingAddress', async () => {
-      let l = await storage.setMessagingAddress(token.address, 'someAddress');
+      let l = await storage.setMessagingAddress('someAddress');
       assert.equal(l.logs[0].event, 'MessagingAddressSet');
 
-      l = await storage.getMessagingAddress(token.address);
+      l = await storage.messagingAddress.call();
       assert.equal(l, 'someAddress');
     });
 
     it('allowNewShareholders', async () => {
-      let l = await storage.allowNewShareholders(token.address, true, { from: issuer });
+      let l = await storage.allowNewShareholders(true, { from: issuer });
       assert.equal(l.logs[0].event, 'NewShareholdersAllowance');
 
-      l = await storage.newShareholdersAllowed(token.address);
+      l = await storage.newShareholdersAllowed.call();
       assert.equal(l, true);
     });
   });
