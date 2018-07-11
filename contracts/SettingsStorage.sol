@@ -6,53 +6,49 @@ import "./interfaces/ISettingsStorage.sol";
 
 contract SettingsStorage is ISettingsStorage, Ownable {
 
-  struct Settings {
+  /**
+    * @dev Toggle for locking/unlocking trades at a token level.
+    *      The default behavior of the zero memory state for locking will be unlocked.
+    */
+  bool public locked;
 
-    /**
-     * @dev Toggle for locking/unlocking trades at a token level.
-     *      The default behavior of the zero memory state for locking will be unlocked.
-     */
-    bool locked;
+  /// @dev Toggle for allowing/disallowing new shareholders
+  bool public newShareholdersAllowed;
 
-    /// @dev Toggle for allowing/disallowing new shareholders
-    bool newShareholdersAllowed;
+  /// @dev Issuer of the token
+  address public issuer;
 
-    /// @dev Issuer of the token
-    address issuer;
+  /// @dev Initial offering end date
+  uint256 public initialOfferEndDate;
 
-    /// @dev Initial offering end date
-    uint256 initialOfferEndDate;
-
-    /// @dev Messaging address
-    string messagingAddress;
-
-    /// @dev Company acccount address address
-    address companyAccount;
-  }
+  /// @dev Messaging address
+  string public messagingAddress;
 
   /// @dev Array of whitelists
   IssuanceWhiteList[] whitelists;
 
-  /// @notice Permissions that allow/disallow token trades on a per token level
-  mapping(address => Settings) settings;
-
   /**
    * @notice Locks the ability to trade a token
    *
-   * @dev    This method can only be called by this contract's owner
+   * @dev    This method can only be called by this contract's issuer
    *
-   * @param  _token The address of the token to lock
+   * @param  _locked True for lock the token
    */
-  function setLocked(address _token, bool _locked) public {
+  function setLocked(bool _locked) public {
 
-    require(msg.sender == settings[_token].issuer);
+    require(msg.sender == issuer);
 
-    settings[_token].locked = _locked;
-    LogLockSet(_token, _locked);
+    locked = _locked;
+    LogLockSet(_locked);
   }
 
-  function getLocked(address _token) view public returns(bool) {
-    return settings[_token].locked;
+  /**
+   * @notice Get whitelists
+   *
+   * @return IssuanceWhiteList[] Array of whitelists
+   */
+  function getWhitelists() view public returns (IssuanceWhiteList[]) {
+    return whitelists;
   }
 
   function addWhitelist(IssuanceWhiteList _whitelist) onlyOwner public {
@@ -111,15 +107,6 @@ contract SettingsStorage is ISettingsStorage, Ownable {
   }
 
   /**
-   * @notice Get whitelists
-   *
-   * @return WhiteList[] Array of whitelists
-   */
-  function getWhitelists() view public returns (IssuanceWhiteList[]) {
-    return whitelists;
-  }
-
-  /**
    * @notice Check if address is indeed in one of the whitelists
    *
    * @param _address Buyer to be added to whitelist
@@ -137,99 +124,53 @@ contract SettingsStorage is ISettingsStorage, Ownable {
   /**
    * @notice Set initial offering end date
    *
-   * @param  _token The address of the token
    * @param  _date Initial offering end date
    */
-  function setInititalOfferEndDate(address _token, uint256 _date) public {
+  function setInititalOfferEndDate(uint256 _date) public {
 
-    require(msg.sender == settings[_token].issuer);
+    require(msg.sender == issuer);
 
-    settings[_token].initialOfferEndDate = _date;
-    InititalOfferEndDateSet(_token, _date);
-  }
-
-  function getInititalOfferEndDate(address _token) view public returns(uint256) {
-    return settings[_token].initialOfferEndDate;
+    initialOfferEndDate = _date;
+    InititalOfferEndDateSet(_date);
   }
 
   /**
    * @notice Set issuer of token
    *
-   * @param  _token The address of the token
    * @param  _issuer Issuer to be set
    */
-  function setIssuer(address _token, address _issuer) public {
-    require((msg.sender == settings[_token].issuer && settings[_token].issuer != address(0)) ||
-            (msg.sender == owner && settings[_token].issuer == address(0)));
-    settings[_token].issuer = _issuer;
-    IssuerSet(_token, _issuer);
-  }
+  function setIssuer(address _issuer) public {
 
-  /**
-   * @notice Get issuer's address
-   *
-   * @param  _token The address of the token
-   */
-  function getIssuerAddress(address _token) view public returns (address) {
-    return settings[_token].issuer;
-  }
+    require((msg.sender == issuer && issuer != address(0)) ||
+            (msg.sender == owner && issuer == address(0)));
 
-  /**
-   * @notice Get messaging address
-   *
-   * @param  _token The address of the token
-   */
-  function getMessagingAddress(address _token) view public returns (string) {
-    return settings[_token].messagingAddress;
+    issuer = _issuer;
+    IssuerSet(_issuer);
   }
 
   /**
    * @notice Set messaging address
    *
-   * @param  _token The address of the token
    * @param  _address Messaging address to be set
    */
-  function setMessagingAddress(address _token, string _address) public {
+  function setMessagingAddress(string _address) public {
 
-    require(msg.sender == owner || msg.sender == settings[_token].issuer);
+    require(msg.sender == owner || msg.sender == issuer);
 
-    settings[_token].messagingAddress = _address;
+    messagingAddress = _address;
     MessagingAddressSet(_address);
   }
 
   /**
    * @notice Allow/disallow new shareholders
    *
-   * @param  _token The address of the token
    * @param  allow Allow/disallow new shareholders
    */
-  function allowNewShareholders(address _token, bool allow) public {
+  function allowNewShareholders(bool allow) public {
 
-    require(msg.sender == settings[_token].issuer);
+    require(msg.sender == issuer);
 
-    settings[_token].newShareholdersAllowed = allow;
-    NewShareholdersAllowance(_token, allow);
-  }
-
-  function newShareholdersAllowed(address _token) view public returns(bool) {
-    return settings[_token].newShareholdersAllowed;
-  }
-
-  /**
-   * @notice Set company account address
-   *
-   * @param  _token The address of the token
-   * @param  _address The address of the company account
-   */
-  function setCompanyAddress(address _token, address _address) public {
-
-    require(msg.sender == settings[_token].issuer);
-
-    settings[_token].companyAccount = _address;
-    CompanyAddressSet(_token, _address);
-  }
-
-  function getCompanyAddress(address _token) view public returns(address) {
-    return settings[_token].companyAccount;
+    newShareholdersAllowed = allow;
+    NewShareholdersAllowance(allow);
   }
 }

@@ -57,7 +57,7 @@ contract RegulatedToken is DetailedERC20, MintableToken {
   }
 
   /**
-   * @notice ERC-20 overridden function that include logic to check for trade validity.
+   * @notice Transfer tokens from one address to another
    *
    * @param _from The address of the sender
    * @param _to The address of the receiver
@@ -65,13 +65,15 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    *
    * @return `true` if successful and `false` if unsuccessful
    */
-  function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
-      if (_check(_from, _to, _value)) {
-        return super.transferFrom(_from, _to, _value);
-      }
-      else {
-        return false;
-      }
+  function transferFrom(address _from, address _to, uint256 _value) onlyOwner public returns (bool) {
+    require(_to != address(0));
+    require(_from != address(0));
+    require(_value <= balances[_from]);
+
+    balances[_from] = balances[_from].sub(_value);
+    balances[_to] = balances[_to].add(_value);
+    Transfer(_from, _to, _value);
+    return true;
   }
 
   /**

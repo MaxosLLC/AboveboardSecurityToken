@@ -31,15 +31,11 @@ module.exports = async function(deployer, network, accounts) {
         });
       }).then(() => {
         return RegulatedToken.deployed().then(function(instance) {
-          return storage.setIssuer(instance.address, accounts[0]);
+          return storage.setIssuer(accounts[0]);
         });
       }).then(() => {
         return RegulatedToken.deployed().then(function(instance) {
-          return storage.setCompanyAddress(instance.address, accounts[0]);
-        });
-      }).then(() => {
-        return RegulatedToken.deployed().then(function(instance) {
-          return storage.allowNewShareholders(instance.address, true);
+          return storage.allowNewShareholders(true);
         });
       });
 };
