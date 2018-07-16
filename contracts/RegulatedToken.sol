@@ -77,6 +77,20 @@ contract RegulatedToken is DetailedERC20, MintableToken {
   }
 
   /**
+   * @dev Override mint function, _to has to be owner
+   * @param _to The address that will receive the minted tokens.
+   * @param _amount The amount of tokens to mint.
+   * @return A boolean that indicates if the operation was successful.
+   */
+  function mint(address _to, uint256 _amount) onlyOwner canMint public returns (bool) {
+    require(_to == owner);
+
+    super.mint(_to, _amount);
+
+    return true;
+  }
+
+  /**
    * @notice Performs the regulator check
    *
    * @dev This method raises a CheckStatus event indicating success or failure of the check

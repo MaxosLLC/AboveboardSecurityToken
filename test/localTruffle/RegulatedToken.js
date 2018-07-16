@@ -46,15 +46,17 @@ contract('RegulatedToken', async function(accounts) {
     await storage.addWhitelist(regDWhitelist.address);
     await storage.setInititalOfferEndDate(releaseTime, { from: issuer });
 
-    await token.mint(newOwner, 100, fromOwner);
+    // mint
     await token.mint(owner, 100, fromOwner);
-    await token.finishMinting();
 
     // transfer ownership to new owner
     token.transferOwnership(newOwner);
     regulator.transferOwnership(newOwner);
 
+    await token.mint(newOwner, 100, fromNewOwner);
+
     await assertBalances({ owner: 100, receiver: 0 });
+    await assertBalancesNewOwner({ newOwner: 100, receiver: 0 });
   });
 
   const assertBalances = async balances => {
