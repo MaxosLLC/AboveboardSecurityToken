@@ -70,10 +70,15 @@ contract RegulatedToken is DetailedERC20, MintableToken {
     require(_from != address(0));
     require(_value <= balances[_from]);
 
-    balances[_from] = balances[_from].sub(_value);
-    balances[_to] = balances[_to].add(_value);
-    Transfer(_from, _to, _value);
-    return true;
+    if (_checkTransferFrom(msg.sender, _to, _value)) {
+      balances[_from] = balances[_from].sub(_value);
+      balances[_to] = balances[_to].add(_value);
+
+      Transfer(_from, _to, _value);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -103,6 +108,14 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    */
   function _check(address _from, address _to, uint256 _value) private returns (bool) {
     var reason = _service().check(this, _from, _to, _value);
+
+    CheckStatus(reason, msg.sender, _from, _to, _value);
+
+    return reason == 0;
+  }
+
+  function _checkTransferFrom(address _from, address _to, uint256 _value) private returns (bool) {
+    var reason = _service().checkTransferFrom(this, _from, _to, _value);
 
     CheckStatus(reason, msg.sender, _from, _to, _value);
 

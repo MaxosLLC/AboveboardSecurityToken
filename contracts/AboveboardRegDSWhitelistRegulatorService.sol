@@ -21,11 +21,17 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
   // @dev Check error reason: New shareholders are not allowed
   uint8 constant private CHECK_ERALLOW = 2;
 
+  // @dev Check error reason: Sender is not allowed to send the token
+  uint8 constant private CHECK_ESEND = 3;
+
   // @dev Check error reason: Receiver is not allowed to receive the token
   uint8 constant private CHECK_ERECV = 4;
 
   // @dev Check error reason: Transfer before initial offering end date
   uint8 constant private CHECK_ERREGD = 5;
+
+  // @dev Check error reason: Sender is not issuer
+  uint8 constant private CHECK_ERISS = 6;
 
   /**
    * @dev Validate contract address
@@ -93,6 +99,22 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
       && block.timestamp < settingsStorage.initialOfferEndDate()
       && !isCompany) {
       return CHECK_ERREGD;
+    }
+
+    return CHECK_SUCCESS;
+  }
+
+  // the sender is the multisig wallet, or the _from is the company account and the sender is the issuer
+  function checkTransferFrom(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
+
+    bool isIssuer = settingsStorage.issuer() == msg.sender;
+
+    if (msg.sender != owner) {
+      return CHECK_ESEND;
+    }
+
+    if (_from != owner && msg.sender != settingsStorage.issuer()) {
+      return CHECK_ERISS;
     }
 
     return CHECK_SUCCESS;
