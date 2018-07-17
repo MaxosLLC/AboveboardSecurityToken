@@ -27,6 +27,15 @@ contract SettingsStorage is ISettingsStorage, Ownable {
   /// @dev Array of whitelists
   IssuanceWhiteList[] whitelists;
 
+  mapping(string => bool) issuerPermissions;
+
+  function setIssuerPermission(string permission, bool setting) public {
+
+    require (msg.sender == owner);
+
+    issuerPermissions[permission] = setting;
+  }
+
   /**
    * @notice Locks the ability to trade a token
    *
@@ -36,7 +45,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    */
   function setLocked(bool _locked) public {
 
-    require(msg.sender == issuer);
+    require(issuerPermissions["locked"] && msg.sender == issuer || msg.sender == owner);
 
     locked = _locked;
     LogLockSet(_locked);
@@ -128,7 +137,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    */
   function setInititalOfferEndDate(uint256 _date) public {
 
-    require(msg.sender == issuer);
+    require(issuerPermissions["locked"] && msg.sender == issuer || msg.sender == owner);
 
     initialOfferEndDate = _date;
     InititalOfferEndDateSet(_date);
@@ -155,7 +164,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    */
   function setMessagingAddress(string _address) public {
 
-    require(msg.sender == owner || msg.sender == issuer);
+    require(issuerPermissions["locked"] && msg.sender == issuer || msg.sender == owner);
 
     messagingAddress = _address;
     MessagingAddressSet(_address);
@@ -168,7 +177,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    */
   function allowNewShareholders(bool allow) public {
 
-    require(msg.sender == issuer);
+    require(issuerPermissions["locked"] && msg.sender == issuer || msg.sender == owner);
 
     newShareholdersAllowed = allow;
     NewShareholdersAllowance(allow);
