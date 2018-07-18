@@ -1,8 +1,7 @@
 pragma solidity ^0.4.18;
 
 import "./zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "./zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
-import "./zeppelin-solidity/contracts/token/ERC20/BasicToken.sol";
+import "./zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
 import "./interfaces/WhiteList.sol";
 import "./interfaces/IRegulatorService.sol";
 import "./SettingsStorage.sol";
@@ -48,9 +47,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
 
   /**
    * @notice Constructor
-   *
    * @param _storage The address of the `SettingsStorage`
-   *
    */
   constructor (address _storage) public {
     require(_storage != address(0));
@@ -74,7 +71,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
    */
   function check(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
 
-    bool isCompany = _from == owner || _to == owner;
+    bool isCompany = _from == MintableToken(_token).owner() || _to == MintableToken(_token).owner();
 
     // trading is locked, can transfer to or from company account
     if (settingsStorage.locked() && !isCompany) {
@@ -82,7 +79,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     }
 
     // if newShareholdersAllowed is not enabled, the transfer will only succeed if the buyer already has tokens or tranfers to or from company account
-    if (!settingsStorage.newShareholdersAllowed() && BasicToken(_token).balanceOf(_to) == 0 && !isCompany) {
+    if (!settingsStorage.newShareholdersAllowed() && MintableToken(_token).balanceOf(_to) == 0 && !isCompany) {
       return CHECK_ERALLOW;
     }
 
@@ -108,10 +105,11 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
   function checkTransferFrom(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
 
     bool isIssuer = msg.sender == settingsStorage.issuer();
+    address tokenOwner = MintableToken(_token).owner();
 
-    if (msg.sender != owner || (_from != owner && !isIssuer)) {
+    if (msg.sender != tokenOwner || (_from != tokenOwner && !isIssuer)) {
 
-      if (msg.sender != owner) {
+      if (msg.sender != tokenOwner) {
         return CHECK_ESEND;
       }
 

@@ -33,7 +33,7 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    * @param _name Name of the token: See DetailedERC20
    * @param _symbol Symbol of the token: See DetailedERC20
    */
-  function RegulatedToken(address _registry, string _name, string _symbol) public
+  constructor (address _registry, string _name, string _symbol) public
     DetailedERC20(_name, _symbol, RTOKEN_DECIMALS) {
     require(_registry != address(0));
     registry = ServiceRegistry(_registry);
