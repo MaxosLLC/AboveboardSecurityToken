@@ -24,6 +24,11 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
     _;
   }
 
+  modifier onlyAgentOrOwnerOrQualifier() {
+    require(msg.sender == owner || msg.sender == agent || qualifiers[msg.sender]);
+    _;
+  }
+
   function setAgent(address _agent) onlyOwner public {
 
     agent = _agent;
@@ -127,7 +132,7 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
     return membersAddress;
   }
 
-  function getQualifiers() onlyAgentOrOwner view public returns (address[]) {
+  function getQualifiers() onlyAgentOrOwnerOrQualifier view public returns (address[]) {
     return qualifiersAddress;
   }
 }
