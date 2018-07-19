@@ -7,7 +7,7 @@ import "./interfaces/IRegulatorService.sol";
 import "./SettingsStorage.sol";
 
 /// @notice Standard interface for `RegulatorService`s
-contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable {
+contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, ITransferManager, Ownable {
 
   SettingsStorage settingsStorage;
 
