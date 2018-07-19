@@ -62,13 +62,7 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
 
   }
 
-  function add(address _buyer) public returns (bool) {
-
-    // make only executable by owner, agent, and qualifiers
-    bool isQualifier = qualifiers[msg.sender];
-
-    // require that the caller is the owner of the contract, the agent or one of the qualifiers
-    require(msg.sender == owner || msg.sender == agent || isQualifier);
+  function add(address _buyer) onlyAgentOrOwnerOrQualifier public returns (bool) {
 
     if (!members[_buyer]) {
       uint256 id = membersAddress.length;
@@ -81,13 +75,7 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
     MemberAdded(_buyer);
   }
 
-  function addBuyers(address[] _buyers) public returns (bool) {
-
-    // make only executable by owner, agent, and qualifiers
-    bool isQualifier = qualifiers[msg.sender];
-
-    // require that the caller is the owner of the contract, the agent or one of the qualifiers
-    require(msg.sender == owner || msg.sender == agent || isQualifier);
+  function addBuyers(address[] _buyers) onlyAgentOrOwnerOrQualifier public returns (bool) {
 
     for (uint256 i = 0; i < _buyers.length; i++) {
 
@@ -103,13 +91,7 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
     }
   }
 
-  function remove(address _buyer) public returns (bool) {
-
-    // make only executable by owner, agent, and qualifiers
-    bool isQualifier = qualifiers[msg.sender];
-
-    // require that the caller is the owner of the contract, the agent or one of the qualifiers
-    require(msg.sender == owner || msg.sender == agent || isQualifier);
+  function remove(address _buyer) onlyAgentOrOwnerOrQualifier public returns (bool) {
 
     if (members[_buyer]) {
       uint256 id = membersIndex[_buyer];
@@ -128,7 +110,7 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
 
   }
 
-  function getBuyers() onlyAgentOrOwner view public returns (address[]) {
+  function getBuyers() onlyAgentOrOwnerOrQualifier view public returns (address[]) {
     return membersAddress;
   }
 
