@@ -1,13 +1,16 @@
 pragma solidity ^0.4.18;
 
-import "./zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "./zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
-import "./zeppelin-solidity/contracts/token/ERC20/BasicToken.sol";
-import "./polymath/contracts/ITransferManager.sol";
-import "./interfaces/WhiteList.sol";
-import "./SettingsStorage.sol";
+import "../zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "../zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
+import "../zeppelin-solidity/contracts/token/ERC20/BasicToken.sol";
+import "./contracts/ITransferManager.sol";
+import "../interfaces/WhiteList.sol";
+import "../SettingsStorage.sol";
 
-contract PolymathRegulatorService is ITransferManager, Ownable {
+contract AboveboardTransferManager is ITransferManager, Ownable {
+
+  bytes32 public constant WHITELIST = "WHITELIST";
+  bytes32 public constant FLAGS = "FLAGS";
 
   event ReplaceStorage(address oldStorage, address newStorage);
 
@@ -35,7 +38,18 @@ contract PolymathRegulatorService is ITransferManager, Ownable {
    * @param _polyAddress The address of the `PolymathToken`
    *
    */
-  constructor (address _securityToken, address _polyAddress) IModule(_securityToken, _polyAddress) public  {
+  constructor (address _securityToken, address _polyAddress) public IModule(_securityToken, _polyAddress) {
+  }
+
+  function getPermissions() public view returns(bytes32[]) {
+    bytes32[] memory allPermissions = new bytes32[](2);
+    allPermissions[0] = WHITELIST;
+    allPermissions[1] = FLAGS;
+    return allPermissions;
+  }
+
+  function getInitFunction() public returns(bytes4) {
+    return bytes4(0);
   }
 
   /*

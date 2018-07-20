@@ -1,6 +1,6 @@
 const IssuanceWhiteList = artifacts.require("./IssuanceWhiteList.sol")
 const SettingsStorage = artifacts.require("./SettingsStorage.sol")
-const RegulatorService = artifacts.require("./PolymathRegulatorService.sol")
+const RegulatorService = artifacts.require("./polymath/AboveboardTransferManager.sol")
 // const RegulatedToken = artifacts.require("./RegulatedToken.sol")
 
 module.exports = async (deployer, network, accounts) => {
