@@ -7,7 +7,9 @@ import "./interfaces/IRegulatorService.sol";
 import "./SettingsStorage.sol";
 
 /// @notice Standard interface for `RegulatorService`s
-contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, ITransferManager, Ownable {
+contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable {
+
+  BasicToken public deployedToken;
 
   SettingsStorage settingsStorage;
 
@@ -49,8 +51,10 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, ITransfe
    * @notice Constructor
    * @param _storage The address of the `SettingsStorage`
    */
-  constructor (address _storage) public {
+  constructor (address _token, address _storage) public {
+    require(_token != address(0));
     require(_storage != address(0));
+    deployedToken = BasicToken(_token);
     settingsStorage = SettingsStorage(_storage);
   }
 
@@ -61,7 +65,6 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, ITransfe
    * @dev    This method *MAY* call back to the token contract specified by `_token` for
    *         more information needed to enforce trade approval.
    *
-   * @param  _token The address of the token to be transfered
    * @param  _from The address of the sender account
    * @param  _to The address of the receiver account
    * @param  _amount The quantity of the token to trade
@@ -69,7 +72,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, ITransfe
    * @return uint8 The reason code: 0 means success.  Non-zero values are left to the implementation
    *               to assign meaning.
    */
-  function check(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
+  function check(address _from, address _to, uint256 _amount) public returns (uint8) {
 
     bool isCompany = _from == MintableToken(_token).owner() || _to == MintableToken(_token).owner();
 

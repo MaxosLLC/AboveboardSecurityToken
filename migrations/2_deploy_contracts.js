@@ -1,41 +1,24 @@
-var IssuanceWhiteList = artifacts.require("./IssuanceWhiteList.sol");
-var SettingsStorage = artifacts.require("./SettingsStorage.sol");
-var RegulatorService = artifacts.require("./AboveboardRegDSWhitelistRegulatorService.sol");
-var ServiceRegistry = artifacts.require("./ServiceRegistry.sol");
-var RegulatedToken = artifacts.require("./RegulatedToken.sol");
-var storage;
+const IssuanceWhiteList = artifacts.require("./IssuanceWhiteList.sol")
+const SettingsStorage = artifacts.require("./SettingsStorage.sol")
+const RegulatorService = artifacts.require("./PolymathRegulatorService.sol")
+// const RegulatedToken = artifacts.require("./RegulatedToken.sol")
 
-module.exports = async function(deployer, network, accounts) {
+module.exports = async (deployer, network, accounts) => {
+  await deployer.deploy(IssuanceWhiteList).catch(e => console.log('Error deploying IssuanceWhiteList ', e.message))
+  // await deployer.deploy(RegulatedToken, 'AboveboardStock', 'ABST')
+  await deployer.deploy(SettingsStorage).catch(e => console.log('Error deploying SettingsStorage ', e.message))
+  await deployer.deploy(RegulatorService, '0x86976312f1e5682E637C689B062a2B053e9c4c4c', '0x40830eDF059FF1eF1b499C81F2D556077f3a5F29', { gas: 5000000 }).catch(e => console.log('Error deploying RegulatorService ', e.message))
 
-    return deployer.deploy(IssuanceWhiteList)
-      .then(() => {
-        return IssuanceWhiteList.deployed().then(function(instance) {
-          return instance.setWhitelistType("RegS");
-        });
-      }).then(() => {
-        return IssuanceWhiteList.deployed().then(function(instance) {
-          return instance.add(accounts[0]);
-        });
-      }).then(() => {
-        return deployer.deploy(SettingsStorage);
-      }).then(() => {
-        return deployer.deploy(RegulatorService, SettingsStorage.address);
-      }).then(() => {
-        return deployer.deploy(ServiceRegistry, RegulatorService.address);
-      }).then(() => {
-        return deployer.deploy(RegulatedToken, ServiceRegistry.address, 'AboveboardStock', 'ABST');
-      }).then(() => {
-        return SettingsStorage.deployed().then(function(instance) {
-          storage = instance;
-          return instance.addWhitelist(IssuanceWhiteList.address);
-        });
-      }).then(() => {
-        return RegulatedToken.deployed().then(function(instance) {
-          return storage.setIssuer(accounts[0]);
-        });
-      }).then(() => {
-        return RegulatedToken.deployed().then(function(instance) {
-          return storage.allowNewShareholders(true);
-        });
-      });
-};
+  // await RegulatedToken.deployed()
+  const regulatorService = await RegulatorService.deployed()
+  regulatorService.replaceStorage(SettingsStorage.address)
+
+  const whitelist = await IssuanceWhiteList.deployed()
+  await whitelist.setWhitelistType('RegS')
+
+  const storage = await SettingsStorage.deployed()
+  await storage.addWhitelist(IssuanceWhiteList.address)
+
+  await storage.setIssuer(accounts[0])
+  await storage.allowNewShareholders(true)
+}
