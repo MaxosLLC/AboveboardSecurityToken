@@ -74,7 +74,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
    */
   function check(address _from, address _to, uint256 _amount) public returns (uint8) {
 
-    bool isCompany = _from == MintableToken(_token).owner() || _to == MintableToken(_token).owner();
+    bool isCompany = _from == MintableToken(deployedToken).owner() || _to == MintableToken(deployedToken).owner();
 
     // trading is locked, can transfer to or from company account
     if (settingsStorage.locked() && !isCompany) {
@@ -82,7 +82,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     }
 
     // if newShareholdersAllowed is not enabled, the transfer will only succeed if the buyer already has tokens or tranfers to or from company account
-    if (!settingsStorage.newShareholdersAllowed() && MintableToken(_token).balanceOf(_to) == 0 && !isCompany) {
+    if (!settingsStorage.newShareholdersAllowed() && MintableToken(deployedToken).balanceOf(_to) == 0 && !isCompany) {
       return CHECK_ERALLOW;
     }
 
