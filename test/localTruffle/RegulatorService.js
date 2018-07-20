@@ -22,21 +22,10 @@ contract('ServiceRegistry', async accounts => {
     service = await RegulatorService.new(storage.address, { from: owner });
   });
 
-  describe('ownership', () => {
-    it('allows ownership transfer', async () => {
-      await helpers.expectThrow(storage.transferOwnership(newOwner, { from: hacker }));
-      await storage.transferOwnership(newOwner, { from: owner });
-
-      await helpers.expectThrow(storage.transferOwnership(hacker, { from: owner }));
-      await storage.transferOwnership(hacker, { from: newOwner });
-    });
-  });
-
   describe('replaceService', () => {
     let newStorage;
 
     beforeEach(async () => {
-      assert.equal(await storage.owner(), owner);
       assert.equal(await service.getStorageAddress(), storage.address);
 
       newStorage = await SettingsStorage.new({ from: owner });

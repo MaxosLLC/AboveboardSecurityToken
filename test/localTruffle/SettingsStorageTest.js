@@ -23,6 +23,7 @@ contract('SettingsStorage', async accounts => {
     whitelist = await IssuanceWhiteList.new({ from: owner });
 
     await storage.setIssuer(issuer, { from: owner });
+    await storage.setIssuerPermission('locked', true);
   });
 
   describe('manage whitelists', () => {

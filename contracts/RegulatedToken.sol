@@ -37,7 +37,6 @@ contract RegulatedToken is DetailedERC20, MintableToken {
     DetailedERC20(_name, _symbol, RTOKEN_DECIMALS) {
     require(_registry != address(0));
     registry = ServiceRegistry(_registry);
-    owner = msg.sender;
   }
 
   /**
@@ -70,7 +69,7 @@ contract RegulatedToken is DetailedERC20, MintableToken {
     require(_from != address(0));
     require(_value <= balances[_from]);
 
-    if (_checkTransferFrom(msg.sender, _to, _value)) {
+    if (_checkTransferFrom(_from, _to, _value)) {
       balances[_from] = balances[_from].sub(_value);
       balances[_to] = balances[_to].add(_value);
 

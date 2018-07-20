@@ -107,9 +107,9 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     bool isIssuer = msg.sender == settingsStorage.issuer();
     address tokenOwner = MintableToken(_token).owner();
 
-    if (msg.sender != tokenOwner || (_from != tokenOwner && !isIssuer)) {
+    if (_from != tokenOwner || (_from != tokenOwner && !isIssuer)) {
 
-      if (msg.sender != tokenOwner) {
+      if (_from != tokenOwner) {
         return CHECK_ESEND;
       }
 

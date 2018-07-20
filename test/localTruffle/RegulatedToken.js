@@ -40,6 +40,7 @@ contract('RegulatedToken', async function(accounts) {
     regDWhitelist = await IssuanceWhiteList.new({ from: owner });
 
     await regDWhitelist.setWhitelistType("RegD");
+    await storage.setIssuerPermission('locked', true);
     await storage.setIssuer(issuer);
     await storage.allowNewShareholders(true, { from: issuer });
     await storage.addWhitelist(whitelist.address);
@@ -50,10 +51,11 @@ contract('RegulatedToken', async function(accounts) {
     await token.mint(owner, 100, fromOwner);
 
     // transfer ownership to new owner
-    token.transferOwnership(newOwner);
-    regulator.transferOwnership(newOwner);
+    await token.transferOwnership(newOwner);
+    await regulator.transferOwnership(newOwner);
 
     await token.mint(newOwner, 100, fromNewOwner);
+    await token.finishMinting(fromNewOwner);
 
     await assertBalances({ owner: 100, receiver: 0 });
     await assertBalancesNewOwner({ newOwner: 100, receiver: 0 });
@@ -331,16 +333,16 @@ contract('RegulatedToken', async function(accounts) {
       });
 
       it('returns true', async () => {
-        assert.isTrue(await token.transferFrom.call(owner, receiver, 25, fromNewOwner));
-        await assertBalances({ owner: 100, receiver: 0 });
+        assert.isTrue(await token.transferFrom.call(newOwner, receiver, 25, fromNewOwner));
+        await assertBalancesNewOwner({ newOwner: 100, receiver: 0 });
       });
 
       it('triggers a CheckStatus event and transfers funds', async () => {
         const event = token.CheckStatus();
         const value = 25;
 
-        await token.transferFrom(owner, receiver, value, fromNewOwner);
-        await assertBalances({ owner: 75, receiver: value });
+        await token.transferFrom(newOwner, receiver, value, fromNewOwner);
+        await assertBalancesNewOwner({ newOwner: 75, receiver: value });
       });
     });
   });
