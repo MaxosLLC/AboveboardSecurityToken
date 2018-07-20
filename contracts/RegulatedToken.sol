@@ -33,11 +33,10 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    * @param _name Name of the token: See DetailedERC20
    * @param _symbol Symbol of the token: See DetailedERC20
    */
-  function RegulatedToken(address _registry, string _name, string _symbol) public
+  constructor (address _registry, string _name, string _symbol) public
     DetailedERC20(_name, _symbol, RTOKEN_DECIMALS) {
     require(_registry != address(0));
     registry = ServiceRegistry(_registry);
-    owner = msg.sender;
   }
 
   /**
@@ -70,10 +69,15 @@ contract RegulatedToken is DetailedERC20, MintableToken {
     require(_from != address(0));
     require(_value <= balances[_from]);
 
-    balances[_from] = balances[_from].sub(_value);
-    balances[_to] = balances[_to].add(_value);
-    Transfer(_from, _to, _value);
-    return true;
+    if (_checkTransferFrom(_from, _to, _value)) {
+      balances[_from] = balances[_from].sub(_value);
+      balances[_to] = balances[_to].add(_value);
+
+      Transfer(_from, _to, _value);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -103,6 +107,14 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    */
   function _check(address _from, address _to, uint256 _value) private returns (bool) {
     var reason = _service().check(this, _from, _to, _value);
+
+    CheckStatus(reason, msg.sender, _from, _to, _value);
+
+    return reason == 0;
+  }
+
+  function _checkTransferFrom(address _from, address _to, uint256 _value) private returns (bool) {
+    var reason = _service().checkTransferFrom(this, _from, _to, _value);
 
     CheckStatus(reason, msg.sender, _from, _to, _value);
 

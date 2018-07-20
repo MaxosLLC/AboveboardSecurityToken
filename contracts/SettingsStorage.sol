@@ -1,10 +1,9 @@
 pragma solidity ^0.4.18;
 
-import "./zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./IssuanceWhiteList.sol";
 import "./interfaces/ISettingsStorage.sol";
 
-contract SettingsStorage is ISettingsStorage, Ownable {
+contract SettingsStorage is ISettingsStorage {
 
   /**
     * @dev Toggle for locking/unlocking trades at a token level.
@@ -24,8 +23,36 @@ contract SettingsStorage is ISettingsStorage, Ownable {
   /// @dev Messaging address
   string public messagingAddress;
 
+  /// @dev Owner of the Regulated Token
+  address public tokenOwner;
+
   /// @dev Array of whitelists
   IssuanceWhiteList[] whitelists;
+
+  mapping(string => bool) issuerPermissions;
+
+  /**
+   * @notice Constructor
+   */
+  constructor () public {
+    tokenOwner = msg.sender;
+  }
+
+  function setTokenOwner(address _owner) public {
+
+    require(_owner != address(0));
+    require((msg.sender == issuer && issuer != address(0)) ||
+            (msg.sender == tokenOwner && issuer == address(0)));
+
+    tokenOwner = _owner;
+  }
+
+  function setIssuerPermission(string permission, bool setting) public {
+
+    require (msg.sender == tokenOwner);
+
+    issuerPermissions[permission] = setting;
+  }
 
   /**
    * @notice Locks the ability to trade a token
@@ -36,7 +63,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    */
   function setLocked(bool _locked) public {
 
-    require(msg.sender == issuer);
+    require(issuerPermissions["locked"] && msg.sender == issuer || msg.sender == tokenOwner);
 
     locked = _locked;
     LogLockSet(_locked);
@@ -51,10 +78,12 @@ contract SettingsStorage is ISettingsStorage, Ownable {
     return whitelists;
   }
 
-  function addWhitelist(IssuanceWhiteList _whitelist) onlyOwner public {
+  function addWhitelist(IssuanceWhiteList _whitelist) public {
 
     //check that we don't pass an empty list
     require(_whitelist != address(0));
+    require(issuerPermissions["locked"] && msg.sender == issuer || msg.sender == tokenOwner);
+
     bool contains = false;
 
     //Loop through array to see if the whitelist is present
@@ -74,10 +103,11 @@ contract SettingsStorage is ISettingsStorage, Ownable {
     }
   }
 
-  function removeWhitelist(IssuanceWhiteList _whitelist) onlyOwner public {
+  function removeWhitelist(IssuanceWhiteList _whitelist) public {
 
     //check that we don't pass an empty list
     require(_whitelist != address(0));
+    require(issuerPermissions["locked"] && msg.sender == issuer || msg.sender == tokenOwner);
 
     //Loop through array to see if the whitelist is present
     for (uint256 i = 0; i < whitelists.length; i++) {
@@ -128,7 +158,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    */
   function setInititalOfferEndDate(uint256 _date) public {
 
-    require(msg.sender == issuer);
+    require(issuerPermissions["locked"] && msg.sender == issuer || msg.sender == tokenOwner);
 
     initialOfferEndDate = _date;
     InititalOfferEndDateSet(_date);
@@ -142,7 +172,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
   function setIssuer(address _issuer) public {
 
     require((msg.sender == issuer && issuer != address(0)) ||
-            (msg.sender == owner && issuer == address(0)));
+            (msg.sender == tokenOwner && issuer == address(0)));
 
     issuer = _issuer;
     IssuerSet(_issuer);
@@ -155,7 +185,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    */
   function setMessagingAddress(string _address) public {
 
-    require(msg.sender == owner || msg.sender == issuer);
+    require(issuerPermissions["locked"] && msg.sender == issuer || msg.sender == tokenOwner);
 
     messagingAddress = _address;
     MessagingAddressSet(_address);
@@ -168,7 +198,7 @@ contract SettingsStorage is ISettingsStorage, Ownable {
    */
   function allowNewShareholders(bool allow) public {
 
-    require(msg.sender == issuer);
+    require(issuerPermissions["locked"] && msg.sender == issuer || msg.sender == tokenOwner);
 
     newShareholdersAllowed = allow;
     NewShareholdersAllowance(allow);

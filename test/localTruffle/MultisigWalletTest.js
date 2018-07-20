@@ -38,6 +38,7 @@ contract('MultiSigWallet', async function(accounts) {
 
     wallet = await MultiSigWallet.new([arbitrator, owner], 2);
 
+    await storage.setIssuerPermission('locked', true);
     await storage.setIssuer(issuer);
     await storage.allowNewShareholders(true, { from: issuer });
     await storage.addWhitelist(whitelist.address);
@@ -59,7 +60,8 @@ contract('MultiSigWallet', async function(accounts) {
       assert.equal(b, value);
 
       // transfer token ownership to multisig wallet
-      token.transferOwnership(wallet.address);
+      await token.transferOwnership(wallet.address);
+      assert.equal(await token.owner.call(), wallet.address);
 
       // create tx which transfers funds from wallet to receiver
       const transferEncoded = token.contract.transferFrom.getData(wallet.address, owner, value, {from: wallet.address})

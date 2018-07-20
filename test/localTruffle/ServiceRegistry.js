@@ -25,21 +25,10 @@ contract('ServiceRegistry', async accounts => {
     registry = await ServiceRegistry.new(service.address, { from: owner });
   });
 
-  describe('ownership', () => {
-    it('allows ownership transfer', async () => {
-      await helpers.expectThrow(registry.transferOwnership(newOwner, { from: hacker }));
-      await registry.transferOwnership(newOwner, { from: owner });
-
-      await helpers.expectThrow(registry.transferOwnership(hacker, { from: owner }));
-      await registry.transferOwnership(hacker, { from: newOwner });
-    });
-  });
-
   describe('replaceService', () => {
     let newService;
 
     beforeEach(async () => {
-      assert.equal(await registry.owner(), owner);
       assert.equal(await registry.service(), service.address);
 
       newService = await RegulatorService.new(storage.address, { from: owner });

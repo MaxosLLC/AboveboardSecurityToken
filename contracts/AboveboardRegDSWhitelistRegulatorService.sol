@@ -1,8 +1,7 @@
 pragma solidity ^0.4.18;
 
 import "./zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "./zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
-import "./zeppelin-solidity/contracts/token/ERC20/BasicToken.sol";
+import "./zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
 import "./interfaces/WhiteList.sol";
 import "./interfaces/IRegulatorService.sol";
 import "./SettingsStorage.sol";
@@ -21,11 +20,17 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
   // @dev Check error reason: New shareholders are not allowed
   uint8 constant private CHECK_ERALLOW = 2;
 
+  // @dev Check error reason: Sender is not allowed to send the token
+  uint8 constant private CHECK_ESEND = 3;
+
   // @dev Check error reason: Receiver is not allowed to receive the token
   uint8 constant private CHECK_ERECV = 4;
 
   // @dev Check error reason: Transfer before initial offering end date
   uint8 constant private CHECK_ERREGD = 5;
+
+  // @dev Check error reason: Sender is not issuer
+  uint8 constant private CHECK_ERISS = 6;
 
   /**
    * @dev Validate contract address
@@ -42,9 +47,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
 
   /**
    * @notice Constructor
-   *
    * @param _storage The address of the `SettingsStorage`
-   *
    */
   constructor (address _storage) public {
     require(_storage != address(0));
@@ -68,7 +71,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
    */
   function check(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
 
-    bool isCompany = _from == owner || _to == owner;
+    bool isCompany = _from == MintableToken(_token).owner() || _to == MintableToken(_token).owner();
 
     // trading is locked, can transfer to or from company account
     if (settingsStorage.locked() && !isCompany) {
@@ -76,7 +79,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     }
 
     // if newShareholdersAllowed is not enabled, the transfer will only succeed if the buyer already has tokens or tranfers to or from company account
-    if (!settingsStorage.newShareholdersAllowed() && BasicToken(_token).balanceOf(_to) == 0 && !isCompany) {
+    if (!settingsStorage.newShareholdersAllowed() && MintableToken(_token).balanceOf(_to) == 0 && !isCompany) {
       return CHECK_ERALLOW;
     }
 
@@ -93,6 +96,24 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
       && block.timestamp < settingsStorage.initialOfferEndDate()
       && !isCompany) {
       return CHECK_ERREGD;
+    }
+
+    return CHECK_SUCCESS;
+  }
+
+  // the sender is the multisig wallet, or the _from is the company account and the sender is the issuer
+  function checkTransferFrom(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
+
+    bool isIssuer = msg.sender == settingsStorage.issuer();
+    address tokenOwner = MintableToken(_token).owner();
+
+    if (_from != tokenOwner || (_from != tokenOwner && !isIssuer)) {
+
+      if (_from != tokenOwner) {
+        return CHECK_ESEND;
+      }
+
+      return CHECK_ERISS;
     }
 
     return CHECK_SUCCESS;
