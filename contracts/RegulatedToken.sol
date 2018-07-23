@@ -130,6 +130,6 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    * @return The `RegulatorService` that manages this token.
    */
   function _service() constant public returns (AboveboardRegDSWhitelistRegulatorService) {
-    return AboveboardRegDSWhitelistRegulatorService(this, registry.service());
+    return AboveboardRegDSWhitelistRegulatorService(registry.service());
   }
 }

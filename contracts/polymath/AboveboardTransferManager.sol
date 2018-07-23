@@ -14,7 +14,7 @@ contract AboveboardTransferManager is ITransferManager, Ownable {
 
   event ReplaceStorage(address oldStorage, address newStorage);
 
-  //BasicToken public deployedToken;
+  BasicToken public deployedToken;
 
   SettingsStorage settingsStorage;
 
@@ -39,12 +39,11 @@ contract AboveboardTransferManager is ITransferManager, Ownable {
    *
    */
   constructor (address _securityToken, address _polyAddress) public IModule(_securityToken, _polyAddress) {
+    deployedToken = BasicToken(_securityToken);
   }
 
   function getPermissions() public view returns(bytes32[]) {
-    bytes32[] memory allPermissions = new bytes32[](2);
-    allPermissions[0] = WHITELIST;
-    allPermissions[1] = FLAGS;
+    bytes32[] memory allPermissions = new bytes32[](0);
     return allPermissions;
   }
 
