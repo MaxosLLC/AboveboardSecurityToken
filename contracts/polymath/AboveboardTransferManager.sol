@@ -1,22 +1,17 @@
 pragma solidity ^0.4.18;
 
-import "../zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "../zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
-import "../zeppelin-solidity/contracts/token/ERC20/BasicToken.sol";
+import "../zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
 import "./contracts/ITransferManager.sol";
 import "../interfaces/WhiteList.sol";
 import "../SettingsStorage.sol";
 
-contract AboveboardTransferManager is ITransferManager, Ownable {
-
-  bytes32 public constant WHITELIST = "WHITELIST";
-  bytes32 public constant FLAGS = "FLAGS";
+contract AboveboardTransferManager is ITransferManager {
 
   event ReplaceStorage(address oldStorage, address newStorage);
 
-  BasicToken public deployedToken;
+  MintableToken public deployedToken;
 
-  SettingsStorage settingsStorage;
+  SettingsStorage public settingsStorage;
 
   /**
    * @dev Validate contract address
@@ -39,7 +34,7 @@ contract AboveboardTransferManager is ITransferManager, Ownable {
    *
    */
   constructor (address _securityToken, address _polyAddress) public IModule(_securityToken, _polyAddress) {
-    deployedToken = BasicToken(_securityToken);
+    deployedToken = MintableToken(_securityToken);
   }
 
   function getPermissions() public view returns(bytes32[]) {
@@ -66,7 +61,7 @@ contract AboveboardTransferManager is ITransferManager, Ownable {
    * @return Result The polymath reason code: "VALID" or "FORCE_VALID" means success.
    */
   function verifyTransfer(address _from, address _to, uint256 /*_amount*/, bool /*_isTransfer*/) public returns (Result) {
-
+    address owner = deployedToken.owner();
     bool isCompany = _from == owner || _to == owner;
 
     // trading is locked, can transfer to or from company account
@@ -98,21 +93,15 @@ contract AboveboardTransferManager is ITransferManager, Ownable {
   }
 
   /**
-   * @notice Get Settings Storage address
-   *
-   * @return Settings Storage address
-   */
-  function getStorageAddress() view public returns (address) {
-    return settingsStorage;
-  }
-
-  /**
    * @dev Replace the current SettingsStorage
    *
    * @param _storage The address of the `SettingsStorage`
    *
    */
-  function replaceStorage(address _storage) onlyOwner withContract(_storage) public {
+  function replaceStorage(address _storage) withContract(_storage) public {
+    address owner = deployedToken.owner();
+    require(msg.sender == owner);
+
     address oldStorage = settingsStorage;
     settingsStorage = SettingsStorage(_storage);
     ReplaceStorage(oldStorage, _storage);
