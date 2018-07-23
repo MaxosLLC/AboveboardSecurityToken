@@ -23,6 +23,7 @@ interface IRegulatorService {
    * @return uint8 The reason code: 0 means success.  Non-zero values are left to the implementation
    *               to assign meaning.
    */
-  function check(address _from, address _to, uint256 _amount) public returns (uint8);
-  
+  function check(address _token, address _from, address _to, uint256 _amount) public returns (uint8);
+
+  function checkTransferFrom(address _token, address _from, address _to, uint256 _amount) public returns (uint8);
 }

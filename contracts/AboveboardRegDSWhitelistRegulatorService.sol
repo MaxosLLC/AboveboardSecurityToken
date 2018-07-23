@@ -9,8 +9,6 @@ import "./SettingsStorage.sol";
 /// @notice Standard interface for `RegulatorService`s
 contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable {
 
-  BasicToken public deployedToken;
-
   SettingsStorage settingsStorage;
 
   // @dev Check success code
@@ -51,10 +49,8 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
    * @notice Constructor
    * @param _storage The address of the `SettingsStorage`
    */
-  constructor (address _token, address _storage) public {
-    require(_token != address(0));
+  constructor (address _storage) public {
     require(_storage != address(0));
-    deployedToken = BasicToken(_token);
     settingsStorage = SettingsStorage(_storage);
   }
 
@@ -72,9 +68,8 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
    * @return uint8 The reason code: 0 means success.  Non-zero values are left to the implementation
    *               to assign meaning.
    */
-  function check(address _from, address _to, uint256 _amount) public returns (uint8) {
-
-    bool isCompany = _from == MintableToken(deployedToken).owner() || _to == MintableToken(deployedToken).owner();
+  function check(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
+    bool isCompany = _from == MintableToken(_token).owner() || _to == MintableToken(_token).owner();
 
     // trading is locked, can transfer to or from company account
     if (settingsStorage.locked() && !isCompany) {
@@ -82,13 +77,13 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     }
 
     // if newShareholdersAllowed is not enabled, the transfer will only succeed if the buyer already has tokens or tranfers to or from company account
-    if (!settingsStorage.newShareholdersAllowed() && MintableToken(deployedToken).balanceOf(_to) == 0 && !isCompany) {
+    if (!settingsStorage.newShareholdersAllowed() && MintableToken(_token).balanceOf(_to) == 0 && !isCompany) {
       return CHECK_ERALLOW;
     }
 
     bool t;
     string memory wlTo;
-    (t,wlTo) = settingsStorage.isWhiteListed(_to);
+    (t, wlTo) = settingsStorage.isWhiteListed(_to);
     if (!t && !isCompany) {
       return CHECK_ERECV;
     }
