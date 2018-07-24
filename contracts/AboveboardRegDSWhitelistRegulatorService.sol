@@ -9,7 +9,7 @@ import "./SettingsStorage.sol";
 /// @notice Standard interface for `RegulatorService`s
 contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable {
 
-  SettingsStorage settingsStorage;
+  SettingsStorage public settingsStorage;
 
   // @dev Check success code
   uint8 constant private CHECK_SUCCESS = 0;
@@ -115,15 +115,6 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     }
 
     return CHECK_SUCCESS;
-  }
-
-  /**
-   * @notice Get Settings Storage address
-   *
-   * @return Settings Storage address
-   */
-  function getStorageAddress() view public returns (address) {
-    return settingsStorage;
   }
 
   /**
