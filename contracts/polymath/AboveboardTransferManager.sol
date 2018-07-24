@@ -33,7 +33,9 @@ contract AboveboardTransferManager is ITransferManager {
    * @param _polyAddress The address of the `PolymathToken`
    *
    */
-  constructor (address _securityToken, address _polyAddress) public IModule(_securityToken, _polyAddress) {
+  constructor (address _securityToken, address _polyAddress, address _storage) public IModule(_securityToken, _polyAddress) {
+    require(_storage != address(0));
+    settingsStorage = SettingsStorage(_storage);
     deployedToken = MintableToken(_securityToken);
   }
 
@@ -70,9 +72,9 @@ contract AboveboardTransferManager is ITransferManager {
     }
 
     // if newShareholdersAllowed is not enabled, the transfer will only succeed if the buyer already has tokens or tranfers to or from company account
-    //if (!settingsStorage.newShareholdersAllowed() && deployedToken.balanceOf(_to) == 0 && !isCompany) {
-      //return Result.INVALID;
-    //}
+    if (!settingsStorage.newShareholdersAllowed() && deployedToken.balanceOf(_to) == 0 && !isCompany) {
+      return Result.INVALID;
+    }
 
     bool t;
     string memory wlTo;
