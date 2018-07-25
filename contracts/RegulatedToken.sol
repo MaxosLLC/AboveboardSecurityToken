@@ -70,7 +70,7 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    * @return `true` if successful and `false` if unsuccessful
    */
   function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
-    if (_checkTransferFrom(_from, _to, _value)) {
+    if (_check(_from, _to, _value)) {
       return super.transferFrom(_from, _to, _value);
     } else {
       return false;
@@ -87,16 +87,20 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    * @return `true` if successful and `false` if unsuccessful
    */
   function arbitrage(address _from, address _to, uint256 _value) onlyOwner public returns (bool) {
-    require(_to != address(0));
-    require(_from != address(0));
-    require(_value <= balances[_from]);
+    if (_checkArbitrage(_from, _to, _value)) {
+      require(_to != address(0));
+      require(_from != address(0));
+      require(_value <= balances[_from]);
 
-    balances[_from] = balances[_from].sub(_value);
-    balances[_to] = balances[_to].add(_value);
+      balances[_from] = balances[_from].sub(_value);
+      balances[_to] = balances[_to].add(_value);
 
-    Arbitrage(_from, _to, _value);
-    Transfer(_from, _to, _value);
-    return true;
+      Arbitrage(_from, _to, _value);
+      Transfer(_from, _to, _value);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
