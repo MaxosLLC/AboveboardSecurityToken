@@ -2,7 +2,7 @@ const IssuanceWhiteList = artifacts.require("./IssuanceWhiteList.sol")
 const SettingsStorage = artifacts.require("./SettingsStorage.sol")
 const TransferManager = artifacts.require("./polymath/AboveboardTransferManager.sol")
 
-const deployPolymath = true
+const deployPolymath = false
 
 module.exports = async (deployer, network, accounts) => {
   if (!deployPolymath) { return }

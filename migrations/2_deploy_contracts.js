@@ -14,10 +14,8 @@ module.exports = async (deployer, network, accounts) => {
   const whitelist = await IssuanceWhiteList.deployed()
   await whitelist.setWhitelistType('RegS')
 
-  await RegulatedToken.deployed()
-
   const storage = await SettingsStorage.deployed()
   await storage.addWhitelist(IssuanceWhiteList.address)
   await storage.setIssuer(accounts[0])
-  await storage.allowNewShareholders(true)
+  return storage.allowNewShareholders(true)
 }
