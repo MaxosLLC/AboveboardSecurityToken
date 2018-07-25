@@ -14,8 +14,8 @@ contract SettingsStorage is ISettingsStorage {
   /// @dev Toggle for allowing/disallowing new shareholders
   bool public newShareholdersAllowed;
 
-  /// @dev Issuer of the token
-  address public issuer;
+  /// @dev Issuers of the token
+  mapping(address => bool) public officers;
 
   /// @dev Initial offering end date
   uint256 public initialOfferEndDate;
@@ -41,8 +41,7 @@ contract SettingsStorage is ISettingsStorage {
   function setTokenOwner(address _owner) public {
 
     require(_owner != address(0));
-    require((msg.sender == issuer && issuer != address(0)) ||
-            msg.sender == tokenOwner);
+    require(officers[msg.sender] || msg.sender == tokenOwner);
 
     tokenOwner = _owner;
   }
@@ -63,7 +62,7 @@ contract SettingsStorage is ISettingsStorage {
    */
   function setLocked(bool _locked) public {
 
-    require(issuerPermissions["setLocked"] && msg.sender == issuer || msg.sender == tokenOwner);
+    require(issuerPermissions["setLocked"] && officers[msg.sender] || msg.sender == tokenOwner);
 
     locked = _locked;
     LogLockSet(_locked);
@@ -82,7 +81,7 @@ contract SettingsStorage is ISettingsStorage {
 
     //check that we don't pass an empty list
     require(_whitelist != address(0));
-    require(issuerPermissions["addWhitelist"] && msg.sender == issuer || msg.sender == tokenOwner);
+    require(issuerPermissions["addWhitelist"] && officers[msg.sender] || msg.sender == tokenOwner);
 
     bool contains = false;
 
@@ -107,7 +106,7 @@ contract SettingsStorage is ISettingsStorage {
 
     //check that we don't pass an empty list
     require(_whitelist != address(0));
-    require(issuerPermissions["removeWhitelist"] && msg.sender == issuer || msg.sender == tokenOwner);
+    require(issuerPermissions["removeWhitelist"] && officers[msg.sender] || msg.sender == tokenOwner);
 
     //Loop through array to see if the whitelist is present
     for (uint256 i = 0; i < whitelists.length; i++) {
@@ -158,7 +157,7 @@ contract SettingsStorage is ISettingsStorage {
    */
   function setInititalOfferEndDate(uint256 _date) public {
 
-    require(issuerPermissions["setInititalOfferEndDate"] && msg.sender == issuer || msg.sender == tokenOwner);
+    require(issuerPermissions["setInititalOfferEndDate"] && officers[msg.sender] || msg.sender == tokenOwner);
 
     initialOfferEndDate = _date;
     InititalOfferEndDateSet(_date);
@@ -171,10 +170,10 @@ contract SettingsStorage is ISettingsStorage {
    */
   function setIssuer(address _issuer) public {
 
-    require((msg.sender == issuer && issuer != address(0)) ||
+    require((officers[msg.sender] && _issuer != address(0)) ||
             msg.sender == tokenOwner);
 
-    issuer = _issuer;
+    officers[_issuer] = true;
     IssuerSet(_issuer);
   }
 
@@ -185,7 +184,7 @@ contract SettingsStorage is ISettingsStorage {
    */
   function setMessagingAddress(string _address) public {
 
-    require(issuerPermissions["setMessagingAddress"] && msg.sender == issuer || msg.sender == tokenOwner);
+    require(issuerPermissions["setMessagingAddress"] && officers[msg.sender] || msg.sender == tokenOwner);
 
     messagingAddress = _address;
     MessagingAddressSet(_address);
@@ -198,7 +197,7 @@ contract SettingsStorage is ISettingsStorage {
    */
   function allowNewShareholders(bool allow) public {
 
-    require(issuerPermissions["allowNewShareholders"] && msg.sender == issuer || msg.sender == tokenOwner);
+    require(issuerPermissions["allowNewShareholders"] && officers[msg.sender] || msg.sender == tokenOwner);
 
     newShareholdersAllowed = allow;
     NewShareholdersAllowance(allow);

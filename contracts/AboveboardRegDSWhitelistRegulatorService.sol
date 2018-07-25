@@ -102,7 +102,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
   // the sender is the multisig wallet, or the _from is the company account and the sender is the issuer
   function checkTransferFrom(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
 
-    bool isIssuer = msg.sender == settingsStorage.issuer();
+    bool isIssuer = settingsStorage.officers(msg.sender);
     address tokenOwner = MintableToken(_token).owner();
 
     if (_from != tokenOwner || (_from != tokenOwner && !isIssuer)) {
