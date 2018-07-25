@@ -136,8 +136,8 @@ contract RegulatedToken is DetailedERC20, MintableToken {
     return reason == 0;
   }
 
-  function _checkTransferFrom(address _from, address _to, uint256 _value) private returns (bool) {
-    var reason = _service().checkTransferFrom(this, _from, _to, _value);
+  function _checkArbitrage(address _from, address _to, uint256 _value) private returns (bool) {
+    var reason = _service().checkArbitrage(this, _from, _to, _value);
 
     CheckStatus(reason, msg.sender, _from, _to, _value);
 

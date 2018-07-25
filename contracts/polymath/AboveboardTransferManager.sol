@@ -3,7 +3,7 @@ pragma solidity ^0.4.18;
 import "../zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
 import "./contracts/ITransferManager.sol";
 import "../interfaces/WhiteList.sol";
-import "../SettingsStorage.sol";
+import "./AboveboardSettingsStorage.sol";
 
 contract AboveboardTransferManager is ITransferManager {
 
@@ -11,7 +11,7 @@ contract AboveboardTransferManager is ITransferManager {
 
   MintableToken public deployedToken;
 
-  SettingsStorage public settingsStorage;
+  AboveboardSettingsStorage public settingsStorage;
 
   /**
    * @dev Validate contract address
@@ -35,7 +35,7 @@ contract AboveboardTransferManager is ITransferManager {
    */
   constructor (address _securityToken, address _polyAddress, address _storage) public IModule(_securityToken, _polyAddress) {
     require(_storage != address(0));
-    settingsStorage = SettingsStorage(_storage);
+    settingsStorage = AboveboardSettingsStorage(_storage);
     deployedToken = MintableToken(_securityToken);
   }
 
@@ -105,7 +105,7 @@ contract AboveboardTransferManager is ITransferManager {
     require(msg.sender == owner);
 
     address oldStorage = settingsStorage;
-    settingsStorage = SettingsStorage(_storage);
+    settingsStorage = AboveboardSettingsStorage(_storage);
     ReplaceStorage(oldStorage, _storage);
   }
 }

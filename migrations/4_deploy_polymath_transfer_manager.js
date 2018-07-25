@@ -1,7 +1,6 @@
 const IssuanceWhiteList = artifacts.require("./IssuanceWhiteList.sol")
 const SettingsStorage = artifacts.require("./SettingsStorage.sol")
 const TransferManager = artifacts.require("./polymath/AboveboardTransferManager.sol")
-// const RegulatedToken = artifacts.require("./RegulatedToken.sol")
 
 const deployPolymath = true
 
