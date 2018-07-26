@@ -38,10 +38,13 @@ contract('MultiSigWallet', async function(accounts) {
 
     wallet = await MultiSigWallet.new([arbitrator, owner], 2);
 
-    await storage.setIssuerPermission('locked', true);
+    await storage.setIssuerPermission('setLocked', true);
+    await storage.setIssuerPermission('allowNewShareholders', true);
+    await storage.setIssuerPermission('addWhitelist', true);
+
     await storage.setIssuer(issuer);
     await storage.allowNewShareholders(true, { from: issuer });
-    await storage.addWhitelist(whitelist.address);
+    await storage.addWhitelist(whitelist.address, { from: issuer });
 
     await token.mint(owner, 100);
     await token.finishMinting();
@@ -59,9 +62,21 @@ contract('MultiSigWallet', async function(accounts) {
       let b = await token.balanceOf.call(wallet.address).valueOf();
       assert.equal(b, value);
 
-      // transfer token ownership to multisig wallet
-      await token.transferOwnership(wallet.address);
-      assert.equal(await token.owner.call(), wallet.address);
+      // create tx which approves funds transfer from wallet to receiver
+      const approveEncoded = token.contract.approve.getData(wallet.address, value, {from: wallet.address})
+
+      // submit tx
+      var transactionId = utils.getParamFromTxEvent(
+          await wallet.submitTransaction(token.address, 0, approveEncoded, {from: owner}),
+          'transactionId', null, 'Submission')
+
+      // confirm by arbitrator
+      var executedTransactionId = utils.getParamFromTxEvent(
+          await wallet.confirmTransaction(transactionId, {from: arbitrator}),
+          'transactionId', null, 'Execution')
+
+      // Check that transaction has been executed
+      assert.ok(transactionId.equals(executedTransactionId))
 
       // create tx which transfers funds from wallet to receiver
       const transferEncoded = token.contract.transferFrom.getData(wallet.address, owner, value, {from: wallet.address})
