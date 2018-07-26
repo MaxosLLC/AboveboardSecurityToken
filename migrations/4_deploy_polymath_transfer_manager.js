@@ -1,6 +1,6 @@
-const IssuanceWhiteList = artifacts.require("./IssuanceWhiteList.sol")
-const SettingsStorage = artifacts.require("./SettingsStorage.sol")
-const TransferManager = artifacts.require("./polymath/AboveboardTransferManager.sol")
+const IssuanceWhiteList = artifacts.require('./IssuanceWhiteList.sol')
+const SettingsStorage = artifacts.require('./SettingsStorage.sol')
+const TransferManager = artifacts.require('./polymath/AboveboardTransferManager.sol')
 
 const deployPolymath = false
 
@@ -18,5 +18,5 @@ module.exports = async (deployer, network, accounts) => {
   await storage.addWhitelist(IssuanceWhiteList.address)
 
   await storage.setIssuer(accounts[0])
-  await storage.allowNewShareholders(true)
+  return storage.allowNewShareholders(true)
 }

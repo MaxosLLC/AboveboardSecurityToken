@@ -1,8 +1,8 @@
-const IssuanceWhiteList = artifacts.require("./IssuanceWhiteList.sol")
-const SettingsStorage = artifacts.require("./SettingsStorage.sol")
-const RegulatorService = artifacts.require("./AboveboardRegDSWhitelistRegulatorService.sol")
-const RegulatedToken = artifacts.require("./RegulatedToken.sol")
-const ServiceRegistry = artifacts.require("./ServiceRegistry.sol")
+const IssuanceWhiteList = artifacts.require('./IssuanceWhiteList.sol')
+const SettingsStorage = artifacts.require('./SettingsStorage.sol')
+const RegulatorService = artifacts.require('./AboveboardRegDSWhitelistRegulatorService.sol')
+const RegulatedToken = artifacts.require('./RegulatedToken.sol')
+const ServiceRegistry = artifacts.require('./ServiceRegistry.sol')
 
 module.exports = async (deployer, network, accounts) => {
   await deployer.deploy(IssuanceWhiteList)
