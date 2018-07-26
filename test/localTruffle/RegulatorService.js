@@ -26,7 +26,7 @@ contract('ServiceRegistry', async accounts => {
     let newStorage;
 
     beforeEach(async () => {
-      assert.equal(await service.getStorageAddress(), storage.address);
+      assert.equal(await service.settingsStorage(), storage.address);
 
       newStorage = await SettingsStorage.new({ from: owner });
     });
@@ -35,7 +35,7 @@ contract('ServiceRegistry', async accounts => {
       const event = service.ReplaceStorage();
 
       await service.replaceStorage(newStorage.address);
-      assert.equal(await service.getStorageAddress(), newStorage.address);
+      assert.equal(await service.settingsStorage(), newStorage.address);
 
       await helpers.assertEvent(event, {
         oldStorage: storage.address,
@@ -46,12 +46,12 @@ contract('ServiceRegistry', async accounts => {
     it('should NOT allow an invalid address', async () => {
       await helpers.expectThrow(service.replaceStorage(participant));
       await helpers.expectThrow(service.replaceStorage(0));
-      assert.equal(await service.getStorageAddress(), storage.address);
+      assert.equal(await service.settingsStorage(), storage.address);
     });
 
     it('should NOT allow anybody except for the owner to replace the service', async () => {
       await helpers.expectThrow(service.replaceStorage(newStorage.address, { from: hacker }));
-      assert.equal(await service.getStorageAddress(), storage.address);
+      assert.equal(await service.settingsStorage(), storage.address);
     });
   });
 });
