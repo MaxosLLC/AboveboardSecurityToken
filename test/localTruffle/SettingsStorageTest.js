@@ -23,7 +23,10 @@ contract('SettingsStorage', async accounts => {
     whitelist = await IssuanceWhiteList.new({ from: owner });
 
     await storage.setIssuer(issuer, { from: owner });
-    await storage.setIssuerPermission('locked', true);
+    await storage.setIssuerPermission('setLocked', true);
+    await storage.setIssuerPermission('setInititalOfferEndDate', true);
+    await storage.setIssuerPermission('allowNewShareholders', true);
+    await storage.setIssuerPermission('addWhitelist', true);
   });
 
   describe('manage whitelists', () => {
@@ -85,8 +88,8 @@ contract('SettingsStorage', async accounts => {
       let l = await storage.setIssuer(accounts[1], { from: issuer });
       assert.equal(l.logs[0].event, 'IssuerSet');
 
-      l = await storage.issuer.call();
-      assert.equal(l, accounts[1]);
+      l = await storage.officers.call(accounts[1]);
+      assert.equal(l, true);
     });
 
     it('setMessagingAddress', async () => {
