@@ -40,7 +40,12 @@ contract('RegulatedToken', async function(accounts) {
     regDWhitelist = await IssuanceWhiteList.new({ from: owner });
 
     await regDWhitelist.setWhitelistType("RegD");
-    await storage.setIssuerPermission('locked', true);
+
+    await storage.setIssuerPermission('setLocked', true);
+    await storage.setIssuerPermission('setInititalOfferEndDate', true);
+    await storage.setIssuerPermission('allowNewShareholders', true);
+    await storage.setIssuerPermission('addWhitelist', true);
+
     await storage.setIssuer(issuer);
     await storage.allowNewShareholders(true, { from: issuer });
     await storage.addWhitelist(whitelist.address);
@@ -332,17 +337,17 @@ contract('RegulatedToken', async function(accounts) {
         await whitelist.add(receiver);
       });
 
-      it('returns true', async () => {
-        assert.isTrue(await token.transferFrom.call(newOwner, receiver, 25, fromNewOwner));
-        await assertBalancesNewOwner({ newOwner: 100, receiver: 0 });
-      });
-
       it('triggers a CheckStatus event and transfers funds', async () => {
         const event = token.CheckStatus();
         const value = 25;
 
-        await token.transferFrom(newOwner, receiver, value, fromNewOwner);
+        await token.transfer(receiver, value, fromNewOwner);
         await assertBalancesNewOwner({ newOwner: 75, receiver: value });
+
+        await token.approve(receiver, value, { from: receiver })
+
+        await token.transferFrom(receiver, newOwner, value, fromReceiver);
+        await assertBalancesNewOwner({ newOwner: 100, receiver: 0 });
       });
     });
   });
