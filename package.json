@@ -57,6 +57,15 @@
     "setupTestFrameworkScriptFile": "<rootDir>/test/helpers/setup.js"
   },
   "standard": {
-   "globals": [ "web3", "artifacts", "assert", "contract", "it", "describe", "beforeEach", "afterEach" ]
+    "globals": [
+      "web3",
+      "artifacts",
+      "assert",
+      "contract",
+      "it",
+      "describe",
+      "beforeEach",
+      "afterEach"
+    ]
   }
 }

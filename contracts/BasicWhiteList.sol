@@ -57,5 +57,4 @@ contract BasicWhiteList is WhiteList {
   function getBuyers() view public returns (address[]) {
     return membersAddress;
   }
-
 }

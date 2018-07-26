@@ -18,5 +18,4 @@ contract IServiceRegistry is Ownable {
    */
 
   function replaceService(address _service) public;
-
 }
