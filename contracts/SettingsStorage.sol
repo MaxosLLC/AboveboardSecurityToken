@@ -39,7 +39,6 @@ contract SettingsStorage is ISettingsStorage {
   }
 
   function setTokenOwner(address _owner) public {
-
     require(_owner != address(0));
     require(officers[msg.sender] || msg.sender == tokenOwner);
 
@@ -47,7 +46,6 @@ contract SettingsStorage is ISettingsStorage {
   }
 
   function setIssuerPermission(string permission, bool setting) public {
-
     require (msg.sender == tokenOwner);
 
     issuerPermissions[permission] = setting;
@@ -61,7 +59,6 @@ contract SettingsStorage is ISettingsStorage {
    * @param  _locked True for lock the token
    */
   function setLocked(bool _locked) public {
-
     require(issuerPermissions["setLocked"] && officers[msg.sender] || msg.sender == tokenOwner);
 
     locked = _locked;
@@ -78,7 +75,6 @@ contract SettingsStorage is ISettingsStorage {
   }
 
   function addWhitelist(IssuanceWhiteList _whitelist) public {
-
     //check that we don't pass an empty list
     require(_whitelist != address(0));
     require(issuerPermissions["addWhitelist"] && officers[msg.sender] || msg.sender == tokenOwner);
@@ -103,7 +99,6 @@ contract SettingsStorage is ISettingsStorage {
   }
 
   function removeWhitelist(IssuanceWhiteList _whitelist) public {
-
     //check that we don't pass an empty list
     require(_whitelist != address(0));
     require(issuerPermissions["removeWhitelist"] && officers[msg.sender] || msg.sender == tokenOwner);
@@ -156,7 +151,6 @@ contract SettingsStorage is ISettingsStorage {
    * @param  _date Initial offering end date
    */
   function setInititalOfferEndDate(uint256 _date) public {
-
     require(issuerPermissions["setInititalOfferEndDate"] && officers[msg.sender] || msg.sender == tokenOwner);
 
     initialOfferEndDate = _date;
@@ -169,7 +163,6 @@ contract SettingsStorage is ISettingsStorage {
    * @param  _issuer Issuer to be set
    */
   function setIssuer(address _issuer) public {
-
     require((officers[msg.sender] && _issuer != address(0)) ||
             msg.sender == tokenOwner);
 
@@ -183,7 +176,6 @@ contract SettingsStorage is ISettingsStorage {
    * @param  _address Messaging address to be set
    */
   function setMessagingAddress(string _address) public {
-
     require(issuerPermissions["setMessagingAddress"] && officers[msg.sender] || msg.sender == tokenOwner);
 
     messagingAddress = _address;
@@ -196,7 +188,6 @@ contract SettingsStorage is ISettingsStorage {
    * @param  allow Allow/disallow new shareholders
    */
   function allowNewShareholders(bool allow) public {
-
     require(issuerPermissions["allowNewShareholders"] && officers[msg.sender] || msg.sender == tokenOwner);
 
     newShareholdersAllowed = allow;

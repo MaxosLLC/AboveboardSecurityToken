@@ -4,6 +4,7 @@ import "./RegulatedToken.sol";
 import "./AboveboardRegDSWhitelistRegulatorService.sol";
 
 contract MockRegulatedToken is RegulatedToken {
+
   AboveboardRegDSWhitelistRegulatorService public service;
   uint public decimals;
 

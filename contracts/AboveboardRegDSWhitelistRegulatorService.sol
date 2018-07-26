@@ -101,11 +101,10 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
 
   // the sender is the multisig wallet, or the _from is the company account and the sender is the issuer
   function checkArbitrage(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
-
-    bool isIssuer = settingsStorage.officers(msg.sender);
+    bool isOfficer = settingsStorage.officers(msg.sender);
     address tokenOwner = MintableToken(_token).owner();
 
-    if (_from != tokenOwner || (_from != tokenOwner && !isIssuer)) {
+    if (_from != tokenOwner || (_from != tokenOwner && !isOfficer)) {
 
       if (_from != tokenOwner) {
         return CHECK_ESEND;
