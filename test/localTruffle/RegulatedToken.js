@@ -249,7 +249,7 @@ contract('RegulatedToken', async accounts => {
     describe('when receiver is under Regulation D, only token contract owner can send to US investors first year', () => {
       beforeEach(async () => {
         await regDWhitelist.add(receiver)
-        await storage.setIssuer(owner, { from: issuer })
+        await storage.addOfficer(owner, { from: issuer })
       })
 
       it('triggers a CheckStatus event and transfers funds', async () => {
@@ -271,7 +271,7 @@ contract('RegulatedToken', async accounts => {
     describe('when receiver is under Regulation D, cannot sell these shares in the first year, except to the token contract owner', () => {
       beforeEach(async () => {
         await regDWhitelist.add(receiver)
-        await storage.setIssuer(owner, { from: issuer })
+        await storage.addOfficer(owner, { from: issuer })
       })
 
       it('triggers a CheckStatus event, transfers funds from issuer then transfers funds back to token contract owner', async () => {

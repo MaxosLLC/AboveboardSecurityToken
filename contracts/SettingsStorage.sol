@@ -167,7 +167,7 @@ contract SettingsStorage is ISettingsStorage {
             msg.sender == tokenOwner);
 
     officers[_officer] = true;
-    OfficerSet(_officer);
+    OfficerAdded(_officer);
   }
 
   /**

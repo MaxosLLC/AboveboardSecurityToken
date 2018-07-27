@@ -41,11 +41,11 @@ interface ISettingsStorage {
   event RegulationDWhitelistSet(address whitelist);
 
   /**
-   * @notice Triggered when an officer is set
+   * @notice Triggered when an officer is added
    *
    * @param  _officer Address of an officer
    */
-  event OfficerSet(address _officer);
+  event OfficerAdded(address _officer);
 
   /**
    * @notice Triggered when an officer is removed

@@ -54,30 +54,30 @@ contract('SettingsStorage', async accounts => {
       assert.equal(l.logs[0].event, 'InititalOfferEndDateSet')
     })
 
-    it('setIssuer', async () => {
-      let l = await storage.setIssuer(accounts[1], { from: issuer })
-      assert.equal(l.logs[0].event, 'IssuerSet')
+    it('addOfficer', async () => {
+      let l = await storage.addOfficer(accounts[1], { from: issuer })
+      assert.equal(l.logs[0].event, 'OfficerAdded')
     })
 
-    it('setIssuer from owner after already set', async () => {
+    it('addOfficer from owner after already set', async () => {
       try {
-        await storage.setIssuer(accounts[1], { from: owner })
+        await storage.addOfficer(accounts[1], { from: owner })
       } catch (e) {
         assert.ok(e)
       }
     })
 
-    it('setIssuer from hacker', async () => {
+    it('addOfficer from hacker', async () => {
       try {
-        await storage.setIssuer(accounts[1], { from: hacker })
+        await storage.addOfficer(accounts[1], { from: hacker })
       } catch (e) {
         assert.ok(e)
       }
     })
 
     it('getIssuerAddress', async () => {
-      let l = await storage.setIssuer(accounts[1], { from: issuer })
-      assert.equal(l.logs[0].event, 'IssuerSet')
+      let l = await storage.addOfficer(accounts[1], { from: issuer })
+      assert.equal(l.logs[0].event, 'OfficerAdded')
 
       l = await storage.officers.call(accounts[1])
       assert.equal(l, true)
