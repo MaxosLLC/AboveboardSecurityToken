@@ -158,16 +158,29 @@ contract SettingsStorage is ISettingsStorage {
   }
 
   /**
-   * @notice Set issuer of token
+   * @notice Set officer of token
    *
-   * @param  _issuer Issuer to be set
+   * @param  _officer Officer to be set
    */
-  function setIssuer(address _issuer) public {
-    require((officers[msg.sender] && _issuer != address(0)) ||
+  function addOfficer(address _officer) public {
+    require((officers[msg.sender] && _officer != address(0)) ||
             msg.sender == tokenOwner);
 
-    officers[_issuer] = true;
-    IssuerSet(_issuer);
+    officers[_officer] = true;
+    OfficerSet(_officer);
+  }
+
+  /**
+   * @notice Remove officer of token
+   *
+   * @param  _officer Officer to be removed
+   */
+  function removeOfficer(address _officer) public {
+    require((officers[msg.sender] && _officer != address(0)) ||
+            msg.sender == tokenOwner);
+
+    officers[_officer] = true;
+    OfficerRemoved(_officer);
   }
 
   /**

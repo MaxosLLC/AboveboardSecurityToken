@@ -46,7 +46,7 @@ contract('RegulatedToken', async accounts => {
     await storage.setIssuerPermission('allowNewShareholders', true)
     await storage.setIssuerPermission('addWhitelist', true)
 
-    await storage.setIssuer(issuer)
+    await storage.addOfficer(issuer)
     await storage.allowNewShareholders(true, { from: issuer })
     await storage.addWhitelist(whitelist.address)
     await storage.addWhitelist(regDWhitelist.address)

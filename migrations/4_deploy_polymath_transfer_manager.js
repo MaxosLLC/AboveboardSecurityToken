@@ -17,6 +17,6 @@ module.exports = async (deployer, network, accounts) => {
   const storage = await SettingsStorage.deployed()
   await storage.addWhitelist(IssuanceWhiteList.address)
 
-  await storage.setIssuer(accounts[0])
+  await storage.addOfficer(accounts[0])
   return storage.allowNewShareholders(true)
 }

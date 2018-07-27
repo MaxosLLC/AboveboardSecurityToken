@@ -41,11 +41,18 @@ interface ISettingsStorage {
   event RegulationDWhitelistSet(address whitelist);
 
   /**
-   * @notice Triggered when an issuer is set
+   * @notice Triggered when an officer is set
    *
-   * @param  _issuer Address of an issuer
+   * @param  _officer Address of an officer
    */
-  event IssuerSet(address _issuer);
+  event OfficerSet(address _officer);
+
+  /**
+   * @notice Triggered when an officer is removed
+   *
+   * @param  _officer Address of an officer
+   */
+  event OfficerRemoved(address _officer);
 
   /**
    * @notice Triggered when a messaging address is set
