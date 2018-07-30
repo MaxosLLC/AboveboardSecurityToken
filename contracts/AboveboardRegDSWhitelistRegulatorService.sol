@@ -29,8 +29,8 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
   // @dev Check error reason: Transfer before initial offering end date
   uint8 constant private CHECK_ERREGD = 5;
 
-  // @dev Check error reason: Sender is not issuer
-  uint8 constant private CHECK_ERISS = 6;
+  // @dev Check error reason: Sender is not officer
+  uint8 constant private CHECK_EROFF = 6;
 
   /**
    * @dev Validate contract address
@@ -104,13 +104,13 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
     bool isOfficer = settingsStorage.officers(msg.sender);
     address tokenOwner = MintableToken(_token).owner();
 
-    if (_from != tokenOwner || (_from != tokenOwner && !isOfficer)) {
+    if (_to != tokenOwner && !isOfficer) {
 
-      if (_from != tokenOwner) {
-        return CHECK_ESEND;
+      if (_to != tokenOwner) {
+        return CHECK_ERECV;
       }
 
-      return CHECK_ERISS;
+      return CHECK_EROFF;
     }
 
     return CHECK_SUCCESS;

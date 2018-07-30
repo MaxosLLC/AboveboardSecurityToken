@@ -350,4 +350,22 @@ contract('RegulatedToken', async accounts => {
       })
     })
   })
+
+  describe('arbitrage', () => {
+    describe('when receiver is added to whitelist', () => {
+      beforeEach(async () => {
+        await whitelist.add(receiver)
+      })
+
+      it('transfers funds back to owner', async () => {
+        const value = 25
+
+        await token.transfer(receiver, value, fromNewOwner)
+        await assertBalancesNewOwner({ newOwner: 75, receiver: value })
+
+        await token.arbitrage(receiver, newOwner, value, fromNewOwner)
+        await assertBalancesNewOwner({ newOwner: 100, receiver: 0 })
+      })
+    })
+  })
 })
