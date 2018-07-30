@@ -30,10 +30,8 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
   }
 
   function setAgent(address _agent) onlyOwner public {
-
     agent = _agent;
     NewAgentAssigned(_agent);
-    
   }
 
   function setWhitelistType(string _whitelistType) onlyOwner public {
@@ -104,5 +102,18 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
 
   function getQualifiers() onlyAgentOrOwnerOrQualifier view public returns (address[]) {
     return qualifiersAddress;
+  }
+
+  function getAgentsOwnerAndQualifiers() onlyAgentOrOwnerOrQualifier view public returns (address[]) {
+    address[] memory agentOwnerAndQualifiers = new address[](qualifiersAddress.length + 2);
+
+    agentOwnerAndQualifiers[0] = owner;
+    agentOwnerAndQualifiers[1] = agent;
+
+    for (uint i = 0; i < qualifiersAddress.length; i++) {
+      agentOwnerAndQualifiers[i + 2] = qualifiersAddress[i];
+    }
+
+    return agentOwnerAndQualifiers;
   }
 }
