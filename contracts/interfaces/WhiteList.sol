@@ -31,5 +31,4 @@ contract WhiteList {
   /// @dev Get buyers
   /// @return Addresses of buyers
   function getBuyers() view public returns (address[]);
-
 }

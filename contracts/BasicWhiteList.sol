@@ -17,7 +17,6 @@ contract BasicWhiteList is WhiteList {
   }
 
   function add(address _buyer) public returns (bool) {
-
     if (!members[_buyer]) {
       uint256 id = membersAddress.length;
       membersIndex[_buyer] = id;
@@ -45,7 +44,6 @@ contract BasicWhiteList is WhiteList {
   }
 
   function remove(address _buyer) public returns (bool) {
-
     if (members[_buyer]) {
       uint256 id = membersIndex[_buyer];
       delete membersAddress[id];
@@ -59,5 +57,4 @@ contract BasicWhiteList is WhiteList {
   function getBuyers() view public returns (address[]) {
     return membersAddress;
   }
-
 }

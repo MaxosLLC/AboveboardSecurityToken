@@ -1,21 +1,16 @@
-var RegulationDWhiteList = artifacts.require("./IssuanceWhiteList.sol");
-var SettingsStorage = artifacts.require("./SettingsStorage.sol");
-var RegulatorService = artifacts.require("./AboveboardRegDSWhitelistRegulatorService.sol");
-var RegulatedToken = artifacts.require("./RegulatedToken.sol");
-var storage;
+const RegulationDWhiteList = artifacts.require('./IssuanceWhiteList.sol')
+const SettingsStorage = artifacts.require('./SettingsStorage.sol')
 
-module.exports = async function(deployer, network, accounts) {
+const deployRegDWhitelist = false
 
-    return deployer.deploy(RegulationDWhiteList)
-      .then(() => {
-        return RegulationDWhiteList.deployed().then(function(instance) {
-          return instance.setWhitelistType("RegD");
-        });
-      })
-      .then(() => {
-        return SettingsStorage.deployed().then(function(instance) {
-          storage = instance;
-          return instance.addWhitelist(RegulationDWhiteList.address);
-        });
-      });
-};
+module.exports = async (deployer, network, accounts) => {
+  if (!deployRegDWhitelist) { return }
+
+  await deployer.deploy(RegulationDWhiteList)
+
+  const whitelist = await RegulationDWhiteList.deployed()
+  await whitelist.setWhitelistType('RegD')
+
+  const storage = await SettingsStorage.deployed()
+  return storage.addWhitelist(RegulationDWhiteList.address)
+}

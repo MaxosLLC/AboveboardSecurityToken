@@ -9,7 +9,7 @@ import "./SettingsStorage.sol";
 /// @notice Standard interface for `RegulatorService`s
 contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable {
 
-  SettingsStorage settingsStorage;
+  SettingsStorage public settingsStorage;
 
   // @dev Check success code
   uint8 constant private CHECK_SUCCESS = 0;
@@ -29,8 +29,8 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
   // @dev Check error reason: Transfer before initial offering end date
   uint8 constant private CHECK_ERREGD = 5;
 
-  // @dev Check error reason: Sender is not issuer
-  uint8 constant private CHECK_ERISS = 6;
+  // @dev Check error reason: Sender is not officer
+  uint8 constant private CHECK_EROFF = 6;
 
   /**
    * @dev Validate contract address
@@ -61,7 +61,6 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
    * @dev    This method *MAY* call back to the token contract specified by `_token` for
    *         more information needed to enforce trade approval.
    *
-   * @param  _token The address of the token to be transfered
    * @param  _from The address of the sender account
    * @param  _to The address of the receiver account
    * @param  _amount The quantity of the token to trade
@@ -70,7 +69,6 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
    *               to assign meaning.
    */
   function check(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
-
     bool isCompany = _from == MintableToken(_token).owner() || _to == MintableToken(_token).owner();
 
     // trading is locked, can transfer to or from company account
@@ -85,7 +83,7 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
 
     bool t;
     string memory wlTo;
-    (t,wlTo) = settingsStorage.isWhiteListed(_to);
+    (t, wlTo) = settingsStorage.isWhiteListed(_to);
     if (!t && !isCompany) {
       return CHECK_ERECV;
     }
@@ -102,30 +100,20 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
   }
 
   // the sender is the multisig wallet, or the _from is the company account and the sender is the issuer
-  function checkTransferFrom(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
-
-    bool isIssuer = msg.sender == settingsStorage.issuer();
+  function checkArbitrage(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
+    bool isOfficer = settingsStorage.officers(msg.sender);
     address tokenOwner = MintableToken(_token).owner();
 
-    if (_from != tokenOwner || (_from != tokenOwner && !isIssuer)) {
+    if (_to != tokenOwner && !isOfficer) {
 
-      if (_from != tokenOwner) {
-        return CHECK_ESEND;
+      if (_to != tokenOwner) {
+        return CHECK_ERECV;
       }
 
-      return CHECK_ERISS;
+      return CHECK_EROFF;
     }
 
     return CHECK_SUCCESS;
-  }
-
-  /**
-   * @notice Get Settings Storage address
-   *
-   * @return Settings Storage address
-   */
-  function getStorageAddress() view public returns (address) {
-    return settingsStorage;
   }
 
   /**

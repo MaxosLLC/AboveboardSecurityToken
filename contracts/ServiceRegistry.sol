@@ -15,12 +15,10 @@ contract ServiceRegistry is IServiceRegistry {
    * @param _addr The address of a smart contract
    */
   modifier withContract(address _addr) {
-
     uint length;
     assembly { length := extcodesize(_addr) }
     require(length > 0);
     _;
-
   }
 
   /**
@@ -30,9 +28,7 @@ contract ServiceRegistry is IServiceRegistry {
    *
    */
   function ServiceRegistry(address _service) public {
-
     service = _service;
-
   }
 
   /**
@@ -42,11 +38,9 @@ contract ServiceRegistry is IServiceRegistry {
    *
    */
   function replaceService(address _service) onlyOwner withContract(_service) public {
-
     address oldService = service;
     service = _service;
     ReplaceService(oldService, service);
-
   }
 
   /**

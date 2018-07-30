@@ -1,35 +1,28 @@
-const BasicWhiteList = artifacts.require('./BasicWhiteList.sol');
+const BasicWhiteList = artifacts.require('./BasicWhiteList.sol')
 
-contract('BasicWhiteList', function(accounts) {
+contract('BasicWhiteList', accounts => {
+  let basicWhiteList
 
-    let basicWhiteList;
+  beforeEach(async () => {
+    basicWhiteList = await BasicWhiteList.new({from: accounts[0]})
+  })
 
-    beforeEach(async () => {
+  it('Test basic functions in BasicWhiteList', async () => {
+    let w = await basicWhiteList.add(accounts[0])
+    assert.equal(w.logs[0].event, 'MemberAdded')
 
-        basicWhiteList = await BasicWhiteList.new({from: accounts[0]});
+    assert.equal(await basicWhiteList.verify(accounts[0]), true)
 
-    });
+    w = await basicWhiteList.remove(accounts[0])
+    assert.equal(w.logs[0].event, 'MemberRemoved')
 
-    it("Test basic functions in BasicWhiteList", async function() {
-        
-        let w = await basicWhiteList.add(accounts[0]);
-        assert.equal(w.logs[0].event, 'MemberAdded');
+    assert.equal(await basicWhiteList.verify(accounts[0]), false)
+  })
 
-        assert.equal(await basicWhiteList.verify(accounts[0]), true);
+  it('Add multiple buyers', async () => {
+    await basicWhiteList.addBuyers([accounts[0], accounts[1]])
 
-        w = await basicWhiteList.remove(accounts[0]);
-        assert.equal(w.logs[0].event, 'MemberRemoved');
-
-        assert.equal(await basicWhiteList.verify(accounts[0]), false);
-
-    });
-
-    it("Add multiple buyers", async function() {
-
-        await basicWhiteList.addBuyers([accounts[0], accounts[1]]);
-
-        assert.equal(await basicWhiteList.verify(accounts[0]), true);
-        assert.equal(await basicWhiteList.verify(accounts[1]), true);
-    });
-
-});
+    assert.equal(await basicWhiteList.verify(accounts[0]), true)
+    assert.equal(await basicWhiteList.verify(accounts[1]), true)
+  })
+})

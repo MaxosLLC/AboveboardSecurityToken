@@ -45,7 +45,7 @@
     "test": "yarn build && scripts/test.sh",
     "testrpc": "scripts/runTestrpc.sh",
     "run-jest": "jest",
-    "lint": "standard --verbose | snazzy",
+    "lint": "standard --fix --verbose | snazzy",
     "coverage": "solidity-coverage"
   },
   "jest": {
@@ -55,5 +55,17 @@
       "test"
     ],
     "setupTestFrameworkScriptFile": "<rootDir>/test/helpers/setup.js"
+  },
+  "standard": {
+    "globals": [
+      "web3",
+      "artifacts",
+      "assert",
+      "contract",
+      "it",
+      "describe",
+      "beforeEach",
+      "afterEach"
+    ]
   }
 }

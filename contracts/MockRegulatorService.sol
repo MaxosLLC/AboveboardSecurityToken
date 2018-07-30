@@ -2,7 +2,8 @@ pragma solidity ^0.4.18;
 
 import "./AboveboardRegDSWhitelistRegulatorService.sol";
 
-contract MockRegulatorService is AboveboardRegDSWhitelistRegulatorService  {
+contract MockRegulatorService is AboveboardRegDSWhitelistRegulatorService {
+
   bool public success;
   uint8 public reason;
 
@@ -11,7 +12,7 @@ contract MockRegulatorService is AboveboardRegDSWhitelistRegulatorService  {
     reason = _reason;
   }
 
-  function check(address, address, address, address, uint256) public returns (uint8) {
+  function check(address, address, address, uint256) public returns (uint8) {
     return reason;
   }
 }
