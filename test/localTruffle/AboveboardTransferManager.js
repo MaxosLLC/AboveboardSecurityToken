@@ -1,5 +1,7 @@
 const helpers = require('../helpers/throwAndAssert')
 const RegulatedToken = artifacts.require('./RegulatedToken.sol')
+const ServiceRegistry = artifacts.require('./ServiceRegistry.sol')
+const RegulatorService = artifacts.require('./AboveboardRegDSWhitelistRegulatorService.sol')
 const IssuanceWhiteList = artifacts.require('./IssuanceWhiteList.sol')
 const SettingsStorage = artifacts.require('./SettingsStorage.sol')
 const TransferManager = artifacts.require('./polymath/AboveboardTransferManager.sol')
@@ -8,6 +10,7 @@ contract('AboveboardTransferManager', async accounts => {
   let storage
   let manager
   let whitelist
+  let token
 
   const owner = accounts[0]
   const receiver = accounts[1]
@@ -19,7 +22,13 @@ contract('AboveboardTransferManager', async accounts => {
   beforeEach(async () => {
     storage = await SettingsStorage.new()
 
-    manager = await TransferManager.new('', '', storage.address, { gas: 9000000 })
+    const regulator = await RegulatorService.new(storage.address, { fromOwner })
+
+    const registry = await ServiceRegistry.new(regulator.address)
+
+    token = await RegulatedToken.new(registry.address, 'Test', 'TEST')
+
+    manager = await TransferManager.new(token.address, '0x0000000000000000000000000000000000000000', storage.address, { gas: 9000000 })
 
     whitelist = await IssuanceWhiteList.new()
 
@@ -31,18 +40,19 @@ contract('AboveboardTransferManager', async accounts => {
     await storage.addOfficer(issuer)
     await storage.allowNewShareholders(true, { from: issuer })
     await storage.addWhitelist(whitelist.address)
-    await storage.addWhitelist(regDWhitelist.address)
-    await storage.setInititalOfferEndDate(releaseTime, { from: issuer })
   })
 
   describe('verifyTransfer', () => {
     
     describe('when the receiver is not added to whitelist', () => {
-      it('does NOT transfer funds', async () => {
+      it('does NOT verify transfer', async () => {
         const value = 25
 
-        let res = await manager.verifyTransfer(owner, receiver, value, fromOwner);
-        assert.equal(res, 'INVALID')
+        try {
+          await manager.verifyTransfer(owner, receiver, value, true);
+        } catch (e) {
+          assert.ok(e)
+        }
       })
     })
     
@@ -51,11 +61,10 @@ contract('AboveboardTransferManager', async accounts => {
         await whitelist.add(receiver)
       })
 
-      it('transfers funds', async () => {
+      it('verifies transfer', async () => {
         const value = 25
 
-        let res = await manager.verifyTransfer(owner, receiver, value, fromOwner);
-        assert.equal(res, 'VALID')
+        await manager.verifyTransfer(owner, receiver, value, true);
       })
     })
   })
