@@ -39,4 +39,8 @@ contract IIssuanceWhiteList is WhiteList {
   /// @dev Get qualifiers
   /// @return Addresses of qualifiers
   function getQualifiers() view public returns (address[]);
+
+  /// @dev Get the owner, agent and all qualifiers
+  /// @return Addresses of owner, agent and all qualifiers
+  function getAgentsOwnerAndQualifiers() view public returns (address[]);
 }
