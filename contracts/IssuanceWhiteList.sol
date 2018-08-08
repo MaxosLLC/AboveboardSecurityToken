@@ -10,12 +10,14 @@ import "./zeppelin-solidity/contracts/ownership/Ownable.sol";
 contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
 
   address agent;
+
   mapping(address => bool) members;
-  mapping(address => bool) qualifiers;
   address[] membersAddress;
+  mapping(address => uint256) membersIndex;
+
+  mapping(address => bool) qualifiers;
   address[] qualifiersAddress;
   mapping(address => uint256) qualifiersIndex;
-  mapping(address => uint256) membersIndex;
 
   string public whitelistType;
 
