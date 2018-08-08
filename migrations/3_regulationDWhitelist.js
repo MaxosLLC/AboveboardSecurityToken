@@ -3,14 +3,15 @@ const SettingsStorage = artifacts.require('./SettingsStorage.sol')
 
 const deployRegDWhitelist = false
 
-module.exports = async (deployer, network, accounts) => {
-  if (!deployRegDWhitelist) { return }
+module.exports = (deployer, network, accounts) =>
+  deployer.then(async () => {
+    if (!deployRegDWhitelist) { return }
 
-  await deployer.deploy(RegulationDWhiteList)
+    await deployer.deploy(RegulationDWhiteList)
 
-  const whitelist = await RegulationDWhiteList.deployed()
-  await whitelist.setWhitelistType('RegD')
+    const whitelist = await RegulationDWhiteList.deployed()
+    await whitelist.setWhitelistType('RegD')
 
-  const storage = await SettingsStorage.deployed()
-  return storage.addWhitelist(RegulationDWhiteList.address)
-}
+    const storage = await SettingsStorage.deployed()
+    return storage.addWhitelist(RegulationDWhiteList.address)
+  })

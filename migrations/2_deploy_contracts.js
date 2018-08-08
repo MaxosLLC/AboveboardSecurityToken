@@ -5,22 +5,27 @@ const RegulatorService = artifacts.require('./AboveboardRegDSWhitelistRegulatorS
 const RegulatedToken = artifacts.require('./RegulatedToken.sol')
 const ServiceRegistry = artifacts.require('./ServiceRegistry.sol')
 
-module.exports = async (deployer, network, accounts) => {
-  await deployer.deploy(IssuanceWhiteList)
-  await deployer.deploy(SecureIssuanceWhiteList)
-  await deployer.deploy(SettingsStorage)
-  await deployer.deploy(RegulatorService, SettingsStorage.address)
-  await deployer.deploy(ServiceRegistry, RegulatorService.address)
-  await deployer.deploy(RegulatedToken, ServiceRegistry.address, 'AboveboardStock', 'ABST')
+module.exports = (deployer, network, accounts) =>
+  deployer.then(async () => {
+    await deployer.deploy(IssuanceWhiteList)
+    await deployer.deploy(SecureIssuanceWhiteList)
+    await deployer.deploy(SettingsStorage)
+    await deployer.deploy(RegulatorService, SettingsStorage.address)
+    await deployer.deploy(ServiceRegistry, RegulatorService.address)
+    await deployer.deploy(RegulatedToken, ServiceRegistry.address, 'AboveboardStock', 'ABST')
 
-  const whitelist = await IssuanceWhiteList.deployed()
-  await whitelist.setWhitelistType('Affiliates')
+    await RegulatorService.deployed()
+    await ServiceRegistry.deployed()
+    await RegulatedToken.deployed()
 
-  const seucreWhitelist = await SecureIssuanceWhiteList.deployed()
-  await seucreWhitelist.setWhitelistType('RegS')
+    const whitelist = await IssuanceWhiteList.deployed()
+    await whitelist.setWhitelistType('Affiliates')
 
-  const storage = await SettingsStorage.deployed()
-  await storage.addWhitelist(IssuanceWhiteList.address)
-  await storage.addOfficer(accounts[0])
-  return storage.allowNewShareholders(true)
-}
+    const seucreWhitelist = await SecureIssuanceWhiteList.deployed()
+    await seucreWhitelist.setWhitelistType('RegS')
+
+    const storage = await SettingsStorage.deployed()
+    await storage.addWhitelist(IssuanceWhiteList.address)
+    await storage.addOfficer(accounts[0])
+    return storage.allowNewShareholders(true)
+  })
