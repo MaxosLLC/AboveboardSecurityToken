@@ -179,7 +179,7 @@ contract SettingsStorage is ISettingsStorage {
     require((officers[msg.sender] && _officer != address(0)) ||
             msg.sender == tokenOwner);
 
-    officers[_officer] = true;
+    officers[_officer] = false;
     OfficerRemoved(_officer);
   }
 
