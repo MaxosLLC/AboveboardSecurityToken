@@ -26,6 +26,8 @@ contract('SecureIssuanceWhiteList', accounts => {
     token2 = await RegulatedToken.new(registry.address, 'Test', 'TEST')
 
     issuanceWhiteList = await IssuanceWhiteList.new({from: owner})
+
+    await issuanceWhiteList.add(owner)
   })
 
   it('Set whitelist type', async () => {
@@ -49,10 +51,19 @@ contract('SecureIssuanceWhiteList', accounts => {
   })
 
   it('verify', async () => {
-    await issuanceWhiteList.addToken(token1.address)
-    await issuanceWhiteList.addToken(token2.address)
+    await issuanceWhiteList.addToken(storage.address)
 
-    const l = await issuanceWhiteList.verify(owner, { from: owner })
+    const l = await issuanceWhiteList.verify(owner, { from: storage.address })
     assert.equal(l, true)
+  })
+
+  it('verify by hacker', async () => {
+    await issuanceWhiteList.addToken(storage.address)
+
+    try {
+      await issuanceWhiteList.verify(owner, { from: hacker })
+    } catch (e) {
+      assert.ok(e)
+    }
   })
 })
