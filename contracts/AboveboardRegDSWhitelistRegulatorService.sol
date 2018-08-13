@@ -81,18 +81,25 @@ contract AboveboardRegDSWhitelistRegulatorService is IRegulatorService, Ownable 
       return CHECK_ERALLOW;
     }
 
+    bool f;
+    string memory wlFrom;
+    (f, wlFrom) = settingsStorage.isWhiteListed(_from);
+
     bool t;
     string memory wlTo;
     (t, wlTo) = settingsStorage.isWhiteListed(_to);
+
     if (!t && !isCompany) {
       return CHECK_ERECV;
     }
 
     // receiver is under Regulation D, Non-US investors can trade at any time
     // only company account can send to US investors first year, US investors cannot sell these shares in the first year, except to the company account
+    // transfer rule for US Reg D / S / 144a. This will have a special case for addresses that are on the QIB whitelist
     if (keccak256(wlTo) == keccak256("RegD")
       && block.timestamp < settingsStorage.initialOfferEndDate()
-      && !isCompany) {
+      && !isCompany
+      && keccak256(wlFrom) != keccak256("qib")) {
       return CHECK_ERREGD;
     }
 
