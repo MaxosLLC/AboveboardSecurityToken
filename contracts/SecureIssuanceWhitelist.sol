@@ -21,7 +21,7 @@ contract SecureIssuanceWhiteList is IssuanceWhiteList {
     return members[_buyer] == true;
   }
 
-  function getVerifiedTokens() onlyOwner public returns (address[]) {
+  function getVerifiedTokens() onlyOwner view public returns (address[]) {
     return verifiedTokenAddresses;
   }
 
