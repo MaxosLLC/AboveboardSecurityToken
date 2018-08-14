@@ -5,6 +5,7 @@ const RegulatedToken = artifacts.require('./RegulatedToken.sol')
 const ServiceRegistry = artifacts.require('./ServiceRegistry.sol')
 const RegulatorService = artifacts.require('./AboveboardRegDSWhitelistRegulatorService.sol')
 const IssuanceWhiteList = artifacts.require('./IssuanceWhiteList.sol')
+const SecureIssuanceWhiteList = artifacts.require('contracts/SecureIssuanceWhiteList.sol')
 const SettingsStorage = artifacts.require('./SettingsStorage.sol')
 
 contract('RegulatedToken', async accounts => {
@@ -12,6 +13,7 @@ contract('RegulatedToken', async accounts => {
   let regulator
   let token
   let whitelist
+  let secureWhitelist
   let regDWhitelist
   let releaseTime
 
@@ -37,9 +39,14 @@ contract('RegulatedToken', async accounts => {
 
     whitelist = await IssuanceWhiteList.new({ from: owner })
 
+    secureWhitelist = await SecureIssuanceWhiteList.new({ from: owner })
+
     regDWhitelist = await IssuanceWhiteList.new({ from: owner })
 
+    await secureWhitelist.setWhitelistType('qib')
     await regDWhitelist.setWhitelistType('RegD')
+
+    await secureWhitelist.addToken(storage.address)
 
     await storage.setIssuerPermission('setLocked', true)
     await storage.setIssuerPermission('setInititalOfferEndDate', true)
@@ -49,6 +56,7 @@ contract('RegulatedToken', async accounts => {
     await storage.addOfficer(issuer)
     await storage.allowNewShareholders(true, { from: issuer })
     await storage.addWhitelist(whitelist.address)
+    await storage.addWhitelist(secureWhitelist.address)
     await storage.addWhitelist(regDWhitelist.address)
     await storage.setInititalOfferEndDate(releaseTime, { from: issuer })
 
@@ -325,6 +333,39 @@ contract('RegulatedToken', async accounts => {
           spender: receiver,
           from: receiver,
           to: newOwner,
+          value
+        })
+      })
+    })
+
+    describe('when sender is on secure whitelist and receiver is on Reg D whitelist', () => {
+      beforeEach(async () => {
+        await secureWhitelist.add(accounts[6])
+        await regDWhitelist.add(accounts[7])
+      })
+
+      it('triggers a CheckStatus event and transfers funds', async () => {
+        const event = token.CheckStatus()
+        const value = 25
+
+        // transfer some funds
+        await token.transfer(accounts[6], value, fromNewOwner)
+        await assertCheckStatusEvent(event, {
+          reason: 0,
+          spender: newOwner,
+          from: newOwner,
+          to: accounts[6],
+          value
+        })
+
+        // transfer from receiver. Receiver is on QIB whitelist
+        const ev = token.CheckStatus()
+        await token.transfer(accounts[7], value, { from: accounts[6] })
+        await assertCheckStatusEvent(ev, {
+          reason: 0,
+          spender: accounts[6],
+          from: accounts[6],
+          to: accounts[7],
           value
         })
       })
