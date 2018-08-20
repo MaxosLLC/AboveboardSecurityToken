@@ -19,7 +19,7 @@ contract('ServiceRegistry', async accounts => {
     service = await RegulatorService.new(storage.address, { from: owner })
   })
 
-  describe('replaceService', () => {
+  describe('replaceStorage', () => {
     let newStorage
 
     beforeEach(async () => {
@@ -28,7 +28,7 @@ contract('ServiceRegistry', async accounts => {
       newStorage = await SettingsStorage.new({ from: owner })
     })
 
-    it('should allow the owner to replace the service with a contract', async () => {
+    it('should allow the owner to replace the storage with a contract', async () => {
       const event = service.ReplaceStorage()
 
       await service.replaceStorage(newStorage.address)

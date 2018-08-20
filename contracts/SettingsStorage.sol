@@ -1,9 +1,10 @@
 pragma solidity ^0.4.18;
 
-import "./IssuanceWhiteList.sol";
+import "./zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./interfaces/ISettingsStorage.sol";
+import "./IssuanceWhiteList.sol";
 
-contract SettingsStorage is ISettingsStorage {
+contract SettingsStorage is ISettingsStorage, Ownable {
 
   /**
     * @dev Toggle for locking/unlocking trades at a token level.
@@ -23,30 +24,13 @@ contract SettingsStorage is ISettingsStorage {
   /// @dev Messaging address
   string public messagingAddress;
 
-  /// @dev Owner of the Regulated Token
-  address public tokenOwner;
-
   /// @dev Array of whitelists
   IssuanceWhiteList[] whitelists;
 
   mapping(string => bool) issuerPermissions;
 
-  /**
-   * @notice Constructor
-   */
-  constructor () public {
-    tokenOwner = msg.sender;
-  }
-
-  function setTokenOwner(address _owner) public {
-    require(_owner != address(0));
-    require(officers[msg.sender] || msg.sender == tokenOwner);
-
-    tokenOwner = _owner;
-  }
-
   function setIssuerPermission(string permission, bool setting) public {
-    require (msg.sender == tokenOwner);
+    require (msg.sender == owner);
 
     issuerPermissions[permission] = setting;
   }
@@ -59,7 +43,7 @@ contract SettingsStorage is ISettingsStorage {
    * @param  _locked True for lock the token
    */
   function setLocked(bool _locked) public {
-    require(issuerPermissions["setLocked"] && officers[msg.sender] || msg.sender == tokenOwner);
+    require(issuerPermissions["setLocked"] && officers[msg.sender] || msg.sender == owner);
 
     locked = _locked;
     LogLockSet(_locked);
@@ -77,7 +61,7 @@ contract SettingsStorage is ISettingsStorage {
   function addWhitelist(IssuanceWhiteList _whitelist) public {
     //check that we don't pass an empty list
     require(_whitelist != address(0));
-    require(issuerPermissions["addWhitelist"] && officers[msg.sender] || msg.sender == tokenOwner);
+    require(issuerPermissions["addWhitelist"] && officers[msg.sender] || msg.sender == owner);
 
     bool contains = false;
 
@@ -101,7 +85,7 @@ contract SettingsStorage is ISettingsStorage {
   function removeWhitelist(IssuanceWhiteList _whitelist) public {
     //check that we don't pass an empty list
     require(_whitelist != address(0));
-    require(issuerPermissions["removeWhitelist"] && officers[msg.sender] || msg.sender == tokenOwner);
+    require(issuerPermissions["removeWhitelist"] && officers[msg.sender] || msg.sender == owner);
 
     //Loop through array to see if the whitelist is present
     for (uint256 i = 0; i < whitelists.length; i++) {
@@ -151,7 +135,7 @@ contract SettingsStorage is ISettingsStorage {
    * @param  _date Initial offering end date
    */
   function setInititalOfferEndDate(uint256 _date) public {
-    require(issuerPermissions["setInititalOfferEndDate"] && officers[msg.sender] || msg.sender == tokenOwner);
+    require(issuerPermissions["setInititalOfferEndDate"] && officers[msg.sender] || msg.sender == owner);
 
     initialOfferEndDate = _date;
     InititalOfferEndDateSet(_date);
@@ -164,7 +148,7 @@ contract SettingsStorage is ISettingsStorage {
    */
   function addOfficer(address _officer) public {
     require((officers[msg.sender] && _officer != address(0)) ||
-            msg.sender == tokenOwner);
+            msg.sender == owner);
 
     officers[_officer] = true;
     OfficerAdded(_officer);
@@ -177,7 +161,7 @@ contract SettingsStorage is ISettingsStorage {
    */
   function removeOfficer(address _officer) public {
     require((officers[msg.sender] && _officer != address(0)) ||
-            msg.sender == tokenOwner);
+            msg.sender == owner);
 
     officers[_officer] = false;
     OfficerRemoved(_officer);
@@ -189,7 +173,7 @@ contract SettingsStorage is ISettingsStorage {
    * @param  _address Messaging address to be set
    */
   function setMessagingAddress(string _address) public {
-    require(issuerPermissions["setMessagingAddress"] && officers[msg.sender] || msg.sender == tokenOwner);
+    require(issuerPermissions["setMessagingAddress"] && officers[msg.sender] || msg.sender == owner);
 
     messagingAddress = _address;
     MessagingAddressSet(_address);
@@ -201,7 +185,7 @@ contract SettingsStorage is ISettingsStorage {
    * @param  allow Allow/disallow new shareholders
    */
   function allowNewShareholders(bool allow) public {
-    require(issuerPermissions["allowNewShareholders"] && officers[msg.sender] || msg.sender == tokenOwner);
+    require(issuerPermissions["allowNewShareholders"] && officers[msg.sender] || msg.sender == owner);
 
     newShareholdersAllowed = allow;
     NewShareholdersAllowance(allow);

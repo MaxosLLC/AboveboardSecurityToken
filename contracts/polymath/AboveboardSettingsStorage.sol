@@ -8,6 +8,6 @@ contract AboveboardSettingsStorage is SettingsStorage {
    * @notice Constructor
    */
   constructor () public {
-    tokenOwner = MintableToken(msg.sender).owner();
+    owner = MintableToken(msg.sender).owner();
   }
 }

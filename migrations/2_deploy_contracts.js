@@ -22,7 +22,7 @@ module.exports = (deployer, network, accounts) =>
     await whitelist.setWhitelistType('Affiliates')
 
     const seucreWhitelist = await SecureIssuanceWhiteList.deployed()
-    await seucreWhitelist.setWhitelistType('RegS')
+    await seucreWhitelist.setWhitelistType('qib')
 
     const storage = await SettingsStorage.deployed()
     await storage.addWhitelist(IssuanceWhiteList.address)
