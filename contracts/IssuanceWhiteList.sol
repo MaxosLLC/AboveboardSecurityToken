@@ -31,6 +31,14 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
     _;
   }
 
+  /**
+   * @notice Constructor
+   * @param _whitelistType Type of the `IssuanceWhiteList`
+   */
+  constructor (string _whitelistType) public {
+    whitelistType = _whitelistType;
+  }
+
   function setAgent(address _agent) onlyOwner public {
     agent = _agent;
     NewAgentAssigned(_agent);

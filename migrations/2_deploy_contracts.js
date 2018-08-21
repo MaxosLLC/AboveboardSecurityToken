@@ -7,8 +7,8 @@ const ServiceRegistry = artifacts.require('./ServiceRegistry.sol')
 
 module.exports = (deployer, network, accounts) =>
   deployer.then(async () => {
-    await deployer.deploy(IssuanceWhiteList)
-    await deployer.deploy(SecureIssuanceWhiteList)
+    await deployer.deploy(IssuanceWhiteList, 'Affiliates')
+    await deployer.deploy(SecureIssuanceWhiteList, 'qib')
     await deployer.deploy(SettingsStorage)
     await deployer.deploy(RegulatorService, SettingsStorage.address)
     await deployer.deploy(ServiceRegistry, RegulatorService.address)
@@ -17,15 +17,12 @@ module.exports = (deployer, network, accounts) =>
     await RegulatorService.deployed()
     await ServiceRegistry.deployed()
     await RegulatedToken.deployed()
-
-    const whitelist = await IssuanceWhiteList.deployed()
-    await whitelist.setWhitelistType('Affiliates')
-
-    const seucreWhitelist = await SecureIssuanceWhiteList.deployed()
-    await seucreWhitelist.setWhitelistType('qib')
-
+    await IssuanceWhiteList.deployed()
+    await SecureIssuanceWhiteList.deployed()
     const storage = await SettingsStorage.deployed()
+
     await storage.addWhitelist(IssuanceWhiteList.address)
+    await storage.addWhitelist(SecureIssuanceWhiteList.address)
     await storage.addOfficer(accounts[0])
     return storage.allowNewShareholders(true)
   })

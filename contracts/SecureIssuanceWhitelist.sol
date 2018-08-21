@@ -15,6 +15,15 @@ contract SecureIssuanceWhiteList is IssuanceWhiteList {
   address[] verifiedTokenAddresses;
   mapping(address => bool) verifiedTokens;
 
+  /**
+   * @notice Constructor
+   * @param _whitelistType Type of the `SecureIssuanceWhiteList`
+   */
+  constructor (string _whitelistType)
+    IssuanceWhiteList(_whitelistType) public {
+
+  }
+
   function verify(address _buyer) view public returns (bool) {
     require(verifiedTokens[msg.sender] == true);
 
