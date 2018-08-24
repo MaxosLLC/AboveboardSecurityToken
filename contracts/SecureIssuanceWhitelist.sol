@@ -19,23 +19,15 @@ contract SecureIssuanceWhiteList is IssuanceWhiteList {
    * @notice Constructor
    * @param _whitelistType Type of the `SecureIssuanceWhiteList`
    */
-  constructor (string _whitelistType,
-              string _kycStatus,
-              uint256 _kycExpDate,
-              string _accreditationStatus,
-              string _jurisdiction)
-    IssuanceWhiteList(_whitelistType,
-              _kycStatus,
-              _kycExpDate,
-              _accreditationStatus,
-              _jurisdiction) public {
+  constructor (string _whitelistType)
+    IssuanceWhiteList(_whitelistType) public {
 
   }
 
   function verify(address _buyer) view public returns (bool) {
     require(verifiedTokens[msg.sender] == true);
 
-    return members[_buyer] == true;
+    return members[_buyer].approved == true;
   }
 
   function getVerifiedTokens() onlyOwner view public returns (address[]) {

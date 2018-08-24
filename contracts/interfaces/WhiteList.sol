@@ -6,13 +6,17 @@ pragma solidity ^0.4.18;
  */
 contract WhiteList {
 
-  string public kycStatus;
+  struct kyc {
+    bool approved;
 
-  uint256 public kycExpDate;
+    string kycStatus;
 
-  string public accreditationStatus;
+    uint256 kycExpDate;
 
-  string public jurisdiction;
+    string accreditationStatus;
+
+    string jurisdiction;
+  }
 
   /// @dev Event raised when a new member is added
   event MemberAdded(address member);
@@ -26,7 +30,7 @@ contract WhiteList {
 
   /// @dev Adds a member in the member mapping
   /// @param member Address of a member that is added to the whitelist
-  function add(address member) public returns (bool);
+  function add(address member, string kycStatus, uint256 kycExpDate, string accreditationStatus, string jurisdiction) public returns (bool);
 
   /// @dev Adds members in the member mapping
   /// @param members Addresses of members that are added to the whitelist

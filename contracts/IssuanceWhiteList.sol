@@ -11,7 +11,7 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
 
   address agent;
 
-  mapping(address => bool) members;
+  mapping(address => kyc) members;
   address[] membersAddress;
   mapping(address => uint256) membersIndex;
 
@@ -34,21 +34,9 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
   /**
    * @notice Constructor
    * @param _whitelistType Type of the `IssuanceWhiteList`
-   * @param _kycStatus KYC status
-   * @param _kycExpDate KYC Expiration date
-   * @param _accreditationStatus Accreditation Status
-   * @param _jurisdiction Jurisdiction
    */
-  constructor (string _whitelistType,
-              string _kycStatus,
-              uint256 _kycExpDate,
-              string _accreditationStatus,
-              string _jurisdiction) public {
+  constructor (string _whitelistType) public {
     whitelistType = _whitelistType;
-    kycStatus = _kycStatus;
-    kycExpDate = _kycExpDate;
-    accreditationStatus = _accreditationStatus;
-    jurisdiction = _jurisdiction;
   }
 
   function setAgent(address _agent) onlyOwner public {
@@ -76,14 +64,14 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
     QualifierRemoved(_qualifier);
   }
 
-  function add(address _buyer) onlyAgentOrOwnerOrQualifier public returns (bool) {
-    if (!members[_buyer]) {
+  function add(address _buyer, string _kycStatus, uint256 _kycExpDate, string _accreditationStatus, string _jurisdiction) onlyAgentOrOwnerOrQualifier public returns (bool) {
+    if (!members[_buyer].approved) {
       uint256 id = membersAddress.length;
       membersIndex[_buyer] = id;
       membersAddress.push(_buyer);
     }
 
-    members[_buyer] = true;
+    members[_buyer] = kyc({approved:true, kycStatus:_kycStatus, kycExpDate:_kycExpDate, accreditationStatus:_accreditationStatus, jurisdiction:_jurisdiction});
 
     MemberAdded(_buyer);
   }
@@ -91,31 +79,31 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
   function addBuyers(address[] _buyers) onlyAgentOrOwnerOrQualifier public returns (bool) {
     for (uint256 i = 0; i < _buyers.length; i++) {
 
-      if (!members[_buyers[i]]) {
+      if (!members[_buyers[i]].approved) {
         uint256 id = membersAddress.length;
         membersIndex[_buyers[i]] = id;
         membersAddress.push(_buyers[i]);
       }
 
-      members[_buyers[i]] = true;
+      members[_buyers[i]] = kyc({approved:true, kycStatus:"", kycExpDate:0, accreditationStatus:"", jurisdiction:""});
 
       MemberAdded(_buyers[i]);
     }
   }
 
   function remove(address _buyer) onlyAgentOrOwnerOrQualifier public returns (bool) {
-    if (members[_buyer]) {
+    if (members[_buyer].approved) {
       uint256 id = membersIndex[_buyer];
       delete membersAddress[id];
     }
 
-    members[_buyer] = false;
+    members[_buyer].approved = false;
 
     MemberRemoved(_buyer);
   }
 
   function verify(address _buyer) view public returns (bool) {
-    return members[_buyer] == true;
+    return members[_buyer].approved == true;
   }
 
   function getBuyers() onlyAgentOrOwnerOrQualifier view public returns (address[]) {
