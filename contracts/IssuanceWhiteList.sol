@@ -110,8 +110,8 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
     return membersAddress;
   }
 
-  function getBuyerKyc(address _buyer) onlyAgentOrOwnerOrQualifier view public returns (string, uint256, string, string) {
-    return (members[_buyer].kycStatus, members[_buyer].kycExpDate, members[_buyer].accreditationStatus, members[_buyer].jurisdiction);
+  function getBuyerKyc(address _buyer) onlyAgentOrOwnerOrQualifier view public returns (bool, string, uint256, string, string) {
+    return (members[_buyer].approved, members[_buyer].kycStatus, members[_buyer].kycExpDate, members[_buyer].accreditationStatus, members[_buyer].jurisdiction);
   }
 
   function getQualifiers() onlyAgentOrOwnerOrQualifier view public returns (address[]) {
