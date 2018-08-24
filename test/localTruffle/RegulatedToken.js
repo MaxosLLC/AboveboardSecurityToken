@@ -37,11 +37,11 @@ contract('RegulatedToken', async accounts => {
 
     token = await RegulatedToken.new(registry.address, 'Test', 'TEST')
 
-    whitelist = await IssuanceWhiteList.new('Affiliates', { from: owner })
+    whitelist = await IssuanceWhiteList.new('Affiliates', '', 0, '', '', { from: owner })
 
-    secureWhitelist = await SecureIssuanceWhiteList.new('qib', { from: owner })
+    secureWhitelist = await SecureIssuanceWhiteList.new('qib', '', 0, '', '', { from: owner })
 
-    regDWhitelist = await IssuanceWhiteList.new('RegD', { from: owner })
+    regDWhitelist = await IssuanceWhiteList.new('RegD', '', 0, '', '', { from: owner })
 
     await secureWhitelist.addToken(storage.address)
 

@@ -28,7 +28,7 @@ contract('MultiSigWallet', async accounts => {
 
     token = await RegulatedToken.new(registry.address, 'Test', 'TEST')
 
-    whitelist = await IssuanceWhiteList.new('Test', { from: owner })
+    whitelist = await IssuanceWhiteList.new('Test', '', 0, '', '', { from: owner })
 
     wallet = await MultiSigWallet.new([arbitrator, owner], 2)
 

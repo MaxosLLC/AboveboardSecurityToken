@@ -6,7 +6,7 @@ contract('IssuanceWhiteList', accounts => {
   const hacker = accounts[3]
 
   beforeEach(async () => {
-    issuanceWhiteList = await IssuanceWhiteList.new('Test', {from: accounts[0]})
+    issuanceWhiteList = await IssuanceWhiteList.new('Test', '', 0, '', '', {from: accounts[0]})
   })
 
   it('Test agent - qualifier addition/removal', async () => {

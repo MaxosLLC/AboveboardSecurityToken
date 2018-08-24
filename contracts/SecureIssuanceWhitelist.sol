@@ -19,8 +19,16 @@ contract SecureIssuanceWhiteList is IssuanceWhiteList {
    * @notice Constructor
    * @param _whitelistType Type of the `SecureIssuanceWhiteList`
    */
-  constructor (string _whitelistType)
-    IssuanceWhiteList(_whitelistType) public {
+  constructor (string _whitelistType,
+              string _kycStatus,
+              uint256 _kycExpDate,
+              string _accreditationStatus,
+              string _jurisdiction)
+    IssuanceWhiteList(_whitelistType,
+              _kycStatus,
+              _kycExpDate,
+              _accreditationStatus,
+              _jurisdiction) public {
 
   }
 

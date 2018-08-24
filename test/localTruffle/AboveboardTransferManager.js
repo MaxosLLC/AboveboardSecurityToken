@@ -30,7 +30,7 @@ contract('AboveboardTransferManager', async accounts => {
 
     manager = await TransferManager.new(token.address, '0x0000000000000000000000000000000000000000', storage.address, { gas: 9000000 })
 
-    whitelist = await IssuanceWhiteList.new('Test')
+    whitelist = await IssuanceWhiteList.new('Test', '', 0, '', '')
 
     await storage.setIssuerPermission('setLocked', true)
     await storage.setIssuerPermission('setInititalOfferEndDate', true)

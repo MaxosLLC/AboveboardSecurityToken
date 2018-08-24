@@ -34,9 +34,21 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
   /**
    * @notice Constructor
    * @param _whitelistType Type of the `IssuanceWhiteList`
+   * @param _kycStatus KYC status
+   * @param _kycExpDate KYC Expiration date
+   * @param _accreditationStatus Accreditation Status
+   * @param _jurisdiction Jurisdiction
    */
-  constructor (string _whitelistType) public {
+  constructor (string _whitelistType,
+              string _kycStatus,
+              uint256 _kycExpDate,
+              string _accreditationStatus,
+              string _jurisdiction) public {
     whitelistType = _whitelistType;
+    kycStatus = _kycStatus;
+    kycExpDate = _kycExpDate;
+    accreditationStatus = _accreditationStatus;
+    jurisdiction = _jurisdiction;
   }
 
   function setAgent(address _agent) onlyOwner public {

@@ -6,6 +6,14 @@ pragma solidity ^0.4.18;
  */
 contract WhiteList {
 
+  string public kycStatus;
+
+  uint256 public kycExpDate;
+
+  string public accreditationStatus;
+
+  string public jurisdiction;
+
   /// @dev Event raised when a new member is added
   event MemberAdded(address member);
 
