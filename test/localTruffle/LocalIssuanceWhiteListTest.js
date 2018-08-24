@@ -6,7 +6,7 @@ contract('IssuanceWhiteList', accounts => {
   const hacker = accounts[3]
 
   beforeEach(async () => {
-    issuanceWhiteList = await IssuanceWhiteList.new('Test', '', 0, '', '', {from: accounts[0]})
+    issuanceWhiteList = await IssuanceWhiteList.new('Test', {from: accounts[0]})
   })
 
   it('Test agent - qualifier addition/removal', async () => {
@@ -21,8 +21,8 @@ contract('IssuanceWhiteList', accounts => {
   })
 
   it('Get list of buyers', async () => {
-    await issuanceWhiteList.add(accounts[0])
-    await issuanceWhiteList.add(accounts[1])
+    await issuanceWhiteList.add(accounts[0], '', 0, '', '')
+    await issuanceWhiteList.add(accounts[1], '', 0, '', '')
 
     let l = await issuanceWhiteList.getBuyers()
     assert.equal(l[0], accounts[0])

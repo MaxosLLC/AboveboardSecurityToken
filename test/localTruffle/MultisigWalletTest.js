@@ -28,7 +28,7 @@ contract('MultiSigWallet', async accounts => {
 
     token = await RegulatedToken.new(registry.address, 'Test', 'TEST')
 
-    whitelist = await IssuanceWhiteList.new('Test', '', 0, '', '', { from: owner })
+    whitelist = await IssuanceWhiteList.new('Test', { from: owner })
 
     wallet = await MultiSigWallet.new([arbitrator, owner], 2)
 
@@ -46,8 +46,8 @@ contract('MultiSigWallet', async accounts => {
 
   describe('when funds are send from wallet', () => {
     beforeEach(async () => {
-      await whitelist.add(owner)
-      await whitelist.add(wallet.address)
+      await whitelist.add(owner, '', 0, '', '')
+      await whitelist.add(wallet.address, '', 0, '', '')
     })
 
     it('transfer from wallet', async () => {

@@ -7,8 +7,8 @@ const ServiceRegistry = artifacts.require('./ServiceRegistry.sol')
 
 module.exports = (deployer, network, accounts) =>
   deployer.then(async () => {
-    await deployer.deploy(IssuanceWhiteList, 'Affiliates', '', 0, '', '')
-    await deployer.deploy(SecureIssuanceWhiteList, 'qib', '', 0, '', '')
+    await deployer.deploy(IssuanceWhiteList, 'Affiliates')
+    await deployer.deploy(SecureIssuanceWhiteList, 'qib')
     await deployer.deploy(SettingsStorage)
     await deployer.deploy(RegulatorService, SettingsStorage.address)
     await deployer.deploy(ServiceRegistry, RegulatorService.address)

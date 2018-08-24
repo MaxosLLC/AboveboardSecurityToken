@@ -11,7 +11,7 @@ contract('SettingsStorage', async accounts => {
 
   beforeEach(async () => {
     storage = await SettingsStorage.new({ from: owner })
-    whitelist = await IssuanceWhiteList.new('Test', '', 0, '', '', { from: owner })
+    whitelist = await IssuanceWhiteList.new('Test', { from: owner })
 
     await storage.addOfficer(issuer, { from: owner })
     await storage.setIssuerPermission('setLocked', true)

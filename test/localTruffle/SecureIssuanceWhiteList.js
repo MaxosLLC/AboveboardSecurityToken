@@ -25,9 +25,9 @@ contract('SecureIssuanceWhiteList', accounts => {
 
     token2 = await RegulatedToken.new(registry.address, 'Test', 'TEST')
 
-    issuanceWhiteList = await IssuanceWhiteList.new('Test', '', 0, '', '', {from: owner})
+    issuanceWhiteList = await IssuanceWhiteList.new('Test', {from: owner})
 
-    await issuanceWhiteList.add(owner)
+    await issuanceWhiteList.add(owner, '', 0, '', '')
   })
 
   it('Set whitelist type', async () => {

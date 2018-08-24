@@ -37,11 +37,11 @@ contract('RegulatedToken', async accounts => {
 
     token = await RegulatedToken.new(registry.address, 'Test', 'TEST')
 
-    whitelist = await IssuanceWhiteList.new('Affiliates', '', 0, '', '', { from: owner })
+    whitelist = await IssuanceWhiteList.new('Affiliates', { from: owner })
 
-    secureWhitelist = await SecureIssuanceWhiteList.new('qib', '', 0, '', '', { from: owner })
+    secureWhitelist = await SecureIssuanceWhiteList.new('qib', { from: owner })
 
-    regDWhitelist = await IssuanceWhiteList.new('RegD', '', 0, '', '', { from: owner })
+    regDWhitelist = await IssuanceWhiteList.new('RegD', { from: owner })
 
     await secureWhitelist.addToken(storage.address)
 
@@ -126,7 +126,7 @@ contract('RegulatedToken', async accounts => {
 
     describe('when receiver is added to whitelist', () => {
       beforeEach(async () => {
-        await whitelist.add(receiver)
+        await whitelist.add(receiver, '', 0, '', '')
         await assertBalances({ owner: 100, receiver: 0 })
       })
 
@@ -148,8 +148,8 @@ contract('RegulatedToken', async accounts => {
 
     describe('when new shareholders are not allowed', () => {
       beforeEach(async () => {
-        await whitelist.add(receiver)
-        await whitelist.add(accounts[2])
+        await whitelist.add(receiver, '', 0, '', '')
+        await whitelist.add(accounts[2], '', 0, '', '')
         await assertBalances({ owner: 100, receiver: 0 })
       })
 
@@ -208,7 +208,7 @@ contract('RegulatedToken', async accounts => {
 
     describe('when receiver is under Regulation D, transfer is before release date', () => {
       beforeEach(async () => {
-        await regDWhitelist.add(receiver)
+        await regDWhitelist.add(receiver, '', 0, '', '')
         await assertBalances({ owner: 100, receiver: 0 })
       })
 
@@ -230,7 +230,7 @@ contract('RegulatedToken', async accounts => {
 
     describe('when receiver is under Regulation D, transfer is after release date', () => {
       beforeEach(async () => {
-        await regDWhitelist.add(receiver)
+        await regDWhitelist.add(receiver, '', 0, '', '')
         await assertBalances({ owner: 100, receiver: 0 })
         await helpers.increaseTimeTo(releaseTime + helpers.duration.seconds(100), web3)
       })
@@ -253,7 +253,7 @@ contract('RegulatedToken', async accounts => {
 
     describe('when receiver is under Regulation D, only token contract owner can send to US investors first year', () => {
       beforeEach(async () => {
-        await regDWhitelist.add(receiver)
+        await regDWhitelist.add(receiver, '', 0, '', '')
         await storage.addOfficer(owner, { from: issuer })
       })
 
@@ -275,7 +275,7 @@ contract('RegulatedToken', async accounts => {
 
     describe('when receiver is under Regulation D, cannot sell these shares in the first year, except to the token contract owner', () => {
       beforeEach(async () => {
-        await regDWhitelist.add(receiver)
+        await regDWhitelist.add(receiver, '', 0, '', '')
         await storage.addOfficer(owner, { from: issuer })
       })
 
@@ -337,8 +337,8 @@ contract('RegulatedToken', async accounts => {
 
     describe('when sender is on secure whitelist and receiver is on Reg D whitelist', () => {
       beforeEach(async () => {
-        await secureWhitelist.add(accounts[6])
-        await regDWhitelist.add(accounts[7])
+        await secureWhitelist.add(accounts[6], '', 0, '', '')
+        await regDWhitelist.add(accounts[7], '', 0, '', '')
       })
 
       it('triggers a CheckStatus event and transfers funds', async () => {
@@ -372,7 +372,7 @@ contract('RegulatedToken', async accounts => {
   describe('transferFrom', () => {
     describe('when receiver is added to whitelist', () => {
       beforeEach(async () => {
-        await whitelist.add(receiver)
+        await whitelist.add(receiver, '', 0, '', '')
       })
 
       it('triggers a CheckStatus event and transfers funds', async () => {
@@ -392,7 +392,7 @@ contract('RegulatedToken', async accounts => {
   describe('arbitrage', () => {
     describe('when receiver is added to whitelist', () => {
       beforeEach(async () => {
-        await whitelist.add(receiver)
+        await whitelist.add(receiver, '', 0, '', '')
       })
 
       it('transfers funds back to owner', async () => {
