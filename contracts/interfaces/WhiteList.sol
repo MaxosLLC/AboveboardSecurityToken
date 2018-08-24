@@ -43,4 +43,9 @@ contract WhiteList {
   /// @dev Get buyers
   /// @return Addresses of buyers
   function getBuyers() view public returns (address[]);
+
+  /// @dev Get buyer's KYC informations
+  /// @param buyer Address of buyer that is added to the whitelist
+  /// @return Addresses of buyers
+  function getBuyerKyc(address buyer) view public returns (string, uint256, string, string);
 }
