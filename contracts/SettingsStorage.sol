@@ -29,6 +29,13 @@ contract SettingsStorage is ISettingsStorage, Ownable {
 
   mapping(string => bool) issuerPermissions;
 
+  constructor (bool _locked, bool _newShareholdersAllowed, uint256 _initialOfferEndDate, string _messagingAddress) public {
+    locked = _locked;
+    newShareholdersAllowed = _newShareholdersAllowed;
+    initialOfferEndDate = _initialOfferEndDate;
+    messagingAddress = _messagingAddress;
+  }
+
   function setIssuerPermission(string permission, bool setting) public {
     require (msg.sender == owner);
 

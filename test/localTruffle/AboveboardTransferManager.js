@@ -20,7 +20,7 @@ contract('AboveboardTransferManager', async accounts => {
   const fromReceiver = { from: receiver }
 
   beforeEach(async () => {
-    storage = await SettingsStorage.new()
+    storage = await SettingsStorage.new(false, true, 0, '')
 
     const regulator = await RegulatorService.new(storage.address, { fromOwner })
 

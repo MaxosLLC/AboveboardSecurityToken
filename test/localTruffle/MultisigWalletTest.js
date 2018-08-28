@@ -20,7 +20,7 @@ contract('MultiSigWallet', async accounts => {
   const issuer = accounts[4]
 
   beforeEach(async () => {
-    storage = await SettingsStorage.new({ from: owner })
+    storage = await SettingsStorage.new(false, true, 0, '', { from: owner })
 
     regulator = await RegulatorService.new(storage.address, { from: owner })
 

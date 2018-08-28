@@ -2,7 +2,7 @@ const helpers = require('../helpers/throwAndAssert')
 const RegulatorService = artifacts.require('./AboveboardRegDSWhitelistRegulatorService.sol')
 const SettingsStorage = artifacts.require('./SettingsStorage.sol')
 
-contract('ServiceRegistry', async accounts => {
+contract('RegulatorService', async accounts => {
   let owner
   let hacker
   let participant
@@ -15,7 +15,7 @@ contract('ServiceRegistry', async accounts => {
     hacker = accounts[2]
     participant = accounts[3]
 
-    storage = await SettingsStorage.new({ from: owner })
+    storage = await SettingsStorage.new(false, true, 0, '', { from: owner })
     service = await RegulatorService.new(storage.address, { from: owner })
   })
 
@@ -25,7 +25,7 @@ contract('ServiceRegistry', async accounts => {
     beforeEach(async () => {
       assert.equal(await service.settingsStorage(), storage.address)
 
-      newStorage = await SettingsStorage.new({ from: owner })
+      newStorage = await SettingsStorage.new(false, true, 0, '', { from: owner })
     })
 
     it('should allow the owner to replace the storage with a contract', async () => {

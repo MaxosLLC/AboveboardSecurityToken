@@ -10,7 +10,7 @@ contract('SettingsStorage', async accounts => {
   const hacker = accounts[5]
 
   beforeEach(async () => {
-    storage = await SettingsStorage.new({ from: owner })
+    storage = await SettingsStorage.new(false, true, 0, '', { from: owner })
     whitelist = await IssuanceWhiteList.new('Test', { from: owner })
 
     await storage.addOfficer(issuer, { from: owner })

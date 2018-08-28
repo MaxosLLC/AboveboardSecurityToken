@@ -17,7 +17,7 @@ contract('ServiceRegistry', async accounts => {
     hacker = accounts[2]
     participant = accounts[3]
 
-    storage = await SettingsStorage.new({ from: owner })
+    storage = await SettingsStorage.new(false, true, 0, '', { from: owner })
     service = await RegulatorService.new(storage.address, { from: owner })
     registry = await ServiceRegistry.new(service.address, { from: owner })
   })
