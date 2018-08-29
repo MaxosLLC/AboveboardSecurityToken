@@ -3,7 +3,6 @@ const SecureIssuanceWhiteList = artifacts.require('./SecureIssuanceWhiteList.sol
 const SettingsStorage = artifacts.require('./SettingsStorage.sol')
 const RegulatorService = artifacts.require('./AboveboardRegDSWhitelistRegulatorService.sol')
 const RegulatedToken = artifacts.require('./RegulatedToken.sol')
-const ServiceRegistry = artifacts.require('./ServiceRegistry.sol')
 
 module.exports = (deployer, network, accounts) =>
   deployer.then(async () => {
@@ -11,11 +10,9 @@ module.exports = (deployer, network, accounts) =>
     await deployer.deploy(SecureIssuanceWhiteList, 'qib')
     await deployer.deploy(SettingsStorage, false, true, 0, '')
     await deployer.deploy(RegulatorService, SettingsStorage.address)
-    await deployer.deploy(ServiceRegistry, RegulatorService.address)
-    await deployer.deploy(RegulatedToken, ServiceRegistry.address, 'AboveboardStock', 'ABST', 0)
+    await deployer.deploy(RegulatedToken, RegulatorService.address, 'AboveboardStock', 'ABST', 0)
 
     await RegulatorService.deployed()
-    await ServiceRegistry.deployed()
     await RegulatedToken.deployed()
     await IssuanceWhiteList.deployed()
     await SecureIssuanceWhiteList.deployed()
