@@ -1,7 +1,7 @@
 const IssuanceWhiteList = artifacts.require('./IssuanceWhiteList.sol')
 const SecureIssuanceWhiteList = artifacts.require('./SecureIssuanceWhiteList.sol')
 const SettingsStorage = artifacts.require('./SettingsStorage.sol')
-const RegulatorService = artifacts.require('./AboveboardRegDSWhitelistRegulatorService.sol')
+const RegulatorService = artifacts.require('./RegulatorService.sol')
 const RegulatedToken = artifacts.require('./RegulatedToken.sol')
 
 module.exports = (deployer, network, accounts) =>
