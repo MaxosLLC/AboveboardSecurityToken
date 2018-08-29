@@ -35,7 +35,7 @@ contract('RegulatedToken', async accounts => {
 
     const registry = await ServiceRegistry.new(regulator.address)
 
-    token = await RegulatedToken.new(registry.address, 'Test', 'TEST')
+    token = await RegulatedToken.new(registry.address, 'Test', 'TEST', 0)
 
     whitelist = await IssuanceWhiteList.new('Affiliates', { from: owner })
 
@@ -98,7 +98,7 @@ contract('RegulatedToken', async accounts => {
 
   describe('constructor', () => {
     it('requires a non-zero registry argument', async () => {
-      await helpers.expectThrow(RegulatedToken.new(0, 'TEST', 'Test'))
+      await helpers.expectThrow(RegulatedToken.new(0, 'TEST', 'Test', 0))
     })
   })
 

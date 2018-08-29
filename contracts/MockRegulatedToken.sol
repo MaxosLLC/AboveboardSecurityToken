@@ -10,7 +10,7 @@ contract MockRegulatedToken is RegulatedToken {
 
   // 0xffffffff is a test address for ServiceRegistry that is bypassed by our _service() implementation
   function MockRegulatedToken(address _service) public
-    RegulatedToken(ServiceRegistry(0xffffffff), "MockToken", "MTKN")
+    RegulatedToken(ServiceRegistry(0xffffffff), "MockToken", "MTKN", 0)
   {
     service = AboveboardRegDSWhitelistRegulatorService(_service);
   }

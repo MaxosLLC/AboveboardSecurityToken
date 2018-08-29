@@ -21,9 +21,9 @@ contract('SecureIssuanceWhiteList', accounts => {
 
     const registry = await ServiceRegistry.new(regulator.address)
 
-    token1 = await RegulatedToken.new(registry.address, 'Test', 'TEST')
+    token1 = await RegulatedToken.new(registry.address, 'Test', 'TEST', 0)
 
-    token2 = await RegulatedToken.new(registry.address, 'Test', 'TEST')
+    token2 = await RegulatedToken.new(registry.address, 'Test', 'TEST', 0)
 
     issuanceWhiteList = await IssuanceWhiteList.new('Test', {from: owner})
 

@@ -10,11 +10,6 @@ import "./AboveboardRegDSWhitelistRegulatorService.sol";
 contract RegulatedToken is DetailedERC20, MintableToken {
 
   /**
-   * @notice R-Token decimals setting (used when constructing DetailedERC20)
-   */
-  uint8 constant public RTOKEN_DECIMALS = 0;
-
-  /**
    * @notice Triggered when regulator checks pass or fail
    */
   event CheckStatus(uint8 reason, address indexed spender, address indexed from, address indexed to, uint256 value);
@@ -37,9 +32,10 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    * @param _registry Address of `ServiceRegistry` contract
    * @param _name Name of the token: See DetailedERC20
    * @param _symbol Symbol of the token: See DetailedERC20
+   * @param _decimals Decimals of the token: See DetailedERC20
    */
-  constructor (address _registry, string _name, string _symbol) public
-    DetailedERC20(_name, _symbol, RTOKEN_DECIMALS) {
+  constructor (address _registry, string _name, string _symbol, uint8 _decimals) public
+    DetailedERC20(_name, _symbol, _decimals) {
     require(_registry != address(0));
     registry = ServiceRegistry(_registry);
   }

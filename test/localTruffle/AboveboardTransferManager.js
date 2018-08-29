@@ -26,7 +26,7 @@ contract('AboveboardTransferManager', async accounts => {
 
     const registry = await ServiceRegistry.new(regulator.address)
 
-    token = await RegulatedToken.new(registry.address, 'Test', 'TEST')
+    token = await RegulatedToken.new(registry.address, 'Test', 'TEST', 0)
 
     manager = await TransferManager.new(token.address, '0x0000000000000000000000000000000000000000', storage.address, { gas: 9000000 })
 

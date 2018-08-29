@@ -12,7 +12,7 @@ module.exports = (deployer, network, accounts) =>
     await deployer.deploy(SettingsStorage, false, true, 0, '')
     await deployer.deploy(RegulatorService, SettingsStorage.address)
     await deployer.deploy(ServiceRegistry, RegulatorService.address)
-    await deployer.deploy(RegulatedToken, ServiceRegistry.address, 'AboveboardStock', 'ABST')
+    await deployer.deploy(RegulatedToken, ServiceRegistry.address, 'AboveboardStock', 'ABST', 0)
 
     await RegulatorService.deployed()
     await ServiceRegistry.deployed()

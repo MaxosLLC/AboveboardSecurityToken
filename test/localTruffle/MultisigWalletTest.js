@@ -26,7 +26,7 @@ contract('MultiSigWallet', async accounts => {
 
     const registry = await ServiceRegistry.new(regulator.address)
 
-    token = await RegulatedToken.new(registry.address, 'Test', 'TEST')
+    token = await RegulatedToken.new(registry.address, 'Test', 'TEST', 0)
 
     whitelist = await IssuanceWhiteList.new('Test', { from: owner })
 
