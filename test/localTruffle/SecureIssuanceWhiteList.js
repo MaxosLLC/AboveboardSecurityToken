@@ -1,7 +1,6 @@
 const IssuanceWhiteList = artifacts.require('contracts/SecureIssuanceWhiteList.sol')
 const RegulatedToken = artifacts.require('./RegulatedToken.sol')
-const ServiceRegistry = artifacts.require('./ServiceRegistry.sol')
-const RegulatorService = artifacts.require('./AboveboardRegDSWhitelistRegulatorService.sol')
+const RegulatorService = artifacts.require('./RegulatorService.sol')
 const SettingsStorage = artifacts.require('./SettingsStorage.sol')
 
 contract('SecureIssuanceWhiteList', accounts => {
@@ -19,11 +18,9 @@ contract('SecureIssuanceWhiteList', accounts => {
 
     regulator = await RegulatorService.new(storage.address, { from: owner })
 
-    const registry = await ServiceRegistry.new(regulator.address)
+    token1 = await RegulatedToken.new(regulator.address, 'Test', 'TEST', 0)
 
-    token1 = await RegulatedToken.new(registry.address, 'Test', 'TEST', 0)
-
-    token2 = await RegulatedToken.new(registry.address, 'Test', 'TEST', 0)
+    token2 = await RegulatedToken.new(regulator.address, 'Test', 'TEST', 0)
 
     issuanceWhiteList = await IssuanceWhiteList.new('Test', {from: owner})
 

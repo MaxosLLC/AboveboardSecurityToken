@@ -1,8 +1,7 @@
 const utils = require('../helpers/utils')
 
 const RegulatedToken = artifacts.require('./RegulatedToken.sol')
-const ServiceRegistry = artifacts.require('./ServiceRegistry.sol')
-const RegulatorService = artifacts.require('./AboveboardRegDSWhitelistRegulatorService.sol')
+const RegulatorService = artifacts.require('./RegulatorService.sol')
 const IssuanceWhiteList = artifacts.require('./IssuanceWhiteList.sol')
 const MultiSigWallet = artifacts.require('./MultiSigArbitration.sol')
 const SettingsStorage = artifacts.require('./SettingsStorage.sol')
@@ -24,9 +23,7 @@ contract('MultiSigWallet', async accounts => {
 
     regulator = await RegulatorService.new(storage.address, { from: owner })
 
-    const registry = await ServiceRegistry.new(regulator.address)
-
-    token = await RegulatedToken.new(registry.address, 'Test', 'TEST', 0)
+    token = await RegulatedToken.new(regulator.address, 'Test', 'TEST', 0)
 
     whitelist = await IssuanceWhiteList.new('Test', { from: owner })
 

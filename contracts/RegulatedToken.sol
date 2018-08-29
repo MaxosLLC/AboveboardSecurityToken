@@ -2,12 +2,16 @@ pragma solidity ^0.4.18;
 
 import "./zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
 import "./zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
-import "./ServiceRegistry.sol";
-import "./AboveboardRegDSWhitelistRegulatorService.sol";
+import "./RegulatorService.sol";
 
 
 /// @notice An ERC-20 token that has the ability to check for trade validity
 contract RegulatedToken is DetailedERC20, MintableToken {
+
+  /**
+   * @notice Triggered when service address is replaced
+   */
+  event ReplaceService(address oldService, address newService);
 
   /**
    * @notice Triggered when regulator checks pass or fail
@@ -20,24 +24,48 @@ contract RegulatedToken is DetailedERC20, MintableToken {
   event Arbitrage(address _from, address _to, uint256 _value);
 
   /**
-   * @notice Address of the `ServiceRegistry` that has the location of the
-   *         `RegulatorService` contract responsible for checking trade
-   *         permissions.
+   * @dev Validate contract address
+   * Credit: https://github.com/Dexaran/ERC223-token-standard/blob/Recommended/ERC223_Token.sol#L107-L114
+   *
+   * @param _addr The address of a smart contract
    */
-  ServiceRegistry public registry;
+  modifier withContract(address _addr) {
+    uint length;
+    assembly { length := extcodesize(_addr) }
+    require(length > 0);
+    _;
+  }
+
+  /**
+   * @notice Address of the `RegulatorService` contract responsible for
+   *         checking trade permissions.
+   */
+  RegulatorService public service;
 
   /**
    * @notice Constructor
    *
-   * @param _registry Address of `ServiceRegistry` contract
+   * @param _service Address of `RegulatorService` contract
    * @param _name Name of the token: See DetailedERC20
    * @param _symbol Symbol of the token: See DetailedERC20
    * @param _decimals Decimals of the token: See DetailedERC20
    */
-  constructor (address _registry, string _name, string _symbol, uint8 _decimals) public
+  constructor (address _service, string _name, string _symbol, uint8 _decimals) public
     DetailedERC20(_name, _symbol, _decimals) {
-    require(_registry != address(0));
-    registry = ServiceRegistry(_registry);
+    require(_service != address(0));
+    service = RegulatorService(_service);
+  }
+
+  /**
+   * @dev Replace the current RegulatorService
+   *
+   * @param _service The address of the `RegulatorService`
+   *
+   */
+  function replaceService(address _service) onlyOwner withContract(_service) public {
+    address oldService = service;
+    service = RegulatorService(_service);
+    ReplaceService(oldService, service);
   }
 
   /**
@@ -125,7 +153,7 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    * @return `true` if the check was successful and `false` if unsuccessful
    */
   function _check(address _from, address _to, uint256 _value) private returns (bool) {
-    var reason = _service().check(this, _from, _to, _value);
+    var reason = service.check(this, _from, _to, _value);
 
     CheckStatus(reason, msg.sender, _from, _to, _value);
 
@@ -133,22 +161,10 @@ contract RegulatedToken is DetailedERC20, MintableToken {
   }
 
   function _checkArbitrage(address _from, address _to, uint256 _value) private returns (bool) {
-    var reason = _service().checkArbitrage(this, _from, _to, _value);
+    var reason = service.checkArbitrage(this, _from, _to, _value);
 
     CheckStatus(reason, msg.sender, _from, _to, _value);
 
     return reason == 0;
-  }
-
-  /**
-   * @notice Retreives the address of the `RegulatorService` that manages this token.
-   *
-   * @dev This function *MUST NOT* memorize the `RegulatorService` address.  This would
-   *      break the ability to upgrade the `RegulatorService`.
-   *
-   * @return The `RegulatorService` that manages this token.
-   */
-  function _service() constant public returns (AboveboardRegDSWhitelistRegulatorService) {
-    return AboveboardRegDSWhitelistRegulatorService(registry.service());
   }
 }
