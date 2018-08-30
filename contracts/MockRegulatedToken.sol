@@ -1,25 +1,21 @@
 pragma solidity ^0.4.18;
 
 import "./RegulatedToken.sol";
-import "./AboveboardRegDSWhitelistRegulatorService.sol";
+import "./RegulatorService.sol";
 
 contract MockRegulatedToken is RegulatedToken {
 
-  AboveboardRegDSWhitelistRegulatorService public service;
+  RegulatorService public service;
   uint public decimals;
 
-  // 0xffffffff is a test address for ServiceRegistry that is bypassed by our _service() implementation
+  // 0xffffffff is a test address for RegulatorService that is bypassed by our service implementation
   function MockRegulatedToken(address _service) public
-    RegulatedToken(ServiceRegistry(0xffffffff), "MockToken", "MTKN", 0)
+    RegulatedToken(RegulatorService(0xffffffff), "MockToken", "MTKN", 0)
   {
-    service = AboveboardRegDSWhitelistRegulatorService(_service);
+    service = RegulatorService(_service);
   }
 
   function setDecimals(uint _decimals) public {
     decimals = _decimals;
-  }
-
-  function _service() constant public returns (AboveboardRegDSWhitelistRegulatorService) {
-    return service;
   }
 }

@@ -9,7 +9,7 @@ module.exports = (deployer, network, accounts) =>
 
     await deployer.deploy(RegulationDWhiteList, 'RegD')
 
-    const whitelist = await RegulationDWhiteList.deployed()
+    await RegulationDWhiteList.deployed()
     const storage = await SettingsStorage.deployed()
 
     return storage.addWhitelist(RegulationDWhiteList.address)

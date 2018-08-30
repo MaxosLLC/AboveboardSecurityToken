@@ -1,7 +1,6 @@
 const helpers = require('../helpers/throwAndAssert')
 const RegulatedToken = artifacts.require('./RegulatedToken.sol')
-const ServiceRegistry = artifacts.require('./ServiceRegistry.sol')
-const RegulatorService = artifacts.require('./AboveboardRegDSWhitelistRegulatorService.sol')
+const RegulatorService = artifacts.require('./RegulatorService.sol')
 const IssuanceWhiteList = artifacts.require('./IssuanceWhiteList.sol')
 const SettingsStorage = artifacts.require('./SettingsStorage.sol')
 const TransferManager = artifacts.require('./polymath/AboveboardTransferManager.sol')
@@ -24,9 +23,7 @@ contract('AboveboardTransferManager', async accounts => {
 
     const regulator = await RegulatorService.new(storage.address, { fromOwner })
 
-    const registry = await ServiceRegistry.new(regulator.address)
-
-    token = await RegulatedToken.new(registry.address, 'Test', 'TEST', 0)
+    token = await RegulatedToken.new(regulator.address, 'Test', 'TEST', 0)
 
     manager = await TransferManager.new(token.address, '0x0000000000000000000000000000000000000000', storage.address, { gas: 9000000 })
 

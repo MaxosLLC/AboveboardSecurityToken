@@ -1,5 +1,5 @@
 const helpers = require('../helpers/throwAndAssert')
-const RegulatorService = artifacts.require('./AboveboardRegDSWhitelistRegulatorService.sol')
+const RegulatorService = artifacts.require('./RegulatorService.sol')
 const SettingsStorage = artifacts.require('./SettingsStorage.sol')
 
 contract('RegulatorService', async accounts => {
