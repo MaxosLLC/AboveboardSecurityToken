@@ -8,7 +8,7 @@ module.exports = (deployer, network, accounts) =>
   deployer.then(async () => {
     if (!deployPolymath) { return }
 
-    await deployer.deploy(IssuanceWhiteList, 'RegS', '', '')
+    await deployer.deploy(IssuanceWhiteList, 'RegS')
     await deployer.deploy(SettingsStorage, false, true, 0)
     await deployer.deploy(TransferManager, '0xFec990b9aa412d93cD12E61d7dfC3f63676e7ea2', '0x0DFb0511E9e28B643a9B01A684724048821992D4', SettingsStorage.address, { gas: 9000000 })
 

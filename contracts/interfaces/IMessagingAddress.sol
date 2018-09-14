@@ -29,4 +29,12 @@ interface IMessagingAddress {
    * @param  _type The Messaging Address Type
    */
   function setMessagingAddressType(string _type) public;
+
+  /**
+   * @dev Set Messaging Address and Type
+   *
+   * @param  _address The Messaging Address
+   * @param  _type The Messaging Address Type
+   */
+  function setMessagingAddressAndType(string _address, string _type) public;
 }

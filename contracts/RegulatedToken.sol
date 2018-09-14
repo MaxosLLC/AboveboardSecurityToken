@@ -50,11 +50,9 @@ contract RegulatedToken is DetailedERC20, MintableToken, MessagingAddress {
    * @param _name Name of the token: See DetailedERC20
    * @param _symbol Symbol of the token: See DetailedERC20
    * @param _decimals Decimals of the token: See DetailedERC20
-   * @param _messagingAddress Messaging Address
-   * @param _messagingAddressType Type of the `_messagingAddress`
    */
-  constructor (address _service, string _name, string _symbol, uint8 _decimals, string _messagingAddress, string _messagingAddressType) public
-    DetailedERC20(_name, _symbol, _decimals) MessagingAddress(_messagingAddress, _messagingAddressType) {
+  constructor (address _service, string _name, string _symbol, uint8 _decimals) public
+    DetailedERC20(_name, _symbol, _decimals) {
     require(_service != address(0));
     service = RegulatorService(_service);
   }

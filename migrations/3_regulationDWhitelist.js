@@ -7,7 +7,7 @@ module.exports = (deployer, network, accounts) =>
   deployer.then(async () => {
     if (!deployRegDWhitelist) { return }
 
-    await deployer.deploy(RegulationDWhiteList, 'RegD', '', '')
+    await deployer.deploy(RegulationDWhiteList, 'RegD')
 
     await RegulationDWhiteList.deployed()
     const storage = await SettingsStorage.deployed()
