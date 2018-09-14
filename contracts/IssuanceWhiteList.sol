@@ -35,6 +35,8 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable, MessagingAddress {
   /**
    * @notice Constructor
    * @param _whitelistType Type of the `IssuanceWhiteList`
+   * @param _messagingAddress Messaging Address
+   * @param _messagingAddressType Type of the `_messagingAddress`
    */
   constructor (string _whitelistType, string _messagingAddress, string _messagingAddressType) public
     MessagingAddress(_messagingAddress, _messagingAddressType) {
