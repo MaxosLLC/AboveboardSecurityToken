@@ -21,8 +21,8 @@ contract SecureIssuanceWhiteList is IssuanceWhiteList {
    * @notice Constructor
    * @param _whitelistType Type of the `SecureIssuanceWhiteList`
    */
-  constructor (string _whitelistType)
-    IssuanceWhiteList(_whitelistType) public {
+  constructor (string _whitelistType, string _messagingAddress, string _messagingAddressType)
+    IssuanceWhiteList(_whitelistType, _messagingAddress, _messagingAddressType) public {
     verifyTokens = true;
   }
 

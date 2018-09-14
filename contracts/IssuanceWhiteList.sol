@@ -2,12 +2,13 @@ pragma solidity ^0.4.18;
 
 import "./interfaces/IIssuanceWhiteList.sol";
 import "./zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "./MessagingAddress.sol";
 
 /**
  * @title IssuanceWhiteList
  * @dev WhiteList for an AboveBoard issued token. Owner is the issuer.
  */
-contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
+contract IssuanceWhiteList is IIssuanceWhiteList, Ownable, MessagingAddress {
 
   address agent;
 
@@ -35,7 +36,8 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable {
    * @notice Constructor
    * @param _whitelistType Type of the `IssuanceWhiteList`
    */
-  constructor (string _whitelistType) public {
+  constructor (string _whitelistType, string _messagingAddress, string _messagingAddressType) public
+    MessagingAddress(_messagingAddress, _messagingAddressType) {
     whitelistType = _whitelistType;
   }
 

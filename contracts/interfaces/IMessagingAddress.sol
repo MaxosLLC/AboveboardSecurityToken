@@ -17,14 +17,14 @@ interface IMessagingAddress {
   event MessagingAddressTypeSet(string _messagingAddressType);
 
   /**
-   * @dev Add a new whitelist
+   * @dev Set Messaging Address
    *
    * @param  _address The Messaging Address
    */
   function setMessagingAddress(string _address) public;
 
   /**
-   * @dev Remove a whitelist from the array
+   * @dev Set Messaging Address Type
    *
    * @param  _type The Messaging Address Type
    */
