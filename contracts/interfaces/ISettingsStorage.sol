@@ -55,13 +55,6 @@ interface ISettingsStorage {
   event OfficerRemoved(address _officer);
 
   /**
-   * @notice Triggered when a messaging address is set
-   *
-   * @param  _address Address of a messaging service
-   */
-  event MessagingAddressSet(string _address);
-
-  /**
    * @notice Triggered when a new shareholders allowed/disallowed
    *
    * @param  allow True for allowing new shareholders

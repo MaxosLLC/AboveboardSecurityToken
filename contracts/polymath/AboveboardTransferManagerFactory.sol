@@ -10,7 +10,7 @@ contract AboveboardTransferManagerFactory is IModuleFactory {
   }
 
   function deploy(bytes _data) external returns(address) {
-    SettingsStorage settingsStorage = new SettingsStorage(false, true, 0, "");
+    SettingsStorage settingsStorage = new SettingsStorage(false, true, 0);
     AboveboardTransferManager aboveboardTransferManager = new AboveboardTransferManager(msg.sender, address(polyToken), settingsStorage);
     require(getSig(_data) == aboveboardTransferManager.getInitFunction());
     require(address(aboveboardTransferManager).call(_data));

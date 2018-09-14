@@ -8,7 +8,7 @@ module.exports = (deployer, network, accounts) =>
   deployer.then(async () => {
     await deployer.deploy(IssuanceWhiteList, 'Affiliates')
     await deployer.deploy(SecureIssuanceWhiteList, 'qib')
-    await deployer.deploy(SettingsStorage, false, true, 0, '')
+    await deployer.deploy(SettingsStorage, false, true, 0)
     await deployer.deploy(RegulatorService, SettingsStorage.address)
     await deployer.deploy(RegulatedToken, RegulatorService.address, 'AboveboardStock', 'ABST', 0)
 
