@@ -3,10 +3,11 @@ pragma solidity ^0.4.18;
 import "./zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
 import "./zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
 import "./RegulatorService.sol";
+import "./MessagingAddress.sol";
 
 
 /// @notice An ERC-20 token that has the ability to check for trade validity
-contract RegulatedToken is DetailedERC20, MintableToken {
+contract RegulatedToken is DetailedERC20, MintableToken, MessagingAddress {
 
   /**
    * @notice Triggered when service address is replaced

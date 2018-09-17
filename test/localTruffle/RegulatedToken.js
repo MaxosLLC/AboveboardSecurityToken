@@ -28,7 +28,7 @@ contract('RegulatedToken', async accounts => {
   beforeEach(async () => {
     releaseTime = web3.eth.getBlock('latest').timestamp + helpers.duration.years(1)
 
-    storage = await SettingsStorage.new(false, true, 0, '', { from: owner })
+    storage = await SettingsStorage.new(false, true, 0, { from: owner })
 
     regulator = await RegulatorService.new(storage.address, { from: owner })
 

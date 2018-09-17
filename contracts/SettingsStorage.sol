@@ -21,19 +21,15 @@ contract SettingsStorage is ISettingsStorage, Ownable {
   /// @dev Initial offering end date
   uint256 public initialOfferEndDate;
 
-  /// @dev Messaging address
-  string public messagingAddress;
-
   /// @dev Array of whitelists
   IssuanceWhiteList[] whitelists;
 
   mapping(string => bool) issuerPermissions;
 
-  constructor (bool _locked, bool _newShareholdersAllowed, uint256 _initialOfferEndDate, string _messagingAddress) public {
+  constructor (bool _locked, bool _newShareholdersAllowed, uint256 _initialOfferEndDate) public {
     locked = _locked;
     newShareholdersAllowed = _newShareholdersAllowed;
     initialOfferEndDate = _initialOfferEndDate;
-    messagingAddress = _messagingAddress;
   }
 
   function setIssuerPermission(string permission, bool setting) public {
@@ -172,18 +168,6 @@ contract SettingsStorage is ISettingsStorage, Ownable {
 
     officers[_officer] = false;
     OfficerRemoved(_officer);
-  }
-
-  /**
-   * @notice Set messaging address
-   *
-   * @param  _address Messaging address to be set
-   */
-  function setMessagingAddress(string _address) public {
-    require(issuerPermissions["setMessagingAddress"] && officers[msg.sender] || msg.sender == owner);
-
-    messagingAddress = _address;
-    MessagingAddressSet(_address);
   }
 
   /**
