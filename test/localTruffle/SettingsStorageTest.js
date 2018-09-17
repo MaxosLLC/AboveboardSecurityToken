@@ -10,7 +10,7 @@ contract('SettingsStorage', async accounts => {
   const hacker = accounts[5]
 
   beforeEach(async () => {
-    storage = await SettingsStorage.new(false, true, 0, '', { from: owner })
+    storage = await SettingsStorage.new(false, true, 0, { from: owner })
     whitelist = await IssuanceWhiteList.new('Test', { from: owner })
 
     await storage.addOfficer(issuer, { from: owner })
@@ -81,14 +81,6 @@ contract('SettingsStorage', async accounts => {
 
       l = await storage.officers.call(accounts[1])
       assert.equal(l, true)
-    })
-
-    it('setMessagingAddress', async () => {
-      let l = await storage.setMessagingAddress('someAddress')
-      assert.equal(l.logs[0].event, 'MessagingAddressSet')
-
-      l = await storage.messagingAddress.call()
-      assert.equal(l, 'someAddress')
     })
 
     it('allowNewShareholders', async () => {

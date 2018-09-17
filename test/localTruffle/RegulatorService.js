@@ -15,7 +15,7 @@ contract('RegulatorService', async accounts => {
     hacker = accounts[2]
     participant = accounts[3]
 
-    storage = await SettingsStorage.new(false, true, 0, '', { from: owner })
+    storage = await SettingsStorage.new(false, true, 0, { from: owner })
     service = await RegulatorService.new(storage.address, { from: owner })
   })
 
@@ -25,7 +25,7 @@ contract('RegulatorService', async accounts => {
     beforeEach(async () => {
       assert.equal(await service.settingsStorage(), storage.address)
 
-      newStorage = await SettingsStorage.new(false, true, 0, '', { from: owner })
+      newStorage = await SettingsStorage.new(false, true, 0, { from: owner })
     })
 
     it('should allow the owner to replace the storage with a contract', async () => {
