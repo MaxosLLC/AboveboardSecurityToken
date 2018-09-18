@@ -115,11 +115,11 @@ contract IssuanceWhiteList is IIssuanceWhiteList, Ownable, MessagingAddress {
     return (members[_buyer].approved, members[_buyer].kycStatus, members[_buyer].kycExpDate, members[_buyer].accreditationStatus, members[_buyer].jurisdiction);
   }
 
-  function getQualifiers() onlyAgentOrOwnerOrQualifier view public returns (address[]) {
+  function getQualifiers() view public returns (address[]) {
     return qualifiersAddress;
   }
 
-  function getAgentsOwnerAndQualifiers() onlyAgentOrOwnerOrQualifier view public returns (address[]) {
+  function getAgentsOwnerAndQualifiers() view public returns (address[]) {
     address[] memory agentOwnerAndQualifiers = new address[](qualifiersAddress.length + 2);
 
     agentOwnerAndQualifiers[0] = owner;
