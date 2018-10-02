@@ -69,15 +69,13 @@ contract RegulatorService is IRegulatorService, Ownable {
    *               to assign meaning.
    */
   function check(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
-    bool isCompany = _from == MintableToken(_token).owner() || _to == MintableToken(_token).owner();
-
     // trading is locked, can transfer to or from company account
-    if (settingsStorage.locked() && !isCompany) {
+    if (settingsStorage.locked()) {
       return CHECK_ELOCKED;
     }
 
     // if newShareholdersAllowed is not enabled, the transfer will only succeed if the buyer already has tokens or tranfers to or from company account
-    if (!settingsStorage.newShareholdersAllowed() && MintableToken(_token).balanceOf(_to) == 0 && !isCompany) {
+    if (!settingsStorage.newShareholdersAllowed() && MintableToken(_token).balanceOf(_to) == 0) {
       return CHECK_ERALLOW;
     }
 
@@ -89,7 +87,7 @@ contract RegulatorService is IRegulatorService, Ownable {
     string memory wlTo;
     (t, wlTo) = settingsStorage.isWhiteListed(_to);
 
-    if (!t && !isCompany) {
+    if (!t) {
       return CHECK_ERECV;
     }
 
@@ -98,7 +96,6 @@ contract RegulatorService is IRegulatorService, Ownable {
     // transfer rule for US Reg D / S / 144a. This will have a special case for addresses that are on the QIB whitelist
     if (keccak256(wlTo) == keccak256("RegD")
       && block.timestamp < settingsStorage.initialOfferEndDate()
-      && !isCompany
       && keccak256(wlFrom) != keccak256("qib")) {
       return CHECK_ERREGD;
     }
