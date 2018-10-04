@@ -162,7 +162,7 @@ contract RegulatedToken is DetailedERC20, MintableToken, MessagingAddress {
   }
 
   function _checkArbitrage(address _from, address _to, uint256 _value) private returns (bool) {
-    var reason = service.checkArbitrage(this, _from, _to, _value);
+    var reason = service.checkArbitrage(msg.sender, this, _from, _to, _value);
 
     CheckStatus(reason, msg.sender, _from, _to, _value);
 
