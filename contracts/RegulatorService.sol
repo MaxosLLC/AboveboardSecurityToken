@@ -104,13 +104,13 @@ contract RegulatorService is IRegulatorService, Ownable {
   }
 
   // the sender is the multisig wallet, or the _from is the company account and the sender is the issuer
-  function checkArbitrage(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
-    bool isOfficer = settingsStorage.officers(msg.sender);
+  function checkArbitrage(address _sender, address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
+    bool isOfficer = settingsStorage.officers(_sender);
     address tokenOwner = MintableToken(_token).owner();
 
-    if (_to != tokenOwner && !isOfficer) {
+    if (_from != tokenOwner && !isOfficer && _sender != tokenOwner) {
 
-      if (_to != tokenOwner) {
+      if (_from != tokenOwner) {
         return CHECK_ERECV;
       }
 
