@@ -25,5 +25,5 @@ interface IRegulatorService {
    */
   function check(address _token, address _from, address _to, uint256 _amount) public returns (uint8);
 
-  function checkArbitrage(address _token, address _from, address _to, uint256 _amount) public returns (uint8);
+  function checkArbitrage(address _sender, address _token, address _from, address _to, uint256 _amount) public returns (uint8);
 }
