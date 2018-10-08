@@ -111,7 +111,7 @@ contract RegulatedToken is DetailedERC20, MintableToken, MessagingAddress {
    *
    * @return `true` if successful and `false` if unsuccessful
    */
-  function arbitrage(address _from, address _to, uint256 _value) onlyOwner public returns (bool) {
+  function arbitrage(address _from, address _to, uint256 _value) public returns (bool) {
     if (_checkArbitrage(_from, _to, _value)) {
       require(_to != address(0));
       require(_from != address(0));
